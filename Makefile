@@ -1,8 +1,8 @@
-CC = g++
-ARTIFACT = catan.exe
-SRC_DIR = src
-SRC = $(SRC_DIR)/main.cpp
-OBJ_DIR = bin
+CC := g++
+ARTIFACT := catan.exe
+SRC_DIR := src
+SRC := $(SRC_DIR)/main.cpp
+OBJ_DIR := bin
 OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
 all: $(ARTIFACT)
