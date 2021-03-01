@@ -4,8 +4,8 @@ SRC_DIR := src
 SRC := $(wildcard $(SRC_DIR)/*.cpp)
 OBJ_DIR := bin
 OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
-INC := -Iinclude
-LIB := -lpdcurses
+INC := -Iinclude -Ithird_party/pdcurses/include
+LIB := -Lthird_party/pdcurses/lib -lpdcurses
 CPPFLAGS := $(INC) -MMD -MP
 CFLAGS   := -Wall -std=c++11 -g
 

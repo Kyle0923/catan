@@ -1,20 +1,18 @@
 #ifndef INCLUDE_COMMON_HPP
 #define INCLUDE_COMMON_HPP
 
-#include <utility>
-
 struct Point_t
 {
     int x;
     int y;
 };
 
-
 enum class ResourceTypes {
+    DESERT,
+    CLAY,
     SHEEP,
     WHEAT,
     WOOD,
-    CLAY,
     ORE
 };
 

@@ -1,6 +1,6 @@
-#include "resource.hpp"
+#include "land.hpp"
 
-std::vector<Point_t> ResourceGrid::getAllPoints()
+std::vector<Point_t> Land::getAllPoints()
 {
     std::vector<Point_t> allPoints;
     const int horizontalLength = 12;
@@ -21,10 +21,12 @@ std::vector<Point_t> ResourceGrid::getAllPoints()
     return allPoints;
 }
 
-ResourceGrid::ResourceGrid(int id, Point_t topRight) : mLocation(id), mTopRight{topRight}
+Land::Land(int aId, Point_t aTopRight, ResourceTypes aResourceType) :
+    Terrain(aId, aTopRight),
+    mResourceType(aResourceType)
 {
 }
 
-ResourceGrid::~ResourceGrid()
+Land::~Land()
 {
 }
