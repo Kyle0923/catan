@@ -6,14 +6,15 @@
 class Land : public Terrain
 {
 private:
-    int mDiceNum;
     ResourceTypes mResourceType;
+    int mDiceNum;
+    bool isUnderRob;
 public:
     std::vector<Point_t> getAllPoints() override;
     Land(int aId, Point_t aTopRight, ResourceTypes aResourceType);
+    void setDiceNum(int aDice);
+    int getDiceNum();
     ~Land();
 };
-
-
 
 #endif /* INCLUDE_LAND_HPP */

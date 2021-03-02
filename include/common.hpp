@@ -1,6 +1,8 @@
 #ifndef INCLUDE_COMMON_HPP
 #define INCLUDE_COMMON_HPP
 
+#include "logger.hpp"
+
 struct Point_t
 {
     int x;

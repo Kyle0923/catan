@@ -9,7 +9,7 @@ Terrain::Terrain(int aId, Point_t aTopRight) :
     mId(aId),
     mTopRight(aTopRight)
 {
-
+    // empty
 }
 
 std::vector<Point_t> Terrain::getAllPoints()

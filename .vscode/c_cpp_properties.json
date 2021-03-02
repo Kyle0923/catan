@@ -1,20 +1,15 @@
 {
     "env": {
-      "myDefaultIncludePath": ["${workspaceFolder}", "${workspaceFolder}/include", "${workspaceFolder}/third_party/pdcurses/include"],
+      "myDefaultIncludePath": ["${workspaceFolder}", "${workspaceFolder}/include"],
       "myCompilerPath": "/c/MinGW/bin/g++"
     },
     "configurations": [
       {
         "name": "Catan",
         "intelliSenseMode": "clang-x64",
-        "includePath": ["${myDefaultIncludePath}", "/another/path"],
-        "macFrameworkPath": ["/System/Library/Frameworks"],
-        "defines": ["FOO", "BAR=100"],
-        "forcedInclude": ["${workspaceFolder}/include/config.h"],
-        "compilerPath": "/usr/bin/clang",
+        "includePath": ["${myDefaultIncludePath}", "${workspaceFolder}/third_party/pdcurses/include"],
+        // "forcedInclude": ["${workspaceFolder}/include/config.h"],
         "cStandard": "c11",
-        "cppStandard": "c++17",
-        "compileCommands": "/path/to/compile_commands.json",
         "browse": {
           "path": ["${workspaceFolder}"],
           "limitSymbolsToIncludedHeaders": true,

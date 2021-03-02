@@ -23,8 +23,21 @@ std::vector<Point_t> Land::getAllPoints()
 
 Land::Land(int aId, Point_t aTopRight, ResourceTypes aResourceType) :
     Terrain(aId, aTopRight),
-    mResourceType(aResourceType)
+    mResourceType(aResourceType),
+    mDiceNum(0),
+    isUnderRob(false)
 {
+    // empty
+}
+
+void Land::setDiceNum(int aDice)
+{
+    mDiceNum = aDice;
+}
+
+int Land::getDiceNum()
+{
+    return mDiceNum;
 }
 
 Land::~Land()
