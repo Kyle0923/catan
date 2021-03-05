@@ -4,8 +4,8 @@
 #include <time.h>
 #include <string.h>
 
-#include "resource.hpp"
-using namespace std;
+#include "common.hpp"
+#include "game_map.hpp"
 
 #define DELAYSIZE 200
 
@@ -21,6 +21,11 @@ short color_table[] =
 
 int main(int argc, char **argv)
 {
+    Logger::initLogfile();
+    DEBUG_LOG("Begin ", " of ", "main");
+    GameMap gameMap(78, 33);
+    return 0;
+    //TODO: read in map.txt, generate map
     time_t seed;
     int start, end, row, diff, flag, direction;
     short i;

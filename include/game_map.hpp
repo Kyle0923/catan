@@ -2,18 +2,23 @@
 #define INCLUDE_GAME_MAP_HPP
 
 #include <vector>
-#include "terrain.hpp"
+#include <deque>
+#include "common.hpp"
+
+class Terrain; // forward declare Terrain
 
 class GameMap
 {
 private:
     int mSizeHorizontal;
     int mSizeVertical;
-    std::vector< std::vector<Terrain*> > mGameMap;
+    std::deque< std::deque<Terrain*> > mGameMap;
     inline bool boundaryCheck(int x, int y);
 public:
     GameMap(int aSizeHorizontal, int aSizeVertical);
-    int registerTerrain(int x, int y, Terrain* aTerrain);
+    int registerTerrain(const std::vector<Point_t>& aPoints, Terrain* const aTerrain);
+    int registerTerrain(const Point_t& aPoint, Terrain* const aTerrain);
+    int registerTerrain(const int x, const int y, Terrain* const aTerrain);
     void fillInBlank();
     ~GameMap();
 };

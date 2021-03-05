@@ -8,10 +8,11 @@ class Land : public Terrain
 private:
     ResourceTypes mResourceType;
     int mDiceNum;
-    bool isUnderRob;
+    bool mIsUnderRob;
 public:
     std::vector<Point_t> getAllPoints() override;
     Land(int aId, Point_t aTopRight, ResourceTypes aResourceType);
+    ResourceTypes getResourceType();
     void setDiceNum(int aDice);
     int getDiceNum();
     ~Land();

@@ -4,6 +4,7 @@
 #include <vector>
 #include "common.hpp"
 #include "curses.h"
+#include "game_map.hpp"
 
 class Terrain
 {
@@ -16,7 +17,7 @@ public:
     Terrain(int aId, Point_t aTopRight);
 
     // Register all points of current terrain to map
-    void registerToMap() {}; // TODO: implement
+    void registerToMap(GameMap* aMap);
 
     virtual std::vector<Point_t> getAllPoints();
 

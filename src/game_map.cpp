@@ -1,23 +1,37 @@
 #include "game_map.hpp"
+#include "blank.hpp"
 
 void GameMap::fillInBlank()
 {
     for (int jj = 0; jj < mSizeVertical; ++jj)
     {
-        std::vector<Terrain*> row = mGameMap[jj];
+        std::deque<Terrain*> row = mGameMap[jj];
         for (int ii = 0; ii < mSizeHorizontal; ++ii)
         {
-            if (row[ii] != nullptr)
+            if (row[ii] == nullptr)
             {
-                continue;
+                row[ii] = Blank::getBlank();
             }
-            Terrain* blank = new Terrain(0, Point_t{ii, jj});
-            row[ii] = blank;
         }
     }
 }
 
-int GameMap::registerTerrain(int x, int y, Terrain* aTerrain)
+int GameMap::registerTerrain(const std::vector<Point_t>& aPoints, Terrain* const aTerrain)
+{
+    int rc = 0;
+    for (std::vector<Point_t>::const_iterator it = aPoints.begin() ; it != aPoints.end(); ++it)
+    {
+        rc += registerTerrain(*it, aTerrain);
+    }
+    return rc;
+}
+
+int GameMap::registerTerrain(const Point_t& aPoint, Terrain* const aTerrain)
+{
+    return registerTerrain(aPoint.x, aPoint.y, aTerrain);
+}
+
+int GameMap::registerTerrain(const int x, const int y, Terrain* const aTerrain)
 {
     if (boundaryCheck(x, y)) {
         mGameMap[y][x] = aTerrain;
@@ -43,7 +57,7 @@ GameMap::GameMap(int aSizeHorizontal, int aSizeVertical) :
     // init a 2D array with (Terrain*)nullptr
     for (int jj = 0; jj < mSizeVertical; ++jj)
     {
-        std::vector<Terrain*> row(mSizeHorizontal, nullptr);
+        std::deque<Terrain*> row(mSizeHorizontal, nullptr);
         mGameMap.push_back(row);
     }
 }

@@ -7,9 +7,13 @@
 class Edge : public Terrain
 {
 private:
+    Point_t mOtherEnd; // the end other than mTopRight
+    char mDirection;
     std::string mOwner;
+    static const int HORIZONTAL_LENGTH;
 public:
-    Edge(int aId, Point_t aTopRight);
+    std::vector<Point_t> getAllPoints() override;
+    Edge(int aId, Point_t aTopRight, char aDirection);
     ~Edge();
 };
 

@@ -10,12 +10,13 @@ struct Point_t
 };
 
 enum class ResourceTypes {
-    DESERT,
-    CLAY,
-    SHEEP,
-    WHEAT,
-    WOOD,
-    ORE
+    ANY = -1,
+    DESERT = 0,
+    CLAY = 1,
+    SHEEP = 2,
+    WHEAT = 3,
+    WOOD = 4,
+    ORE = 5
 };
 
 #endif /* INCLUDE_COMMON_HPP */

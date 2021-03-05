@@ -23,4 +23,4 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 clean:
 	rm -f $(OBJ_DIR)/*.o $(OBJ_DIR)/*.d $(ARTIFACT)
 
-include $(DEPS)
+-include $(DEPS)

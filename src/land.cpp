@@ -21,11 +21,16 @@ std::vector<Point_t> Land::getAllPoints()
     return allPoints;
 }
 
+ResourceTypes Land::getResourceType()
+{
+    return mResourceType;
+}
+
 Land::Land(int aId, Point_t aTopRight, ResourceTypes aResourceType) :
     Terrain(aId, aTopRight),
     mResourceType(aResourceType),
     mDiceNum(0),
-    isUnderRob(false)
+    mIsUnderRob(false)
 {
     // empty
 }
