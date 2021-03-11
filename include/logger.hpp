@@ -36,16 +36,11 @@ private:
         ostr << logMessage << std::endl;
         return logMessage;
     };
-    template<typename T, typename... Targs>
-    static void _log(std::stringstream& ostr, T aValue, Targs... aArgs)
+    template<typename... Targs>
+    static void _log(std::stringstream& ostr, Targs... aArgs)
     {
-        ostr << aValue;
-        _log(ostr, aArgs...);
-    };
-    template<typename T>
-    static void _log(std::stringstream& ostr, T aValue)
-    {
-        ostr << aValue;
+        // pack expansion using brace-enclosed initializer
+        __attribute__((unused)) int expander[sizeof...(Targs)] = { (ostr << aArgs, 0)... };
     };
     static int mDebugLevel;
     static Logger* mLogger;

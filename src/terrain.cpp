@@ -5,7 +5,7 @@ Point_t Terrain::getTopRight()
     return mTopRight;
 }
 
-void Terrain::registerToMap(GameMap* aMap)
+void Terrain::registerToMap(GameMap* const aMap)
 {
     aMap->registerTerrain(getAllPoints(), this);
 }

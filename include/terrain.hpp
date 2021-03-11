@@ -17,7 +17,7 @@ public:
     Terrain(int aId, Point_t aTopRight);
 
     // Register all points of current terrain to map
-    void registerToMap(GameMap* aMap);
+    void registerToMap(GameMap* const aMap);
 
     virtual std::vector<Point_t> getAllPoints();
 

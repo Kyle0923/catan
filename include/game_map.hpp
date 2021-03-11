@@ -19,6 +19,7 @@ public:
     int registerTerrain(const std::vector<Point_t>& aPoints, Terrain* const aTerrain);
     int registerTerrain(const Point_t& aPoint, Terrain* const aTerrain);
     int registerTerrain(const int x, const int y, Terrain* const aTerrain);
+
     void fillInBlank();
     ~GameMap();
 };
