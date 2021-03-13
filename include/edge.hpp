@@ -14,6 +14,7 @@ private:
 public:
     std::vector<Point_t> getAllPoints() override;
     Edge(int aId, Point_t aTopRight, char aDirection);
+    char getCharRepresentation(bool useId = false) const override;
     ~Edge();
 };
 

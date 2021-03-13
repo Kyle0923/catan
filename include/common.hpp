@@ -5,8 +5,8 @@
 
 struct Point_t
 {
-    int x;
-    int y;
+    size_t x;
+    size_t y;
 };
 
 enum class ResourceTypes {

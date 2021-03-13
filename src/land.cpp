@@ -13,12 +13,17 @@ std::vector<Point_t> Land::getAllPoints()
     }
     for (int jj = 3; jj <= 4; ++jj)
     {
-        for (int ii = 2 - jj; ii < horizontalLength + (4 - jj); ++ii)
+        for (int ii = jj - 4; ii < horizontalLength + (4 - jj); ++ii)
         {
             allPoints.push_back(Point_t{mTopRight.x + ii, mTopRight.y + jj});
         }
     }
     return allPoints;
+}
+
+void Land::setResourceType(ResourceTypes aResourceType)
+{
+    mResourceType = aResourceType;
 }
 
 ResourceTypes Land::getResourceType()
@@ -38,6 +43,25 @@ Land::Land(int aId, Point_t aTopRight, ResourceTypes aResourceType) :
 void Land::setDiceNum(int aDice)
 {
     mDiceNum = aDice;
+}
+
+char Land::getCharRepresentation(bool useId) const
+{
+    if (useId)
+    {
+        return static_cast<char>(mId % 10) + '0';
+    }
+    else
+    {
+        if (mResourceType == ResourceTypes::ANY)
+        {
+            return '.';
+        }
+        else
+        {
+            return static_cast<char>((int)mResourceType) + '0';
+        }
+    }
 }
 
 int Land::getDiceNum()

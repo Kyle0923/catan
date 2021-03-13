@@ -4,7 +4,8 @@
 #include <vector>
 #include "common.hpp"
 #include "curses.h"
-#include "game_map.hpp"
+
+class GameMap;
 
 class Terrain
 {
@@ -17,9 +18,11 @@ public:
     Terrain(int aId, Point_t aTopRight);
 
     // Register all points of current terrain to map
-    void registerToMap(GameMap* const aMap);
+    void registerToMap(GameMap& aMap);
 
     virtual std::vector<Point_t> getAllPoints();
+
+    virtual char getCharRepresentation(bool useId = false) const = 0;
 
     /* Return all terrains directly connected to
      * current terrain (edge, vertex, land) */

@@ -55,6 +55,18 @@ Edge::Edge(int aId, Point_t aTopRight, char aDirection) :
     }
 }
 
+char Edge::getCharRepresentation(bool useId) const
+{
+    if (useId)
+    {
+        return static_cast<char>(mId % 10) + '0';
+    }
+    else
+    {
+        return mDirection;
+    }
+}
+
 Edge::~Edge()
 {
 }

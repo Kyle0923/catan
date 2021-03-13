@@ -1,13 +1,14 @@
 #include "terrain.hpp"
+#include "game_map.hpp"
 
 Point_t Terrain::getTopRight()
 {
     return mTopRight;
 }
 
-void Terrain::registerToMap(GameMap* const aMap)
+void Terrain::registerToMap(GameMap& aMap)
 {
-    aMap->registerTerrain(getAllPoints(), this);
+    aMap.registerTerrain(getAllPoints(), this);
 }
 
 Terrain::Terrain(int aId, Point_t aTopRight) :

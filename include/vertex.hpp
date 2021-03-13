@@ -19,6 +19,7 @@ private:
 public:
     void setOwner(std::string aOwner, BuildingType aBuilding = BuildingType::SETTLEMENT);
     std::string getOwner();
+    char getCharRepresentation(bool useId = false) const override;
     Vertex(int aId, Point_t aTopRight);
     ~Vertex();
 };

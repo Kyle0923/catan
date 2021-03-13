@@ -12,6 +12,18 @@ Blank* Blank::getBlank()
     return &blank;
 }
 
+char Blank::getCharRepresentation(bool useId) const
+{
+    if (useId)
+    {
+        return ' ';
+    }
+    else
+    {
+        return 'o';
+    }
+}
+
 Blank::Blank(int aId, Point_t aTopRight) :
     Terrain(aId, aTopRight)
 {

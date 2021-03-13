@@ -11,6 +11,19 @@ std::string Vertex::getOwner()
     return mOwner;
 }
 
+char Vertex::getCharRepresentation(bool useId) const
+{
+    if (useId)
+    {
+        return static_cast<char>(mId % 10) + '0';
+    }
+    else
+    {
+        return '+';
+    }
+}
+
+
 Vertex::Vertex(int aId, Point_t aTopRight) :
     Terrain(aId, aTopRight)
 {

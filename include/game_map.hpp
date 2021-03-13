@@ -4,8 +4,10 @@
 #include <vector>
 #include <deque>
 #include "common.hpp"
-
-class Terrain; // forward declare Terrain
+#include "terrain.hpp"
+#include "vertex.hpp"
+#include "edge.hpp"
+#include "land.hpp"
 
 class GameMap
 {
@@ -13,14 +15,21 @@ private:
     int mSizeHorizontal;
     int mSizeVertical;
     std::deque< std::deque<Terrain*> > mGameMap;
+
+    std::vector<Vertex> mVertices;
+    std::vector<Edge> mEdges;
+    std::vector<Land> mLands;
+
     inline bool boundaryCheck(int x, int y);
+    void fillInBlank();
 public:
     GameMap(int aSizeHorizontal, int aSizeVertical);
+    Terrain* const getTerrain(const int x, const int y);
     int registerTerrain(const std::vector<Point_t>& aPoints, Terrain* const aTerrain);
     int registerTerrain(const Point_t& aPoint, Terrain* const aTerrain);
     int registerTerrain(const int x, const int y, Terrain* const aTerrain);
-
-    void fillInBlank();
+    int initMap();
+    void printMap();
     ~GameMap();
 };
 

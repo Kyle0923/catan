@@ -11,6 +11,7 @@ private:
     Blank(int aId, Point_t aTopRight);
 public:
     static Blank* getBlank();
+    char getCharRepresentation(bool useId = false) const override;
     ~Blank();
 };
 

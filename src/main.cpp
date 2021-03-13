@@ -6,6 +6,7 @@
 
 #include "common.hpp"
 #include "game_map.hpp"
+#include "map_file_io.hpp"
 
 #define DELAYSIZE 200
 
@@ -24,6 +25,13 @@ int main(int argc, char **argv)
     Logger::initLogfile();
     DEBUG_LOG("Begin ", " of ", "main");
     GameMap gameMap(78, 33);
+    std::vector<Vertex*> vertices;
+    std::vector<Edge*> edges;
+    std::vector<Land*> lands;
+    MapIO mapFile("map.txt");
+    mapFile.readMap(gameMap, vertices, edges, lands);
+    gameMap.initMap();
+    gameMap.printMap();
     return 0;
     //TODO: read in map.txt, generate map
     time_t seed;

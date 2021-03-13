@@ -5,5 +5,7 @@ const_ptr=`grep --color=always -nr '\*\s*a[A-Z]' src include`
 if [[ $const_ptr != '' ]]; then
     echo error
     echo "$const_ptr"
-    exit 1
+    rc=1
 fi
+
+exit $rc

@@ -12,9 +12,11 @@ private:
 public:
     std::vector<Point_t> getAllPoints() override;
     Land(int aId, Point_t aTopRight, ResourceTypes aResourceType);
+    void setResourceType(ResourceTypes aResourceType);
     ResourceTypes getResourceType();
     void setDiceNum(int aDice);
     int getDiceNum();
+    char getCharRepresentation(bool useId = false) const override;
     ~Land();
 };
 
