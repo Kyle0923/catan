@@ -23,6 +23,7 @@ private:
     inline bool boundaryCheck(int x, int y);
     void fillInBlank();
     int populateAdjacency();
+    int checkOverlap() const;
 
 public:
     GameMap(int aSizeHorizontal, int aSizeVertical);

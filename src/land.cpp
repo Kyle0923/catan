@@ -1,6 +1,6 @@
 #include "land.hpp"
 
-std::vector<Point_t> Land::getAllPoints()
+const std::vector<Point_t> Land::getAllPoints() const
 {
     std::vector<Point_t> allPoints;
     const int horizontalLength = 12;

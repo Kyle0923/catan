@@ -18,7 +18,7 @@ Terrain::Terrain(const int aId, const Point_t aTopRight) :
     // empty
 }
 
-std::vector<Point_t> Terrain::getAllPoints()
+const std::vector<Point_t> Terrain::getAllPoints() const
 {
     return std::vector<Point_t>{mTopRight};
 }

@@ -12,7 +12,7 @@ private:
     std::string mOwner;
     static const int HORIZONTAL_LENGTH;
 public:
-    std::vector<Point_t> getAllPoints() override;
+    const std::vector<Point_t> getAllPoints() const override;
     Edge(const int aId, const Point_t aTopRight, const char aDirection);
     char getCharRepresentation(bool aUseId = false) const override;
     virtual ~Edge();

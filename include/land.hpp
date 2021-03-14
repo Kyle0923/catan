@@ -10,7 +10,7 @@ private:
     int mDiceNum;
     bool mIsUnderRob;
 public:
-    std::vector<Point_t> getAllPoints() override;
+    const std::vector<Point_t> getAllPoints() const override;
     Land(const int aId, const Point_t aTopRight, const ResourceTypes aResourceType);
     void setResourceType(ResourceTypes aResourceType);
     ResourceTypes getResourceType();

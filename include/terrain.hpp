@@ -20,7 +20,7 @@ public:
     // Register all points of current terrain to map
     void registerToMap(GameMap& aMap);
 
-    virtual std::vector<Point_t> getAllPoints();
+    virtual const std::vector<Point_t> getAllPoints() const;
 
     virtual char getCharRepresentation(bool aUseId = false) const = 0;
 

@@ -2,7 +2,7 @@
 
 const int Edge::HORIZONTAL_LENGTH = 9;
 
-std::vector<Point_t> Edge::getAllPoints()
+const std::vector<Point_t> Edge::getAllPoints() const
 {
     std::vector<Point_t> allPoints;
     allPoints.push_back(mTopRight);

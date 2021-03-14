@@ -1,3 +1,5 @@
+#include <unordered_set>
+#include "utility.hpp"
 #include "game_map.hpp"
 #include "blank.hpp"
 
@@ -14,6 +16,54 @@ void GameMap::fillInBlank()
             }
         }
     }
+}
+
+int GameMap::populateAdjacency()
+{
+    return 0;
+}
+
+int GameMap::checkOverlap() const
+{
+    std::unordered_set<Point_t, PointHash> points;
+    int overlapCount = 0;
+    auto lambda = [&points, &overlapCount](const std::vector<Point_t>& aPoints)
+        {
+            for (const Point_t& point : aPoints)
+            {
+                int count = points.count(point);
+                if (count) {
+                    overlapCount += count;
+                    WARN_LOG("Overlap detected at Point [", point, "]");
+                }
+                else
+                {
+                    points.insert(point);
+                }
+            }
+        };
+
+    for (Vertex* const pVertex : mVertices)
+    {
+        lambda(pVertex->getAllPoints());
+    }
+    for (Edge* const pEdge : mEdges)
+    {
+        lambda(pEdge->getAllPoints());
+    }
+    for (Land* const pLand : mLands)
+    {
+        lambda(pLand->getAllPoints());
+    }
+    if (overlapCount)
+    {
+        ERROR_LOG("Detected ", overlapCount, " Overlap");
+    }
+    else
+    {
+        INFO_LOG("No Overlap detected");
+    }
+    return overlapCount;
 }
 
 Terrain* const GameMap::getTerrain(const int x, const int y)
@@ -86,6 +136,7 @@ int GameMap::registerTerrain(const int x, const int y, Terrain* const aTerrain)
 int GameMap::initMap()
 {
     fillInBlank();
+    checkOverlap();
     return 0;
 }
 
