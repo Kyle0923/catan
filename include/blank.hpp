@@ -8,11 +8,11 @@ class Blank : public Terrain
 {
 private:
     static Blank* mBlank;
-    Blank(int aId, Point_t aTopRight);
+    Blank(const int aId, const Point_t aTopRight);
 public:
     static Blank* getBlank();
-    char getCharRepresentation(bool useId = false) const override;
-    ~Blank();
+    char getCharRepresentation(bool aUseId = false) const override;
+    virtual ~Blank();
 };
 
 

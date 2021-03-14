@@ -26,7 +26,7 @@ std::vector<Point_t> Edge::getAllPoints()
     return allPoints;
 }
 
-Edge::Edge(int aId, Point_t aTopRight, char aDirection) :
+Edge::Edge(const int aId, const Point_t aTopRight, const char aDirection) :
     Terrain(aId, aTopRight)
 {
     mOwner = "None";
@@ -55,9 +55,9 @@ Edge::Edge(int aId, Point_t aTopRight, char aDirection) :
     }
 }
 
-char Edge::getCharRepresentation(bool useId) const
+char Edge::getCharRepresentation(bool aUseId) const
 {
-    if (useId)
+    if (aUseId)
     {
         return static_cast<char>(mId % 10) + '0';
     }

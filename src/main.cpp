@@ -25,11 +25,8 @@ int main(int argc, char **argv)
     Logger::initLogfile();
     DEBUG_LOG("Begin ", " of ", "main");
     GameMap gameMap(78, 33);
-    std::vector<Vertex*> vertices;
-    std::vector<Edge*> edges;
-    std::vector<Land*> lands;
     MapIO mapFile("map.txt");
-    mapFile.readMap(gameMap, vertices, edges, lands);
+    mapFile.readMap(gameMap);
     gameMap.initMap();
     gameMap.printMap();
     return 0;

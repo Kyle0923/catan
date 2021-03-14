@@ -9,12 +9,12 @@ Blank* Blank::getBlank()
     {
         mBlank = &blank;
     }
-    return &blank;
+    return mBlank;
 }
 
-char Blank::getCharRepresentation(bool useId) const
+char Blank::getCharRepresentation(bool aUseId) const
 {
-    if (useId)
+    if (aUseId)
     {
         return ' ';
     }
@@ -24,7 +24,7 @@ char Blank::getCharRepresentation(bool useId) const
     }
 }
 
-Blank::Blank(int aId, Point_t aTopRight) :
+Blank::Blank(const int aId, const Point_t aTopRight) :
     Terrain(aId, aTopRight)
 {
     // empty

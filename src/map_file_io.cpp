@@ -1,7 +1,6 @@
 #include "map_file_io.hpp"
 
-int MapIO::readMap(GameMap& aGameMap, std::vector<Vertex*>& aVertices, \
-                    std::vector<Edge*>& aEdges, std::vector<Land*>& aLands)
+int MapIO::readMap(GameMap& aGameMap)
 {
     mFile.open(mFilename);
     if (!mFile.is_open())
@@ -26,9 +25,7 @@ int MapIO::readMap(GameMap& aGameMap, std::vector<Vertex*>& aVertices, \
                 case '+':
                 {
                     // vertex
-                    Vertex* const vertex = new Vertex(aVertices.size(), Point_t{ii, jj});
-                    vertex->registerToMap(aGameMap);
-                    aVertices.push_back(vertex);
+                    aGameMap.addVertex(ii, jj);
                     break;
                 }
                 case '-':
@@ -36,9 +33,7 @@ int MapIO::readMap(GameMap& aGameMap, std::vector<Vertex*>& aVertices, \
                 case '\\':
                 {
                     // edge
-                    Edge* const edge = new Edge(aEdges.size(), Point_t{ii, jj}, pattern);
-                    edge->registerToMap(aGameMap);
-                    aEdges.push_back(edge);
+                    aGameMap.addEdge(ii, jj, pattern);
                     break;
                 }
                 case '.':
@@ -55,9 +50,7 @@ int MapIO::readMap(GameMap& aGameMap, std::vector<Vertex*>& aVertices, \
                         static_cast<ResourceTypes>(pattern - '0')
                         :
                         ResourceTypes::ANY;
-                    Land* const land = new Land (aLands.size(), Point_t{ii, jj}, resource);
-                    land->registerToMap(aGameMap);
-                    aLands.push_back(land);
+                    aGameMap.addLand(ii, jj, resource);
                     break;
                 }
                 default:

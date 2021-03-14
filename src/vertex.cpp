@@ -11,9 +11,9 @@ std::string Vertex::getOwner()
     return mOwner;
 }
 
-char Vertex::getCharRepresentation(bool useId) const
+char Vertex::getCharRepresentation(bool aUseId) const
 {
-    if (useId)
+    if (aUseId)
     {
         return static_cast<char>(mId % 10) + '0';
     }
@@ -24,7 +24,7 @@ char Vertex::getCharRepresentation(bool useId) const
 }
 
 
-Vertex::Vertex(int aId, Point_t aTopRight) :
+Vertex::Vertex(const int aId, const Point_t aTopRight) :
     Terrain(aId, aTopRight)
 {
     mOwner = "None";

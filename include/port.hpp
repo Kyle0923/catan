@@ -10,7 +10,7 @@ private:
 public:
     ResourceTypes getResourceType();
     Port(int aId, Point_t aTopRight, ResourceTypes aResourceType);
-    ~Port();
+    virtual ~Port();
 };
 
 #endif /* INCLUDE_PORT_HPP */

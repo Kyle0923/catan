@@ -5,7 +5,7 @@ ResourceTypes Port::getResourceType()
     return mResourceType;
 }
 
-Port::Port(int aId, Point_t aTopRight, ResourceTypes aResourceType) :
+Port::Port(const int aId, const Point_t aTopRight, const ResourceTypes aResourceType) :
     Terrain(aId, aTopRight),
     mResourceType(aResourceType)
 {

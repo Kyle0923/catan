@@ -16,8 +16,7 @@ private:
     std::fstream mFile;
 public:
     MapIO(std::string aFilename);
-    int readMap(GameMap& aGameMap, std::vector<Vertex*>& aVertices, \
-                    std::vector<Edge*>& aEdges, std::vector<Land*>& aLands);
+    int readMap(GameMap& aGameMap);
     int saveMap(GameMap* const aGameMap);
     ~MapIO();
 };

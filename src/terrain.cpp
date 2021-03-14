@@ -11,7 +11,7 @@ void Terrain::registerToMap(GameMap& aMap)
     aMap.registerTerrain(getAllPoints(), this);
 }
 
-Terrain::Terrain(int aId, Point_t aTopRight) :
+Terrain::Terrain(const int aId, const Point_t aTopRight) :
     mId(aId),
     mTopRight(aTopRight)
 {
@@ -21,4 +21,9 @@ Terrain::Terrain(int aId, Point_t aTopRight) :
 std::vector<Point_t> Terrain::getAllPoints()
 {
     return std::vector<Point_t>{mTopRight};
+}
+
+Terrain::~Terrain()
+{
+    // empty
 }

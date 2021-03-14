@@ -11,13 +11,13 @@ private:
     bool mIsUnderRob;
 public:
     std::vector<Point_t> getAllPoints() override;
-    Land(int aId, Point_t aTopRight, ResourceTypes aResourceType);
+    Land(const int aId, const Point_t aTopRight, const ResourceTypes aResourceType);
     void setResourceType(ResourceTypes aResourceType);
     ResourceTypes getResourceType();
     void setDiceNum(int aDice);
     int getDiceNum();
-    char getCharRepresentation(bool useId = false) const override;
-    ~Land();
+    char getCharRepresentation(bool aUseId = false) const override;
+    virtual ~Land();
 };
 
 #endif /* INCLUDE_LAND_HPP */

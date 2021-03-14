@@ -18,15 +18,40 @@ void GameMap::fillInBlank()
 
 Terrain* const GameMap::getTerrain(const int x, const int y)
 {
-    if (!boundaryCheck(x,y))
-    {
-        Logger::warn("Coord (", x, ", ", y, ") is out of bound, need to resize first");
-        return nullptr;
-    }
-    else
+    if (boundaryCheck(x,y))
     {
         return mGameMap.at(y).at(x);
     }
+    else
+    {
+        WARN_LOG("Coord (", x, ", ", y, ") is out of bound, need to resize first");
+        return nullptr;
+    }
+}
+
+int GameMap::addVertex(const size_t aTopRightX, const size_t aTopRightY)
+{
+    Vertex* const pVertex = new Vertex(mVertices.size(), Point_t{aTopRightX, aTopRightY});
+    pVertex->registerToMap(*this);
+    mVertices.push_back(pVertex);
+    return 0;
+}
+
+int GameMap::addEdge(const size_t aTopRightX, const size_t aTopRightY, const char aPattern)
+{
+    Edge* const pEdge = new Edge(mEdges.size(), Point_t{aTopRightX, aTopRightY}, aPattern);
+    pEdge->registerToMap(*this);
+    mEdges.push_back(pEdge);
+    return 0;
+
+}
+
+int GameMap::addLand(const size_t aTopRightX, const size_t aTopRightY, const ResourceTypes aResource)
+{
+    Land* const pLand = new Land (mLands.size(), Point_t{aTopRightX, aTopRightY}, aResource);
+    pLand->registerToMap(*this);
+    mLands.push_back(pLand);
+    return 0;
 }
 
 int GameMap::registerTerrain(const std::vector<Point_t>& aPoints, Terrain* const aTerrain)
@@ -52,7 +77,7 @@ int GameMap::registerTerrain(const int x, const int y, Terrain* const aTerrain)
     }
     else
     {
-        Logger::warn("Coord (", x, ", ", y, ") is out of bound");
+        WARN_LOG("Coord (", x, ", ", y, ") is out of bound");
         return -1;
     }
 
@@ -69,7 +94,7 @@ bool GameMap::boundaryCheck(int x, int y)
     return (x < mSizeHorizontal && y < mSizeVertical);
 }
 
-void GameMap::printMap()
+void GameMap::printMap(bool aUseId)
 {
     for (int jj = 0; jj < mSizeVertical; ++jj)
     {
@@ -77,8 +102,7 @@ void GameMap::printMap()
         for (int ii = 0; ii < mSizeHorizontal; ++ii)
         {
             // easier to debug using char c
-            // char c = row.at(ii)->getCharRepresentation(true); //print ID
-            char c = row.at(ii)->getCharRepresentation();
+            char c = row.at(ii)->getCharRepresentation(aUseId); //print ID
             std::cout << c;
         }
         std::cout << std::endl;
@@ -99,4 +123,16 @@ GameMap::GameMap(int aSizeHorizontal, int aSizeVertical) :
 
 GameMap::~GameMap()
 {
+    for (Vertex* pVertex : mVertices)
+    {
+        delete pVertex;
+    }
+    for (Edge* pEdge : mEdges)
+    {
+        delete pEdge;
+    }
+    for (Land* pLand : mLands)
+    {
+        delete pLand;
+    }
 }

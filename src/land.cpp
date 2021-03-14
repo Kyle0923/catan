@@ -31,7 +31,7 @@ ResourceTypes Land::getResourceType()
     return mResourceType;
 }
 
-Land::Land(int aId, Point_t aTopRight, ResourceTypes aResourceType) :
+Land::Land(const int aId, const Point_t aTopRight, const ResourceTypes aResourceType) :
     Terrain(aId, aTopRight),
     mResourceType(aResourceType),
     mDiceNum(0),
@@ -45,9 +45,9 @@ void Land::setDiceNum(int aDice)
     mDiceNum = aDice;
 }
 
-char Land::getCharRepresentation(bool useId) const
+char Land::getCharRepresentation(bool aUseId) const
 {
-    if (useId)
+    if (aUseId)
     {
         return static_cast<char>(mId % 10) + '0';
     }

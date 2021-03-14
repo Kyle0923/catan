@@ -13,9 +13,9 @@ private:
     static const int HORIZONTAL_LENGTH;
 public:
     std::vector<Point_t> getAllPoints() override;
-    Edge(int aId, Point_t aTopRight, char aDirection);
-    char getCharRepresentation(bool useId = false) const override;
-    ~Edge();
+    Edge(const int aId, const Point_t aTopRight, const char aDirection);
+    char getCharRepresentation(bool aUseId = false) const override;
+    virtual ~Edge();
 };
 
 

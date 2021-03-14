@@ -19,9 +19,9 @@ private:
 public:
     void setOwner(std::string aOwner, BuildingType aBuilding = BuildingType::SETTLEMENT);
     std::string getOwner();
-    char getCharRepresentation(bool useId = false) const override;
-    Vertex(int aId, Point_t aTopRight);
-    ~Vertex();
+    char getCharRepresentation(bool aUseId = false) const override;
+    Vertex(const int aId, const Point_t aTopRight);
+    virtual ~Vertex();
 };
 
 #endif /* INCLUDE_VERTEX_HPP */
