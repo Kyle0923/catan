@@ -22,16 +22,17 @@ private:
 
     inline bool boundaryCheck(int x, int y);
     void fillInBlank();
-    int populateAdjacency();
+    int populateMap();
     int checkOverlap() const;
 
 public:
     GameMap(int aSizeHorizontal, int aSizeVertical);
     Terrain* const getTerrain(const int x, const int y);
+    Terrain* const getTerrain(const Point_t& aPoint);
 
-    int addVertex(const size_t aTopRightX, const size_t aTopRightY);
-    int addEdge(const size_t aTopRightX, const size_t aTopRightY, const char aPattern);
-    int addLand(const size_t aTopRightX, const size_t aTopRightY, const ResourceTypes aResource);
+    Terrain* const addVertex(const size_t aTopRightX, const size_t aTopRightY);
+    Terrain* const addEdge(const size_t aTopRightX, const size_t aTopRightY, const char aPattern);
+    Terrain* const addLand(const size_t aTopRightX, const size_t aTopRightY, const ResourceTypes aResource);
 
     int registerTerrain(const std::vector<Point_t>& aPoints, Terrain* const aTerrain);
     int registerTerrain(const Point_t& aPoint, Terrain* const aTerrain);

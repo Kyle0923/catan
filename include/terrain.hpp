@@ -12,9 +12,17 @@ class Terrain
 protected:
     const int mId;
     Point_t mTopRight;
+
+    /* mNeighbour stores the neighbours of insterest (not all neighbours)
+     * for lands    => vertices
+     * for vertices => edges
+     * for edges    => vertices
+     */
+    std::vector<Terrain*> mNeighbour;
 public:
     // return the top-right point (top first)
     Point_t getTopRight();
+    int getId();
     Terrain(const int aId, const Point_t aTopRight);
 
     // Register all points of current terrain to map
@@ -22,11 +30,10 @@ public:
 
     virtual const std::vector<Point_t> getAllPoints() const;
 
-    virtual char getCharRepresentation(bool aUseId = false) const = 0;
+    virtual int populateNeighbours(GameMap& aMap);
 
-    /* Return all terrains directly connected to
-     * current terrain (edge, vertex, land) */
-    virtual std::vector<Terrain*> getNeighbour(){return std::vector<Terrain*>();}; // TODO: implement
+    virtual char getCharRepresentation(bool aUseId = false) const = 0;
+    virtual std::string getFullId() const = 0;
 
     virtual ~Terrain();
 };

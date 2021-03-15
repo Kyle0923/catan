@@ -7,13 +7,13 @@
 #include <stdexcept>
 
 #define DEBUG_LOG(...) \
-    Logger::debug<0>("In ", __FILE__, ":", __LINE__, ": ", __VA_ARGS__)
+    Logger::debug<0>("In " __FILE__ ":", __LINE__, ": ", __VA_ARGS__)
 #define INFO_LOG(...) \
-    Logger::info("In ", __FILE__, ":", __LINE__, ": ", __VA_ARGS__)
+    Logger::info("In " __FILE__ ":", __LINE__, ": ", __VA_ARGS__)
 #define WARN_LOG(...) \
-    Logger::warn("In ", __FILE__, ":", __LINE__, ": ", __VA_ARGS__)
+    Logger::warn("In " __FILE__ ":", __LINE__, ": ", __VA_ARGS__)
 #define ERROR_LOG(...) \
-    Logger::error("In ", __FILE__, ":", __LINE__, ": ", __VA_ARGS__)
+    Logger::error("In " __FILE__ ":", __LINE__, ": ", __VA_ARGS__)
 
 
 class Logger
@@ -36,12 +36,26 @@ private:
         ostr << logMessage << std::endl;
         return logMessage;
     };
+#ifndef RECURSION
     template<typename... Targs>
     static void _log(std::stringstream& ostr, Targs... aArgs)
     {
         // pack expansion using brace-enclosed initializer
         __attribute__((unused)) int expander[sizeof...(Targs)] = { (ostr << aArgs, 0)... };
     };
+#else
+    template<typename T, typename... Targs>
+    static void _log(std::stringstream& ostr, T aValue, Targs... aArgs)
+    {
+        ostr << aValue;
+        _log(ostr, aArgs...);
+    };
+    template<typename T>
+    static void _log(std::stringstream& ostr, T aValue)
+    {
+        ostr << aValue;
+    };
+#endif // RECURSION
     static int mDebugLevel;
     static Logger* mLogger;
     std::ofstream mLogFile;
@@ -50,6 +64,13 @@ private:
 public:
     static void setDebugLevel(int aDebugLevel);
     static void initLogfile(std::string aLogFilename = "log.txt");
+    template<typename... Targs>
+    static std::string formatString(Targs... aArgs)
+    {
+        std::stringstream strstream;
+        _log(strstream, aArgs...);
+        return strstream.str();
+    };
     template<int level = 0, typename... Targs>
     static void debug(Targs... aArgs)
     {

@@ -12,6 +12,7 @@ private:
 public:
     static Blank* getBlank();
     char getCharRepresentation(bool aUseId = false) const override;
+    std::string getFullId() const override;
     virtual ~Blank();
 };
 

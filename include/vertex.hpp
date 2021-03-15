@@ -14,12 +14,17 @@ enum BuildingType
 class Vertex : public Terrain
 {
 private:
+    bool mIsCoastal;
     std::string mOwner;
     BuildingType mBuilding;
+    std::vector<Vertex*> mAdjacentVertices;  //neighbours only store edges, adjacentVertices are store here
+    int populateNeighbour(GameMap& aMap, const size_t aPointX, const size_t aPointY);
 public:
     void setOwner(std::string aOwner, BuildingType aBuilding = BuildingType::SETTLEMENT);
     std::string getOwner();
+    int populateNeighbours(GameMap& aMap) override;
     char getCharRepresentation(bool aUseId = false) const override;
+    std::string getFullId() const override;
     Vertex(const int aId, const Point_t aTopRight);
     virtual ~Vertex();
 };

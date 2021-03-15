@@ -6,9 +6,21 @@ Point_t Terrain::getTopRight()
     return mTopRight;
 }
 
+int Terrain::getId()
+{
+    return mId;
+}
+
 void Terrain::registerToMap(GameMap& aMap)
 {
     aMap.registerTerrain(getAllPoints(), this);
+}
+
+int Terrain::populateNeighbours(GameMap& aMap)
+{
+    // empty
+    // override by derive classes
+    return 0;
 }
 
 Terrain::Terrain(const int aId, const Point_t aTopRight) :

@@ -9,6 +9,7 @@ private:
     ResourceTypes mResourceType;
     int mDiceNum;
     bool mIsUnderRob;
+    int populateNeighbour(GameMap& aMap, bool aIsVertex, const int aPointX, const int aPointY, const char aPattern = '.');
 public:
     const std::vector<Point_t> getAllPoints() const override;
     Land(const int aId, const Point_t aTopRight, const ResourceTypes aResourceType);
@@ -17,6 +18,9 @@ public:
     void setDiceNum(int aDice);
     int getDiceNum();
     char getCharRepresentation(bool aUseId = false) const override;
+    std::string getFullId() const override;
+    int populateNeighbours(GameMap& aMap) override;
+
     virtual ~Land();
 };
 

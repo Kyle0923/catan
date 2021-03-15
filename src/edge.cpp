@@ -1,6 +1,5 @@
+#include "game_map.hpp"
 #include "edge.hpp"
-
-const int Edge::HORIZONTAL_LENGTH = 9;
 
 const std::vector<Point_t> Edge::getAllPoints() const
 {
@@ -22,8 +21,64 @@ const std::vector<Point_t> Edge::getAllPoints() const
             break;
         default:
             ERROR_LOG("Unknow Edge direction [", mDirection, "]");
+            break;
     }
     return allPoints;
+}
+
+int Edge::populateNeighbours(GameMap& aMap)
+{
+    int rc = 0;
+    switch (mDirection)
+    {
+    case '-':
+        rc |= populateNeighbour(aMap, mTopRight.x - 1, mTopRight.y);
+        rc |= populateNeighbour(aMap, mOtherEnd.x + 1, mOtherEnd.y);
+        break;
+    case '/':
+        rc |= populateNeighbour(aMap, mTopRight.x + 1, mTopRight.y - 1);
+        rc |= populateNeighbour(aMap, mOtherEnd.x - 1, mOtherEnd.y + 1);
+        break;
+    case '\\':
+        rc |= populateNeighbour(aMap, mTopRight.x - 1, mTopRight.y - 1);
+        rc |= populateNeighbour(aMap, mOtherEnd.x + 1, mOtherEnd.y + 1);
+        break;
+    default:
+        ERROR_LOG("Unknow Edge direction [", mDirection, "]");
+        break;
+    }
+    if (rc)
+    {
+        ERROR_LOG("Failed to populate neighbours of ", getFullId());
+    }
+    else
+    {
+        INFO_LOG("Successfully populated neighbours of ", getFullId());
+    }
+    return rc;
+}
+
+int Edge::populateNeighbour(GameMap& aMap, const size_t aPointX, const size_t aPointY)
+{
+    Terrain* pTerrain = aMap.getTerrain(aPointX, aPointY);
+    if (!dynamic_cast<Vertex*>(pTerrain))
+    {
+        // not vertex
+        WARN_LOG("At Point [", aPointX, ", ", aPointY, "], Expected Vertex - Actual ", pTerrain->getFullId());
+        return 1;
+    }
+    mNeighbour.push_back(pTerrain);
+    return 0;
+}
+
+Vertex* Edge::getVertex(Vertex* const aVertex)
+{
+    for (Terrain* const pTerrain : mNeighbour)
+    {
+        if (pTerrain != aVertex)
+            return dynamic_cast<Vertex*>(pTerrain);
+    }
+    return nullptr;
 }
 
 Edge::Edge(const int aId, const Point_t aTopRight, const char aDirection) :
@@ -50,7 +105,7 @@ Edge::Edge(const int aId, const Point_t aTopRight, const char aDirection) :
             mOtherEnd = Point_t{mTopRight.x + 1, mTopRight.y + 1};
             break;
         default:
-            // empty
+            ERROR_LOG("Unknow Edge direction [", mDirection, "]");
             break;
     }
 }
@@ -65,6 +120,11 @@ char Edge::getCharRepresentation(bool aUseId) const
     {
         return mDirection;
     }
+}
+
+std::string Edge::getFullId() const
+{
+    return Logger::formatString("Edge#", mId);
 }
 
 Edge::~Edge()

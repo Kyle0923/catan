@@ -24,6 +24,11 @@ char Blank::getCharRepresentation(bool aUseId) const
     }
 }
 
+std::string Blank::getFullId() const
+{
+    return "Blank";
+}
+
 Blank::Blank(const int aId, const Point_t aTopRight) :
     Terrain(aId, aTopRight)
 {
