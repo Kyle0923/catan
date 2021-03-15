@@ -28,6 +28,7 @@ const std::vector<Point_t> Edge::getAllPoints() const
 
 int Edge::populateNeighbours(GameMap& aMap)
 {
+    mOwner = ""; // reset edge
     int rc = 0;
     switch (mDirection)
     {

@@ -162,10 +162,20 @@ int GameMap::registerTerrain(const int x, const int y, Terrain* const aTerrain)
 
 int GameMap::initMap()
 {
+    int rc = 0;
     fillInBlank();
-    populateMap();
-    checkOverlap();
-    return 0;
+    rc |= populateMap();
+    rc |= checkOverlap();
+
+    if (rc)
+    {
+        WARN_LOG("failed to initialize GameMap");
+    }
+    else
+    {
+        INFO_LOG("Successfully initialized GameMap");
+    }
+    return rc;
 }
 
 bool GameMap::boundaryCheck(int x, int y)

@@ -5,6 +5,13 @@
 
 int Vertex::populateNeighbours(GameMap& aMap)
 {
+    // reset vertex
+    mOwner = "";
+    mBuilding = BuildingType::NONE;
+    mIsCoastal = false;
+    mAdjacentVertices.clear();
+    mNeighbour.clear();
+
     int rc = 0;
     rc |= populateNeighbour(aMap, mTopRight.x - 1, mTopRight.y);
     rc |= populateNeighbour(aMap, mTopRight.x - 1, mTopRight.y - 1);
