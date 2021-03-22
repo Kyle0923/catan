@@ -4,10 +4,6 @@
 #include <string>
 #include <fstream>
 #include "game_map.hpp"
-#include "vertex.hpp"
-#include "edge.hpp"
-#include "land.hpp"
-#include "port.hpp"
 
 class MapIO
 {

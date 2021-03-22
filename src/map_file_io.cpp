@@ -37,7 +37,7 @@ int MapIO::readMap(GameMap& aGameMap)
                     break;
                 }
                 case '.':
-                // convert ResourceTypes to number in ASCII, (char) 1 + '0' = '1'
+                // convert ResourceTypes to numbers in ASCII, e.g. (char) 1 + '0' = '1'
                 case (char)ResourceTypes::DESERT + '0':
                 case (char)ResourceTypes::CLAY + '0':
                 case (char)ResourceTypes::SHEEP + '0':
@@ -49,7 +49,7 @@ int MapIO::readMap(GameMap& aGameMap)
                     ResourceTypes resource = (pattern != '.') ?
                         static_cast<ResourceTypes>(pattern - '0')
                         :
-                        ResourceTypes::ANY;
+                        ResourceTypes::NONE;
                     aGameMap.addLand(ii, jj, resource);
                     break;
                 }

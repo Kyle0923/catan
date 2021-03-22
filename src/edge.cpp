@@ -1,7 +1,7 @@
 #include "game_map.hpp"
 #include "edge.hpp"
 
-const std::vector<Point_t> Edge::getAllPoints() const
+std::vector<Point_t> Edge::getAllPoints() const
 {
     std::vector<Point_t> allPoints;
     allPoints.push_back(mTopRight);
@@ -48,14 +48,10 @@ int Edge::populateNeighbours(GameMap& aMap)
         ERROR_LOG("Unknow Edge direction [", mDirection, "]");
         break;
     }
-    if (rc)
-    {
-        ERROR_LOG("Failed to populate neighbours of ", getFullId());
-    }
-    else
-    {
+    (rc != 0) ?
+        ERROR_LOG("Failed to populate neighbours of ", getFullId())
+        :
         INFO_LOG("Successfully populated neighbours of ", getFullId());
-    }
     return rc;
 }
 

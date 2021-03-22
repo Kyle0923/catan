@@ -14,7 +14,7 @@ private:
     int populateNeighbour(GameMap& aMap, const size_t aPointX, const size_t aPointY);
 public:
     static constexpr int HORIZONTAL_LENGTH = 9;
-    const std::vector<Point_t> getAllPoints() const override;
+    std::vector<Point_t> getAllPoints() const override;
     Edge(const int aId, const Point_t aTopRight, const char aDirection);
     Vertex* getVertex(Vertex* const aVertex); //get connected vertex that is not the input
     int populateNeighbours(GameMap& aMap) override;

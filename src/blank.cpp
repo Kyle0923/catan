@@ -20,7 +20,7 @@ char Blank::getCharRepresentation(bool aUseId) const
     }
     else
     {
-        return 'o';
+        return ' ';
     }
 }
 

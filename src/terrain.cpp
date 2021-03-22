@@ -6,7 +6,7 @@ Point_t Terrain::getTopRight()
     return mTopRight;
 }
 
-int Terrain::getId()
+int Terrain::getId() const
 {
     return mId;
 }
@@ -20,6 +20,7 @@ int Terrain::populateNeighbours(GameMap& aMap)
 {
     // empty
     // override by derive classes
+    // populate vector<Terrain*> mNeighbour
     return 0;
 }
 
@@ -30,7 +31,7 @@ Terrain::Terrain(const int aId, const Point_t aTopRight) :
     // empty
 }
 
-const std::vector<Point_t> Terrain::getAllPoints() const
+std::vector<Point_t> Terrain::getAllPoints() const
 {
     return std::vector<Point_t>{mTopRight};
 }

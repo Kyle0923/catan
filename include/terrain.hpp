@@ -22,13 +22,13 @@ protected:
 public:
     // return the top-right point (top first)
     Point_t getTopRight();
-    int getId();
+    int getId() const;
     Terrain(const int aId, const Point_t aTopRight);
 
     // Register all points of current terrain to map
     void registerToMap(GameMap& aMap);
 
-    virtual const std::vector<Point_t> getAllPoints() const;
+    virtual std::vector<Point_t> getAllPoints() const;
 
     virtual int populateNeighbours(GameMap& aMap);
 

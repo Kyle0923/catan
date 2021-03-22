@@ -19,14 +19,11 @@ int Vertex::populateNeighbours(GameMap& aMap)
     rc |= populateNeighbour(aMap, mTopRight.x + 1, mTopRight.y);
     rc |= populateNeighbour(aMap, mTopRight.x + 1, mTopRight.y + 1);
     rc |= populateNeighbour(aMap, mTopRight.x - 1, mTopRight.y + 1);
-    if (rc)
-    {
-        ERROR_LOG("Failed to populate neighbours of ", getFullId());
-    }
-    else
-    {
+
+    (rc != 0) ?
+        ERROR_LOG("Failed to populate neighbours of ", getFullId())
+        :
         INFO_LOG("Successfully populated neighbours of ", getFullId());
-    }
     return rc;
 }
 
@@ -48,6 +45,11 @@ int Vertex::populateNeighbour(GameMap& aMap, const size_t aPointX, const size_t 
     return 0;
 }
 
+const std::vector<Vertex*>& Vertex::getAdjacentVertices() const
+{
+    return mAdjacentVertices;
+}
+
 void Vertex::setOwner(std::string aOwner, BuildingType aBuilding)
 {
     mOwner = aOwner;
@@ -57,6 +59,32 @@ void Vertex::setOwner(std::string aOwner, BuildingType aBuilding)
 std::string Vertex::getOwner()
 {
     return mOwner;
+}
+
+bool Vertex::isCoastal() const
+{
+    return mIsCoastal;
+}
+
+bool Vertex::hasHarbour() const
+{
+    return (mHarbour != nullptr);
+}
+
+int Vertex::setHarbour(Harbour* const aHarbour)
+{
+    if (aHarbour == nullptr)
+    {
+        DEBUG_LOG("Clearing harbour for " + getFullId() +", existing: " + (mHarbour ? mHarbour->getFullId() : "nullptr"));
+        mHarbour = nullptr;
+        return 0;
+    }
+    if (mHarbour)
+    {
+        INFO_LOG("Reseting harbour for " + getFullId() +" current: " + mHarbour->getFullId() + " new: " + aHarbour->getFullId());
+    }
+    mHarbour = aHarbour;
+    return 0;
 }
 
 char Vertex::getCharRepresentation(bool aUseId) const
@@ -78,7 +106,8 @@ std::string Vertex::getFullId() const
 
 Vertex::Vertex(const int aId, const Point_t aTopRight) :
     Terrain(aId, aTopRight),
-    mIsCoastal(false)
+    mIsCoastal(false),
+    mHarbour(nullptr)
 {
     mOwner = "None";
     mBuilding = BuildingType::NONE;

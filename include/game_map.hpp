@@ -8,35 +8,56 @@
 #include "vertex.hpp"
 #include "edge.hpp"
 #include "land.hpp"
+#include "harbour.hpp"
 
 class GameMap
 {
 private:
     int mSizeHorizontal;
     int mSizeVertical;
+    size_t mNumHarbour;
     std::deque< std::deque<Terrain*> > mGameMap;
 
     std::vector<Vertex*> mVertices;
     std::vector<Edge*> mEdges;
     std::vector<Land*> mLands;
+    std::vector<Harbour*> mHarbours;
 
-    inline bool boundaryCheck(int x, int y);
+    Harbour* addHarbour(const int aId1, const int aId2);
+
+    inline bool boundaryCheck(const int x, const int y) const;
     void fillInBlank();
     int populateMap();
     int checkOverlap() const;
 
-public:
-    GameMap(int aSizeHorizontal, int aSizeVertical);
-    Terrain* const getTerrain(const int x, const int y);
-    Terrain* const getTerrain(const Point_t& aPoint);
+    // harbour related
+    int populateHarbours(bool aUseDefaultPosition, bool aUseDefaultResourceType);
+    int createHarboursDefault();
+    int createHarboursRandom();
 
-    Terrain* const addVertex(const size_t aTopRightX, const size_t aTopRightY);
-    Terrain* const addEdge(const size_t aTopRightX, const size_t aTopRightY, const char aPattern);
-    Terrain* const addLand(const size_t aTopRightX, const size_t aTopRightY, const ResourceTypes aResource);
+public:
+    GameMap(const int aSizeHorizontal, const int aSizeVertical);
+    Terrain* getTerrain(const int x, const int y);
+    Terrain* getTerrain(const Point_t& aPoint);
+
+    Vertex* addVertex(const size_t aTopRightX, const size_t aTopRightY);
+    Edge* addEdge(const size_t aTopRightX, const size_t aTopRightY, const char aPattern);
+    Land* addLand(const size_t aTopRightX, const size_t aTopRightY, const ResourceTypes aResource);
+
+    // /* add a vertex to be a condidate of harbour
+    //  * a condidate must be coastal
+    //  * a pair of connected candidates is considered a valid habour and will be assign a harbour
+    //  * for a dangling condidate, GameMap will try to find a neighbour to form a pair
+    //  * for three connected candidates, the rightmost / bottommost will be treated as dangling
+    //  */
+    // int addHarbourCandidate(Vertex* const aVertex); //TODO: not supported currently, description may not be accurate
 
     int registerTerrain(const std::vector<Point_t>& aPoints, Terrain* const aTerrain);
     int registerTerrain(const Point_t& aPoint, Terrain* const aTerrain);
     int registerTerrain(const int x, const int y, Terrain* const aTerrain);
+
+    // standard map has 9 harbours
+    void setNumOfHarbour(const size_t aNum = 9);
 
     int initMap();
     void printMap(bool aUseId = false);

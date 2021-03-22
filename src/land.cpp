@@ -2,7 +2,7 @@
 #include "land.hpp"
 #include "blank.hpp"
 
-const std::vector<Point_t> Land::getAllPoints() const
+std::vector<Point_t> Land::getAllPoints() const
 {
     std::vector<Point_t> allPoints;
     constexpr int horizontalLength = Edge::HORIZONTAL_LENGTH + 3;
@@ -55,14 +55,10 @@ int Land::populateNeighbours(GameMap& aMap)
     // right top edge
     rc |= populateNeighbour(aMap, false, mTopRight.x - 1, mTopRight.y, '/');
 
-    if (rc)
-    {
-        ERROR_LOG("Failed to populate neighbours of ", getFullId());
-    }
-    else
-    {
+    (rc != 0) ?
+        ERROR_LOG("Failed to populate neighbours of ", getFullId())
+        :
         INFO_LOG("Successfully populated neighbours of ", getFullId());
-    }
     return rc;
 }
 
@@ -143,7 +139,7 @@ char Land::getCharRepresentation(bool aUseId) const
     }
     else
     {
-        if (mResourceType == ResourceTypes::ANY)
+        if (mResourceType == ResourceTypes::NONE)
         {
             return '.';
         }
