@@ -10,6 +10,7 @@ class MapIO
 private:
     std::string mFilename;
     std::fstream mFile;
+    Point_t validateMapBoundary();
 public:
     MapIO(std::string aFilename);
     int readMap(GameMap& aGameMap);

@@ -9,6 +9,7 @@ int Vertex::populateNeighbours(GameMap& aMap)
     mOwner = "";
     mBuilding = BuildingType::NONE;
     mIsCoastal = false;
+    mHarbour = nullptr;
     mAdjacentVertices.clear();
     mNeighbour.clear();
 

@@ -16,6 +16,7 @@ private:
     int mSizeHorizontal;
     int mSizeVertical;
     size_t mNumHarbour;
+    bool mInitialized;
     std::deque< std::deque<Terrain*> > mGameMap;
 
     std::vector<Vertex*> mVertices;
@@ -36,7 +37,10 @@ private:
     int createHarboursRandom();
 
 public:
-    GameMap(const int aSizeHorizontal, const int aSizeVertical);
+    GameMap(const int aSizeHorizontal = 0, const int aSizeVertical = 0);
+
+    int clearAndResize(const int aSizeHorizontal, const int aSizeVertical);
+
     Terrain* getTerrain(const int x, const int y);
     Terrain* getTerrain(const Point_t& aPoint);
 

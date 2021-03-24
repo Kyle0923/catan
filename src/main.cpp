@@ -24,7 +24,7 @@ int main(int argc, char **argv)
 {
     Logger::initLogfile();
     DEBUG_LOG("Begin ", " of ", "main");
-    GameMap gameMap(86, 39);
+    GameMap gameMap;
     MapIO mapFile("map.txt");
     mapFile.readMap(gameMap);
     gameMap.initMap();

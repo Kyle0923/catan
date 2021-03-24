@@ -267,7 +267,7 @@ Terrain* GameMap::getTerrain(const int x, const int y)
     }
     else
     {
-        WARN_LOG("Coord (", x, ", ", y, ") is out of bound, need to resize first");
+        WARN_LOG("Coord (", x, ", ", y, ") is out of bound");
         return nullptr;
     }
 }
@@ -279,6 +279,11 @@ Terrain* GameMap::getTerrain(const Point_t& aPoint)
 
 Vertex* GameMap::addVertex(const size_t aTopRightX, const size_t aTopRightY)
 {
+    if (mInitialized)
+    {
+        ERROR_LOG("Map initialized, cannot add vertex");
+        return nullptr;
+    }
     Vertex* const pVertex = new Vertex(mVertices.size(), Point_t{aTopRightX, aTopRightY});
     pVertex->registerToMap(*this);
     mVertices.push_back(pVertex);
@@ -287,6 +292,11 @@ Vertex* GameMap::addVertex(const size_t aTopRightX, const size_t aTopRightY)
 
 Edge* GameMap::addEdge(const size_t aTopRightX, const size_t aTopRightY, const char aPattern)
 {
+    if (mInitialized)
+    {
+        ERROR_LOG("Map initialized, cannot add edge");
+        return nullptr;
+    }
     Edge* const pEdge = new Edge(mEdges.size(), Point_t{aTopRightX, aTopRightY}, aPattern);
     pEdge->registerToMap(*this);
     mEdges.push_back(pEdge);
@@ -296,6 +306,11 @@ Edge* GameMap::addEdge(const size_t aTopRightX, const size_t aTopRightY, const c
 
 Land* GameMap::addLand(const size_t aTopRightX, const size_t aTopRightY, const ResourceTypes aResource)
 {
+    if (mInitialized)
+    {
+        ERROR_LOG("Map initialized, cannot add land");
+        return nullptr;
+    }
     Land* const pLand = new Land(mLands.size(), Point_t{aTopRightX, aTopRightY}, aResource);
     pLand->registerToMap(*this);
     mLands.push_back(pLand);
@@ -325,34 +340,53 @@ Harbour* GameMap::addHarbour(const int aId1, const int aId2)
 
 int GameMap::registerTerrain(const std::vector<Point_t>& aPoints, Terrain* const aTerrain)
 {
+    if (mInitialized)
+    {
+        ERROR_LOG("Map initialized, cannot registerTerrain for " + aTerrain->getFullId());
+        return 1;
+    }
     int rc = 0;
     for (std::vector<Point_t>::const_iterator it = aPoints.begin() ; it != aPoints.end(); ++it)
     {
-        rc += registerTerrain(*it, aTerrain);
+        rc |= registerTerrain(*it, aTerrain);
     }
     return rc;
 }
 
 int GameMap::registerTerrain(const Point_t& aPoint, Terrain* const aTerrain)
 {
+    if (mInitialized)
+    {
+        ERROR_LOG("Map initialized, cannot registerTerrain for " + aTerrain->getFullId());
+        return 1;
+    }
     return registerTerrain(aPoint.x, aPoint.y, aTerrain);
 }
 
 int GameMap::registerTerrain(const int x, const int y, Terrain* const aTerrain)
 {
+    if (mInitialized)
+    {
+        ERROR_LOG("Map initialized, cannot registerTerrain for " + aTerrain->getFullId());
+        return 1;
+    }
     if (boundaryCheck(x, y)) {
         mGameMap.at(y).at(x) = aTerrain;
         return 0;
     }
     else
     {
-        WARN_LOG("Coord (", x, ", ", y, ") is out of bound");
-        return -1;
+        ERROR_LOG("Failed to register point for " + aTerrain->getFullId(), " at (" , x, ", ", y);
+        return 1;
     }
 }
 
 void GameMap::setNumOfHarbour(const size_t aNum)
 {
+    if (mInitialized)
+    {
+        ERROR_LOG("Map initialized, cannot setNumOfHarbour");
+    }
     mNumHarbour = aNum;
 }
 
@@ -369,10 +403,15 @@ int GameMap::initMap()
     rc |= checkOverlap();
     // TODO: assign dice num to land, assign resource to land
 
-    (rc != 0) ?
-        WARN_LOG("failed to initialize GameMap")
-        :
+    if (rc != 0)
+    {
+        WARN_LOG("failed to initialize GameMap");
+    }
+    else
+    {
         INFO_LOG("Successfully initialized GameMap");
+        mInitialized = true;
+    }
     return rc;
 }
 
@@ -383,6 +422,10 @@ bool GameMap::boundaryCheck(const int x, const int y) const
 
 void GameMap::printMap(bool aUseId)
 {
+    if (!mInitialized)
+    {
+        WARN_LOG("Map not initialized, printMap may not function as expected");
+    }
     for (int jj = 0; jj < mSizeVertical; ++jj)
     {
         const std::deque<Terrain*>& row = mGameMap.at(jj);
@@ -396,10 +439,31 @@ void GameMap::printMap(bool aUseId)
     }
 }
 
+int GameMap::clearAndResize(const int aSizeHorizontal, const int aSizeVertical)
+{
+    mSizeHorizontal = aSizeHorizontal;
+    mSizeVertical = aSizeVertical;
+    mNumHarbour = 0;
+    mInitialized = false;
+    mVertices.clear();
+    mEdges.clear();
+    mLands.clear();
+    mHarbours.clear();
+    mGameMap.clear();
+    // init a 2D array with (Terrain*)nullptr
+    for (int jj = 0; jj < mSizeVertical; ++jj)
+    {
+        std::deque<Terrain*> row(mSizeHorizontal, nullptr);
+        mGameMap.push_back(row);
+    }
+    return 0;
+}
+
 GameMap::GameMap(const int aSizeHorizontal, const int aSizeVertical) :
     mSizeHorizontal(aSizeHorizontal),
     mSizeVertical(aSizeVertical),
-    mNumHarbour(0)
+    mNumHarbour(0),
+    mInitialized(false)
 {
     // init a 2D array with (Terrain*)nullptr
     for (int jj = 0; jj < mSizeVertical; ++jj)
