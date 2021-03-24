@@ -56,9 +56,9 @@ int Land::populateNeighbours(GameMap& aMap)
     rc |= populateNeighbour(aMap, false, mTopRight.x - 1, mTopRight.y, '/');
 
     (rc != 0) ?
-        ERROR_LOG("Failed to populate neighbours of ", getFullId())
+        ERROR_LOG("Failed to populate neighbours of ", getStringId())
         :
-        INFO_LOG("Successfully populated neighbours of ", getFullId());
+        INFO_LOG("Successfully populated neighbours of ", getStringId());
     return rc;
 }
 
@@ -91,12 +91,12 @@ int Land::populateNeighbour(GameMap& aMap, bool aIsVertex, const int aPointX, co
             {
                 pTerrain = aMap.addEdge(aPointX, aPointY, aPattern);
             }
-            DEBUG_LOG("Added ", pTerrain->getFullId(), " for ", getFullId());
+            DEBUG_LOG("Added ", pTerrain->getStringId(), " for ", getStringId());
         }
         else
         {
             // collide
-            WARN_LOG("At Point [", aPointX, ", ", aPointY, "], Expected " + expectedTerrain + " - Actual ", pTerrain->getFullId());
+            WARN_LOG("At Point [", aPointX, ", ", aPointY, "], Expected " + expectedTerrain + " - Actual ", pTerrain->getStringId());
             return 1;
         }
     }
@@ -131,7 +131,7 @@ void Land::setDiceNum(int aDice)
     mDiceNum = aDice;
 }
 
-char Land::getCharRepresentation(bool aUseId) const
+char Land::getCharRepresentation(const size_t aPointX, const size_t aPointY, const bool aUseId) const
 {
     if (aUseId)
     {
@@ -150,7 +150,7 @@ char Land::getCharRepresentation(bool aUseId) const
     }
 }
 
-std::string Land::getFullId() const
+std::string Land::getStringId() const
 {
     return Logger::formatString("Land#", mId);
 }

@@ -49,9 +49,9 @@ int Edge::populateNeighbours(GameMap& aMap)
         break;
     }
     (rc != 0) ?
-        ERROR_LOG("Failed to populate neighbours of ", getFullId())
+        ERROR_LOG("Failed to populate neighbours of ", getStringId())
         :
-        INFO_LOG("Successfully populated neighbours of ", getFullId());
+        INFO_LOG("Successfully populated neighbours of ", getStringId());
     return rc;
 }
 
@@ -61,7 +61,7 @@ int Edge::populateNeighbour(GameMap& aMap, const size_t aPointX, const size_t aP
     if (!dynamic_cast<Vertex*>(pTerrain))
     {
         // not vertex
-        WARN_LOG("At Point [", aPointX, ", ", aPointY, "], Expected Vertex - Actual ", pTerrain->getFullId());
+        WARN_LOG("At Point [", aPointX, ", ", aPointY, "], Expected Vertex - Actual ", pTerrain->getStringId());
         return 1;
     }
     mNeighbour.push_back(pTerrain);
@@ -107,7 +107,7 @@ Edge::Edge(const int aId, const Point_t aTopRight, const char aDirection) :
     }
 }
 
-char Edge::getCharRepresentation(bool aUseId) const
+char Edge::getCharRepresentation(const size_t aPointX, const size_t aPointY, const bool aUseId) const
 {
     if (aUseId)
     {
@@ -119,7 +119,7 @@ char Edge::getCharRepresentation(bool aUseId) const
     }
 }
 
-std::string Edge::getFullId() const
+std::string Edge::getStringId() const
 {
     return Logger::formatString("Edge#", mId);
 }

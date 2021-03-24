@@ -32,8 +32,8 @@ public:
 
     virtual int populateNeighbours(GameMap& aMap);
 
-    virtual char getCharRepresentation(bool aUseId = false) const = 0;
-    virtual std::string getFullId() const = 0;
+    virtual char getCharRepresentation(const size_t aPointX, const size_t aPointY, const bool aUseId = false) const = 0;
+    virtual std::string getStringId() const = 0;
 
     virtual ~Terrain();
 };

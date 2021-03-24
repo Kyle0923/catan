@@ -17,8 +17,8 @@ public:
     ResourceTypes getResourceType();
     void setResourceType(ResourceTypes aResource);
 
-    std::string getFullId() const override;
-    char getCharRepresentation(bool aUseId = false) const override;
+    std::string getStringId() const override;
+    char getCharRepresentation(const size_t aPointX, const size_t aPointY, const bool aUseId = false) const override;
     std::vector<Point_t> getAllPoints() const override;
 
     Harbour(const int aId, const ResourceTypes aResource, const Point_t aVertex1, const Point_t aVertex2);

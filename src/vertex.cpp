@@ -22,9 +22,9 @@ int Vertex::populateNeighbours(GameMap& aMap)
     rc |= populateNeighbour(aMap, mTopRight.x - 1, mTopRight.y + 1);
 
     (rc != 0) ?
-        ERROR_LOG("Failed to populate neighbours of ", getFullId())
+        ERROR_LOG("Failed to populate neighbours of ", getStringId())
         :
-        INFO_LOG("Successfully populated neighbours of ", getFullId());
+        INFO_LOG("Successfully populated neighbours of ", getStringId());
     return rc;
 }
 
@@ -37,7 +37,7 @@ int Vertex::populateNeighbour(GameMap& aMap, const size_t aPointX, const size_t 
         mNeighbour.push_back(pTerrain);
         Vertex* const pAdjacentVertex = pEdge->getVertex(this);
         mAdjacentVertices.push_back(pAdjacentVertex);
-        DEBUG_LOG("Added adjacent " + pAdjacentVertex->getFullId() + " for " + getFullId());
+        DEBUG_LOG("Added adjacent " + pAdjacentVertex->getStringId() + " for " + getStringId());
     }
     else if (dynamic_cast<Blank*>(pTerrain))
     {
@@ -76,19 +76,19 @@ int Vertex::setHarbour(Harbour* const aHarbour)
 {
     if (aHarbour == nullptr)
     {
-        DEBUG_LOG("Clearing harbour for " + getFullId() +", existing: " + (mHarbour ? mHarbour->getFullId() : "nullptr"));
+        DEBUG_LOG("Clearing harbour for " + getStringId() +", existing: " + (mHarbour ? mHarbour->getStringId() : "nullptr"));
         mHarbour = nullptr;
         return 0;
     }
     if (mHarbour)
     {
-        INFO_LOG("Reseting harbour for " + getFullId() +" current: " + mHarbour->getFullId() + " new: " + aHarbour->getFullId());
+        INFO_LOG("Reseting harbour for " + getStringId() +" current: " + mHarbour->getStringId() + " new: " + aHarbour->getStringId());
     }
     mHarbour = aHarbour;
     return 0;
 }
 
-char Vertex::getCharRepresentation(bool aUseId) const
+char Vertex::getCharRepresentation(const size_t aPointX, const size_t aPointY, const bool aUseId) const
 {
     if (aUseId)
     {
@@ -100,7 +100,7 @@ char Vertex::getCharRepresentation(bool aUseId) const
     }
 }
 
-std::string Vertex::getFullId() const
+std::string Vertex::getStringId() const
 {
     return Logger::formatString("Vertex#", mId);
 }

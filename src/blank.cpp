@@ -12,7 +12,7 @@ Blank* Blank::getBlank()
     return mBlank;
 }
 
-char Blank::getCharRepresentation(bool aUseId) const
+char Blank::getCharRepresentation(const size_t aPointX, const size_t aPointY, const bool aUseId) const
 {
     if (aUseId)
     {
@@ -24,7 +24,7 @@ char Blank::getCharRepresentation(bool aUseId) const
     }
 }
 
-std::string Blank::getFullId() const
+std::string Blank::getStringId() const
 {
     return "Blank";
 }

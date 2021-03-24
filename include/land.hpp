@@ -17,8 +17,8 @@ public:
     ResourceTypes getResourceType();
     void setDiceNum(int aDice);
     int getDiceNum();
-    char getCharRepresentation(bool aUseId = false) const override;
-    std::string getFullId() const override;
+    char getCharRepresentation(const size_t aPointX, const size_t aPointY, const bool aUseId = false) const override;
+    std::string getStringId() const override;
     int populateNeighbours(GameMap& aMap) override;
 
     virtual ~Land();

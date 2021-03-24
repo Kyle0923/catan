@@ -18,8 +18,8 @@ public:
     Edge(const int aId, const Point_t aTopRight, const char aDirection);
     Vertex* getVertex(Vertex* const aVertex); //get connected vertex that is not the input
     int populateNeighbours(GameMap& aMap) override;
-    char getCharRepresentation(bool aUseId = false) const override;
-    std::string getFullId() const override;
+    char getCharRepresentation(const size_t aPointX, const size_t aPointY, const bool aUseId = false) const override;
+    std::string getStringId() const override;
     virtual ~Edge();
 };
 

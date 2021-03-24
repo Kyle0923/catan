@@ -15,3 +15,18 @@ std::ostream & operator<< (std::ostream &aStream, const Point_t& aPoint)
 {
     return aStream << aPoint.x << ',' << aPoint.y;
 }
+
+std::string resourceTypesToStr(const ResourceTypes aResource)
+{
+    static std::string resourceStr[] = {
+        "NONE",
+        "DESERT",
+        "CLAY",
+        "SHEEP",
+        "WHEAT",
+        "WOOD",
+        "ORE",
+        "ANY"
+    };
+    return resourceStr[static_cast<int>(aResource) + 1];
+}

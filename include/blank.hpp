@@ -11,8 +11,8 @@ private:
     Blank(const int aId, const Point_t aTopRight);
 public:
     static Blank* getBlank();
-    char getCharRepresentation(bool aUseId = false) const override;
-    std::string getFullId() const override;
+    char getCharRepresentation(const size_t aPointX, const size_t aPointY, const bool aUseId = false) const override;
+    std::string getStringId() const override;
     virtual ~Blank();
 };
 

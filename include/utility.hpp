@@ -11,5 +11,6 @@ public:
 
 extern bool operator==(const Point_t& aPointA, const Point_t& aPointB);
 extern std::ostream & operator<< (std::ostream &aStream, const Point_t& aPoint);
+extern std::string resourceTypesToStr(const ResourceTypes aResource);
 
 #endif /* INCLUDE_UTILITY_HPP */

@@ -1,15 +1,17 @@
+#include <algorithm>
 #include "game_map.hpp"
 #include "harbour.hpp"
 #include "blank.hpp"
+#include "utility.hpp"
 
 int Harbour::calculatePoints(GameMap& aMap)
 {
     if (mVertex1.y == mVertex2.y)
     {
-        // +----------+  |       H01
+        // +----------+  |      WOOD
         //  xx      xx   |     xx  xx
         //    xx  xx     |   xx      xx
-        //      H01      |  +----------+
+        //     SHEEP     |  +----------+
         int dy = 1;
         if (aMap.getTerrain(mVertex1.x, mVertex1.y - 1) == Blank::getBlank())
         {
@@ -26,15 +28,15 @@ int Harbour::calculatePoints(GameMap& aMap)
         mLinks.push_back(Point_t{mVertex2.x - 3, mVertex1.y + dy * 2});
         mLinks.push_back(Point_t{mVertex2.x - 4, mVertex1.y + dy * 2});
 
-        mTopRight.x = mVertex1.x + 5;
+        mTopRight.x = mVertex1.x + 4;
         mTopRight.y = mVertex1.y + dy * 3;
     }
     else if (mVertex1.x > mVertex2.x)
     {
-        //    xxxx+   !      +
-        // H01   /    !     / x
-        //    x /     !    /   H01
-        //     +      !   +xxxx
+        //     xxxx+   !      +
+        // CLAY   /    !     / x
+        //     x /     !    /   WOOD
+        //      +      !   +xxxx
         Point_t pointA = mVertex1;  // point next to "xxxx"
         Point_t pointB = mVertex2;  // the other point
         int dx = -1;
@@ -52,7 +54,7 @@ int Harbour::calculatePoints(GameMap& aMap)
         }
         else
         {
-            mTopRight.x = pointB.x - 4;
+            mTopRight.x = pointB.x - 1 - resourceTypesToStr(mResourceType).length();
         }
         mLinks.push_back(Point_t{pointA.x + dx * 1, pointA.y});
         mLinks.push_back(Point_t{pointA.x + dx * 2, pointA.y});
@@ -66,8 +68,8 @@ int Harbour::calculatePoints(GameMap& aMap)
     else
     {
         //     +     |  +xxxx
-        //    x \    |   \   H01
-        // H01   \   |    \ x
+        //    x \    |   \   WHEAT
+        // ORE   \   |    \ x
         //    xxxx+  |     +
         Point_t pointA = mVertex2;  // point next to "xxxx"
         Point_t pointB = mVertex1;  // the other point
@@ -86,7 +88,7 @@ int Harbour::calculatePoints(GameMap& aMap)
         }
         else
         {
-            mTopRight.x = pointB.x - 4;
+            mTopRight.x = pointB.x - 1 - resourceTypesToStr(mResourceType).length();
         }
         mLinks.push_back(Point_t{pointA.x + dx * 1, pointA.y});
         mLinks.push_back(Point_t{pointA.x + dx * 2, pointA.y});
@@ -103,9 +105,10 @@ int Harbour::calculatePoints(GameMap& aMap)
 std::vector<Point_t> Harbour::getAllPoints() const
 {
     std::vector<Point_t> allPoints(mLinks);
-    allPoints.push_back(mTopRight);
-    allPoints.push_back(Point_t{mTopRight.x + 1, mTopRight.y});
-    allPoints.push_back(Point_t{mTopRight.x + 2, mTopRight.y});
+    for (size_t ii = 0; ii < std::min(resourceTypesToStr(mResourceType).length(), 5U); ++ii)
+    {
+        allPoints.push_back(Point_t{mTopRight.x + ii, mTopRight.y});
+    }
     return allPoints;
 }
 
@@ -140,7 +143,7 @@ Harbour::Harbour(const int aId, const ResourceTypes aResource, const Point_t aVe
     }
 }
 
-char Harbour::getCharRepresentation(bool aUseId) const
+char Harbour::getCharRepresentation(const size_t aPointX, const size_t aPointY, const bool aUseId) const
 {
     if (aUseId)
     {
@@ -148,11 +151,26 @@ char Harbour::getCharRepresentation(bool aUseId) const
     }
     else
     {
-        return 'x';
+        if (std::find(mLinks.begin(), mLinks.end(), Point_t{aPointX, aPointY}) != mLinks.end())
+        {
+            return 'x';
+        }
+        else
+        {
+            if (mResourceType != ResourceTypes::ANY)
+            {
+                return resourceTypesToStr(mResourceType).at(aPointX - mTopRight.x);
+            }
+            else
+            {
+                static const std::vector<char> harbourAny = {'3', ':', '1'};
+                return harbourAny[aPointX - mTopRight.x];
+            }
+        }
     }
 }
 
-std::string Harbour::getFullId() const
+std::string Harbour::getStringId() const
 {
     return Logger::formatString("Harbour#", mId);
 }

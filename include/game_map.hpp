@@ -13,8 +13,8 @@
 class GameMap
 {
 private:
-    int mSizeHorizontal;
-    int mSizeVertical;
+    size_t mSizeHorizontal;
+    size_t mSizeVertical;
     size_t mNumHarbour;
     bool mInitialized;
     std::deque< std::deque<Terrain*> > mGameMap;
