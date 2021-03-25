@@ -64,7 +64,7 @@ int MapIO::readMap(GameMap& aGameMap)
                 }
                 default:
                 {
-                    DEBUG_LOG("Unknow character '", pattern, "'(ASCII: ", (int)pattern, ") at, [", ii, ", ", jj, "]");
+                    WARN_LOG("Unknow character '", pattern, "'(ASCII: ", (int)pattern, ") at, [", ii, ", ", jj, "]");
                     break;
                 }
             }
@@ -138,7 +138,7 @@ Point_t MapIO::validateMapBoundary()
     (rc != 0) ?
         ERROR_LOG("Map validation failed")
         :
-        INFO_LOG("Map validation passed, map size: [", horizontalSize, ", ", verticalSize, "]");
+        INFO_LOG("Map validation succeeded, map size: [", horizontalSize, ", ", verticalSize, "]");
 
     // reset file to the beginning
     mFile.clear();

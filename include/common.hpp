@@ -9,7 +9,8 @@ struct Point_t
     size_t y;
 };
 
-enum class ResourceTypes {
+enum class ResourceTypes
+{
     NONE = -1,
     DESERT = 0,
     CLAY = 1,

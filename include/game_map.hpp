@@ -10,6 +10,8 @@
 #include "land.hpp"
 #include "harbour.hpp"
 
+struct SequenceConfig_t;
+
 class GameMap
 {
 private:
@@ -29,12 +31,22 @@ private:
     inline bool boundaryCheck(const int x, const int y) const;
     void fillInBlank();
     int populateMap();
+    int assignResourceAndDice(); // assign resources and dice number to lands
     int checkOverlap() const;
 
-    // harbour related
+    /*
+     * aUseDefaultPosition - randomize the position of the harbours, though the harbours tend to not evenly distributed
+     * aUseDefaultResourceType - by default, 1 ANY harbour is placed between 2 Resource harbours (where possible)
+     *                           set this to true to lift that restriction
+     */
     int populateHarbours(bool aUseDefaultPosition, bool aUseDefaultResourceType);
     int createHarboursDefault();
     int createHarboursRandom();
+
+    /* SequenceConfig_t is an array whose value represents the num of occurrences of the index in the output
+     * e.g., aConfig[CLAY] = 2 means, there should be 2 CLAY in the returned vector
+     */
+    std::vector<int> randomizeResource(SequenceConfig_t aConfig);
 
 public:
     GameMap(const int aSizeHorizontal = 0, const int aSizeVertical = 0);
@@ -54,19 +66,26 @@ public:
     //  * for a dangling condidate, GameMap will try to find a neighbour to form a pair
     //  * for three connected candidates, the rightmost / bottommost will be treated as dangling
     //  */
-    // int addHarbourCandidate(Vertex* const aVertex); //TODO: not supported currently, description may not be accurate
+    // int addHarbourCandidate(Vertex* const aVertex); //TODO: not supported currently
 
     int registerTerrain(const std::vector<Point_t>& aPoints, Terrain* const aTerrain);
     int registerTerrain(const Point_t& aPoint, Terrain* const aTerrain);
     int registerTerrain(const int x, const int y, Terrain* const aTerrain);
 
-    // standard map has 9 harbours
-    void setNumOfHarbour(const size_t aNum = 9);
+    void setNumOfHarbour(const size_t aNum);
 
     int initMap();
     void printMap(bool aUseId = false);
     ~GameMap();
 };
 
+struct SequenceConfig_t
+{
+    std::vector<size_t> mConfig;
+    SequenceConfig_t(const size_t aSize);
+    size_t size() const;
+    size_t& operator[](const size_t aIndex);
+    size_t& operator[](const ResourceTypes aIndex);
+};
 
 #endif /* INCLUDE_GAME_MAP_HPP */

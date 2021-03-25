@@ -23,7 +23,8 @@ short color_table[] =
 int main(int argc, char **argv)
 {
     Logger::initLogfile();
-    DEBUG_LOG("Begin ", " of ", "main");
+    Logger::setDebugLevel(3);
+    DEBUG_LOG_L0("Begin ", " of ", "main");
     GameMap gameMap;
     MapIO mapFile("map.txt");
     mapFile.readMap(gameMap);

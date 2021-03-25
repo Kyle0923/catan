@@ -22,9 +22,9 @@ int Vertex::populateNeighbours(GameMap& aMap)
     rc |= populateNeighbour(aMap, mTopRight.x - 1, mTopRight.y + 1);
 
     (rc != 0) ?
-        ERROR_LOG("Failed to populate neighbours of ", getStringId())
+        WARN_LOG("Failed to populate neighbours of ", getStringId())
         :
-        INFO_LOG("Successfully populated neighbours of ", getStringId());
+        DEBUG_LOG_L2("Successfully populated neighbours of ", getStringId());
     return rc;
 }
 
@@ -37,7 +37,7 @@ int Vertex::populateNeighbour(GameMap& aMap, const size_t aPointX, const size_t 
         mNeighbour.push_back(pTerrain);
         Vertex* const pAdjacentVertex = pEdge->getVertex(this);
         mAdjacentVertices.push_back(pAdjacentVertex);
-        DEBUG_LOG("Added adjacent " + pAdjacentVertex->getStringId() + " for " + getStringId());
+        DEBUG_LOG_L1("Added adjacent " + pAdjacentVertex->getStringId() + " for " + getStringId());
     }
     else if (dynamic_cast<Blank*>(pTerrain))
     {
@@ -76,7 +76,7 @@ int Vertex::setHarbour(Harbour* const aHarbour)
 {
     if (aHarbour == nullptr)
     {
-        DEBUG_LOG("Clearing harbour for " + getStringId() +", existing: " + (mHarbour ? mHarbour->getStringId() : "nullptr"));
+        DEBUG_LOG_L0("Clearing harbour for " + getStringId() +", existing: " + (mHarbour ? mHarbour->getStringId() : "nullptr"));
         mHarbour = nullptr;
         return 0;
     }

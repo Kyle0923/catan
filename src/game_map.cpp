@@ -1,11 +1,13 @@
 #include <unordered_map>
+#include <algorithm>
+#include <random>
+#include <chrono>
 #include <set>
 #include <cstdlib>
-#include <ctime>
-#include <algorithm>
 #include "utility.hpp"
 #include "game_map.hpp"
 #include "blank.hpp"
+#include "constant.hpp"
 
 void GameMap::fillInBlank()
 {
@@ -31,21 +33,40 @@ int GameMap::populateMap()
      * Edge::populateNeighbours records vertices on both end
      * Vertex::populateNeighbours records connected edges and adjcent vertices
      */
-    int rc = 0;
+
+    // return codes
+    int rcLand = 0;
+    int rcEdge = 0;
+    int rcVertex = 0;
+
     for (Land* const pLand : mLands)
     {
-        rc |= pLand->populateNeighbours(*this);
+        rcLand |= pLand->populateNeighbours(*this);
     }
+    rcLand ?
+        ERROR_LOG("Failed to populate neighbours for Lands")
+        :
+        INFO_LOG("Successfully populated neighbours of Lands");
+
     for (Edge* const pEdge : mEdges)
     {
-        rc |= pEdge->populateNeighbours(*this);
+        rcEdge |= pEdge->populateNeighbours(*this);
     }
+    rcEdge ?
+        ERROR_LOG("Failed to populate neighbours for Edges")
+        :
+        INFO_LOG("Successfully populated neighbours of Edges");
+
     for (Vertex* const pVertex : mVertices)
     {
-        rc |= pVertex->populateNeighbours(*this);
+        rcVertex |= pVertex->populateNeighbours(*this);
     }
+    rcVertex ?
+        ERROR_LOG("Failed to populate neighbours for Vertices")
+        :
+        INFO_LOG("Successfully populated neighbours of Vertices");
 
-    return rc;
+    return (rcLand | rcEdge | rcVertex);
 }
 
 int GameMap::populateHarbours(bool aUseDefaultPosition, bool aUseDefaultResourceType)
@@ -59,42 +80,47 @@ int GameMap::populateHarbours(bool aUseDefaultPosition, bool aUseDefaultResource
     {
         rc = createHarboursRandom();
     }
-    if (aUseDefaultResourceType)
+    SequenceConfig_t config(static_cast<size_t>(ResourceTypes::ANY) + 1);
+    config[ResourceTypes::CLAY]  = constant::NUM_HARBOUR_CLAY;
+    config[ResourceTypes::SHEEP] = constant::NUM_HARBOUR_SHEEP;
+    config[ResourceTypes::WHEAT] = constant::NUM_HARBOUR_WHEAT;
+    config[ResourceTypes::WOOD]  = constant::NUM_HARBOUR_WOOD;
+    config[ResourceTypes::ORE]   = constant::NUM_HARBOUR_ORE;
+    if (aUseDefaultResourceType && mHarbours.size() == constant::NUM_OF_HARBOUR)
     {
-        size_t index = 0;
-        int resourceType = static_cast<int>(ResourceTypes::CLAY);
-        for (; index < mHarbours.size(); ++index)
+        DEBUG_LOG_L3("Using default 9 harbours");
+        config[ResourceTypes::ANY] = constant::NUM_HARBOUR_ANY;
+        std::vector<int> randomSeq = randomizeResource(config);
+        for (size_t index = 0; index < mHarbours.size(); ++index)
         {
-            if (index % 2 == 0)
+            if (index % 2 != 0)
             {
-                mHarbours[index]->setResourceType(static_cast<ResourceTypes>(resourceType++));
+                mHarbours[index]->setResourceType(ResourceTypes::ANY);
             }
             else
             {
-                mHarbours[index]->setResourceType(ResourceTypes::ANY);
+                mHarbours[index]->setResourceType(static_cast<ResourceTypes>(randomSeq.at(index / 2)));
             }
         }
     }
     else
     {
-        // one harbour for each resource, ANY for the rest
-        int resourceType = static_cast<int>(ResourceTypes::CLAY);
-        std::set<size_t> resources;
-        while (resources.size() < 5)
+        if (mHarbours.size() > constant::NUM_HARBOUR_RESOURCE)
         {
-            size_t index = rand() % mHarbours.size();
-            resources.emplace(index);
+            // one harbour for each resource, ANY for the rest
+            config[ResourceTypes::ANY] = mHarbours.size() - constant::NUM_HARBOUR_RESOURCE;
         }
-        for (Harbour* const pHarbour : mHarbours)
+        else
         {
-            if (resources.count(pHarbour->getId()))
-            {
-                pHarbour->setResourceType(static_cast<ResourceTypes>(resourceType));
-            }
-            else
-            {
-                pHarbour->setResourceType(ResourceTypes::ANY);
-            }
+            // set num-of-ANY to default, shuffle the sequence and pick by luck
+            INFO_LOG("User defined map has ", mHarbours.size(), " harbours only, randomly picking from the 9 default harbours");
+            config[ResourceTypes::ANY] = constant::NUM_HARBOUR_ANY;
+        }
+
+        std::vector<int> randomSeq = randomizeResource(config);
+        for (size_t index = 0; index < mHarbours.size(); ++index)
+        {
+            mHarbours[index]->setResourceType(static_cast<ResourceTypes>(randomSeq[index]));
         }
     }
     for (Harbour* const pHarbour : mHarbours)
@@ -146,12 +172,12 @@ int GameMap::createHarboursDefault()
         }
     } while (pVertex->getId() != harbourCandidates.at(0));
 
-    const int gap[] = {1, 1, 2};
-    size_t index = 0;
+    const size_t gap[] = {1U, 1U, 2U};
+    size_t index = 0U;
     while (mHarbours.size() < mNumHarbour && index + 1 < harbourCandidates.size())
     {
         addHarbour(harbourCandidates[index], harbourCandidates[index + 1]);
-        index += 2 + gap[mHarbours.size() % 3];
+        index += 2U + gap[mHarbours.size() % 3];
     }
     bool rc = (mHarbours.size() != mNumHarbour);
     rc ?
@@ -172,15 +198,18 @@ int GameMap::createHarboursRandom()
             harbourCandidates.push_back(pVertex->getId());
         }
     }
-    srand (time(NULL));
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::default_random_engine generator(seed);
     while (mHarbours.size() < mNumHarbour)
     {
-        if (harbourCandidates.size() == 0)
+        if (harbourCandidates.size() == 0U)
         {
             WARN_LOG("Unable to create ", mNumHarbour, " of harbours, current number of harbour ", mHarbours.size());
             break;
         }
-        size_t index = rand() % harbourCandidates.size();
+        // get a vertex from candidates
+        std::uniform_int_distribution<size_t> distribution(0U, harbourCandidates.size() - 1U);
+        size_t index = distribution(generator);
         int idVertex = harbourCandidates[index];
         if (mVertices[idVertex]->hasHarbour())
         {
@@ -209,6 +238,21 @@ int GameMap::createHarboursRandom()
                                 harbourCandidates.end());
     }
     return (mHarbours.size() != mNumHarbour);
+}
+
+std::vector<int> GameMap::randomizeResource(SequenceConfig_t aConfig)
+{
+    std::vector<int> resourceSequence;
+    for (int index = 0; index < (int)aConfig.size(); ++index)
+    {
+        for (size_t counter = 0U; counter < aConfig[index]; ++counter)
+        {
+            resourceSequence.push_back(index);
+        }
+    }
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::shuffle(resourceSequence.begin(), resourceSequence.end(), std::default_random_engine(seed));
+    return resourceSequence;
 }
 
 int GameMap::checkOverlap() const
@@ -257,6 +301,59 @@ int GameMap::checkOverlap() const
         INFO_LOG("No Overlap detected");
     }
     return overlapCount;
+}
+
+int GameMap::assignResourceAndDice()
+{
+    SequenceConfig_t resourceConfig(static_cast<size_t>(ResourceTypes::ANY) + 1);
+    // default config
+    resourceConfig[ResourceTypes::DESERT] = constant::NUM_LAND_DESERT;
+    resourceConfig[ResourceTypes::CLAY]   = constant::NUM_LAND_CLAY;
+    resourceConfig[ResourceTypes::SHEEP]  = constant::NUM_LAND_SHEEP;
+    resourceConfig[ResourceTypes::WHEAT]  = constant::NUM_LAND_WHEAT;
+    resourceConfig[ResourceTypes::WOOD]   = constant::NUM_LAND_WOOD;
+    resourceConfig[ResourceTypes::ORE]    = constant::NUM_LAND_ORE;
+    for (Land* const pLand : mLands)
+    {
+        const ResourceTypes resource = pLand->getResourceType();
+        if (resource != ResourceTypes::NONE)
+        {
+            size_t& amount = resourceConfig[resource];
+            if (amount == 0)
+            {
+                WARN_LOG("Too much " + resourceTypesToStr(resource) + " in user defined map");
+            }
+            else
+            {
+                --amount;
+            }
+        }
+    }
+    std::vector<int> resourceSeq = randomizeResource(resourceConfig);
+
+    SequenceConfig_t diceConfig(13); // 0 to 12
+    for (size_t index = 3; index <= 11; ++index)
+    {
+        diceConfig[index] = constant::NUM_DICE_3_TO_11;
+    }
+    diceConfig[2]  = constant::NUM_DICE_2_OR_12;
+    diceConfig[7]  = constant::NUM_DICE_7;
+    diceConfig[12] = constant::NUM_DICE_2_OR_12;
+    std::vector<int> diceSeq = randomizeResource(diceConfig);
+    size_t resourceIndex = 0;
+    size_t diceIndex = 0;
+    for (Land* const pLand : mLands)
+    {
+        if (pLand->getResourceType() == ResourceTypes::NONE)
+        {
+            pLand->setResourceType(static_cast<ResourceTypes>(resourceSeq.at(resourceIndex++)));
+        }
+        if (pLand->getResourceType() != ResourceTypes::DESERT)
+        {
+            pLand->setDiceNum(diceSeq.at(diceIndex++));
+        }
+    }
+    return 0;
 }
 
 Terrain* GameMap::getTerrain(const int x, const int y)
@@ -319,7 +416,7 @@ Land* GameMap::addLand(const size_t aTopRightX, const size_t aTopRightY, const R
 
 Harbour* GameMap::addHarbour(const int aId1, const int aId2)
 {
-    DEBUG_LOG("adding port#", mHarbours.size(), " for ", aId1, " and ", aId2);
+    DEBUG_LOG_L2("adding port#", mHarbours.size(), " for ", aId1, " and ", aId2);
     Harbour* const pHarbour = new Harbour(mHarbours.size(), ResourceTypes::NONE, \
                                         mVertices[aId1]->getTopRight(), mVertices[aId2]->getTopRight());
     mVertices[aId1]->setHarbour(pHarbour);
@@ -394,18 +491,14 @@ int GameMap::initMap()
 {
     int rc = 0;
     fillInBlank();
-    if (!mNumHarbour)
-    {
-        setNumOfHarbour();
-    }
     rc |= populateMap();
     rc |= populateHarbours(true, true); // (bool aUseDefaultPosition, bool aUseDefaultResourceType)
     rc |= checkOverlap();
-    // TODO: assign dice num to land, assign resource to land
+    rc |= assignResourceAndDice();
 
     if (rc != 0)
     {
-        WARN_LOG("failed to initialize GameMap");
+        ERROR_LOG("failed to initialize GameMap");
     }
     else
     {
@@ -443,7 +536,7 @@ int GameMap::clearAndResize(const int aSizeHorizontal, const int aSizeVertical)
 {
     mSizeHorizontal = aSizeHorizontal;
     mSizeVertical = aSizeVertical;
-    mNumHarbour = 0;
+    mNumHarbour = constant::NUM_OF_HARBOUR;
     mInitialized = false;
     mVertices.clear();
     mEdges.clear();
@@ -462,7 +555,7 @@ int GameMap::clearAndResize(const int aSizeHorizontal, const int aSizeVertical)
 GameMap::GameMap(const int aSizeHorizontal, const int aSizeVertical) :
     mSizeHorizontal(aSizeHorizontal),
     mSizeVertical(aSizeVertical),
-    mNumHarbour(0),
+    mNumHarbour(constant::NUM_OF_HARBOUR),
     mInitialized(false)
 {
     // init a 2D array with (Terrain*)nullptr
@@ -487,4 +580,24 @@ GameMap::~GameMap()
     {
         delete pLand;
     }
+}
+
+SequenceConfig_t::SequenceConfig_t(const size_t aSize) : mConfig(aSize, 0)
+{
+    //empty
+}
+
+size_t SequenceConfig_t::size() const
+{
+    return mConfig.size();
+}
+
+size_t& SequenceConfig_t::operator[](const size_t aIndex)
+{
+    return mConfig.at(aIndex);
+}
+
+size_t& SequenceConfig_t::operator[](const ResourceTypes aIndex)
+{
+    return mConfig.at(static_cast<size_t>(aIndex));
 }

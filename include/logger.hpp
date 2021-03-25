@@ -6,8 +6,6 @@
 #include <sstream>
 #include <stdexcept>
 
-#define DEBUG_LOG(...) \
-    Logger::debug<0>("In " __FILE__ ":", __LINE__, ": ", __VA_ARGS__)
 #define INFO_LOG(...) \
     Logger::info("In " __FILE__ ":", __LINE__, ": ", __VA_ARGS__)
 #define WARN_LOG(...) \
@@ -15,6 +13,14 @@
 #define ERROR_LOG(...) \
     Logger::error("In " __FILE__ ":", __LINE__, ": ", __VA_ARGS__)
 
+#define DEBUG_LOG_L0(...) \
+    Logger::debug(0, "In " __FILE__ ":", __LINE__, ": ", __VA_ARGS__)
+#define DEBUG_LOG_L1(...) \
+    Logger::debug(1, "In " __FILE__ ":", __LINE__, ": ", __VA_ARGS__)
+#define DEBUG_LOG_L2(...) \
+    Logger::debug(2, "In " __FILE__ ":", __LINE__, ": ", __VA_ARGS__)
+#define DEBUG_LOG_L3(...) \
+    Logger::debug(3, "In " __FILE__ ":", __LINE__, ": ", __VA_ARGS__)
 
 class Logger
 {
@@ -62,6 +68,12 @@ private:
     Logger();
     ~Logger();
 public:
+
+    /*
+     * higher debug_level => the message is more important
+     * lower debug_level => the message is more generic
+     * set higher level to filter out generic message
+     */
     static void setDebugLevel(int aDebugLevel);
     static void initLogfile(std::string aLogFilename = "log.txt");
     template<typename... Targs>
@@ -71,12 +83,12 @@ public:
         _log(strstream, aArgs...);
         return strstream.str();
     };
-    template<int level = 0, typename... Targs>
-    static void debug(Targs... aArgs)
+    template<typename... Targs>
+    static void debug(int aLevel, Targs... aArgs)
     {
-        if (level >= mDebugLevel)
+        if (aLevel >= mDebugLevel)
         {
-            log(std::cout, "[Debug", level, "] " , aArgs...);
+            log(std::cout, "[Debug", aLevel, "] " , aArgs...);
         }
     };
     template<typename... Targs>

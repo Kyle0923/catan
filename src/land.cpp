@@ -1,6 +1,7 @@
 #include "game_map.hpp"
 #include "land.hpp"
 #include "blank.hpp"
+#include "utility.hpp"
 
 std::vector<Point_t> Land::getAllPoints() const
 {
@@ -56,9 +57,9 @@ int Land::populateNeighbours(GameMap& aMap)
     rc |= populateNeighbour(aMap, false, mTopRight.x - 1, mTopRight.y, '/');
 
     (rc != 0) ?
-        ERROR_LOG("Failed to populate neighbours of ", getStringId())
+        WARN_LOG("Failed to populate neighbours of ", getStringId())
         :
-        INFO_LOG("Successfully populated neighbours of ", getStringId());
+        DEBUG_LOG_L2("Successfully populated neighbours of ", getStringId());
     return rc;
 }
 
@@ -91,7 +92,7 @@ int Land::populateNeighbour(GameMap& aMap, bool aIsVertex, const int aPointX, co
             {
                 pTerrain = aMap.addEdge(aPointX, aPointY, aPattern);
             }
-            DEBUG_LOG("Added ", pTerrain->getStringId(), " for ", getStringId());
+            DEBUG_LOG_L1("Added ", pTerrain->getStringId(), " for ", getStringId());
         }
         else
         {
@@ -137,17 +138,35 @@ char Land::getCharRepresentation(const size_t aPointX, const size_t aPointY, con
     {
         return static_cast<char>(mId % 10) + '0';
     }
-    else
+    if (mResourceType == ResourceTypes::NONE)
     {
-        if (mResourceType == ResourceTypes::NONE)
+        return '.';
+    }
+    if (aPointY == mTopRight.y + 2)
+    {
+        // print label
+        const size_t WIDTH = 16;
+        const std::string label = resourceTypesToStr(mResourceType);
+        const int PADDING = (WIDTH - label.length()) / 2;
+        const int index = (int)aPointX - (int)mTopRight.x + 2 - PADDING;
+        if (index >= 0 && index < (int)label.size())
         {
-            return '.';
-        }
-        else
-        {
-            return static_cast<char>((int)mResourceType) + '0';
+            return label.at(index);
         }
     }
+    if (mResourceType != ResourceTypes::DESERT && aPointY == mTopRight.y + 3)
+    {
+        // print dice num
+        const size_t WIDTH = 14;
+        const std::string label = std::to_string(mDiceNum);
+        const int PADDING = (WIDTH - label.length()) / 2;
+        const int index = (int)aPointX - (int)mTopRight.x + 1 - PADDING;
+        if (index >= 0 && index < (int)label.size())
+        {
+            return label.at(index);
+        }
+    }
+    return ' ';
 }
 
 std::string Land::getStringId() const

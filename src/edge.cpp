@@ -49,9 +49,9 @@ int Edge::populateNeighbours(GameMap& aMap)
         break;
     }
     (rc != 0) ?
-        ERROR_LOG("Failed to populate neighbours of ", getStringId())
+        WARN_LOG("Failed to populate neighbours of ", getStringId())
         :
-        INFO_LOG("Successfully populated neighbours of ", getStringId());
+        DEBUG_LOG_L2("Successfully populated neighbours of ", getStringId());
     return rc;
 }
 
