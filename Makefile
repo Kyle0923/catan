@@ -8,8 +8,15 @@ OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 INC := -Iinclude -Ithird_party/pdcurses/include
 LIB := -Lthird_party/pdcurses/lib -lpdcurses
 CPPFLAGS := $(INC) -MMD -MP
-CFLAGS   := -Wall -std=c++11 -g
+CFLAGS   := -Wall -std=c++11
 DEPS := $(OBJ:.o=.d)
+
+# use `RELEASE=1 make -j8` to build release
+ifneq ($(RELEASE),)
+CFLAGS += -DRELEASE -O3
+else
+CFLAGS += -g
+endif
 
 all: $(LINT_REPORT) $(ARTIFACT)
 

@@ -86,10 +86,12 @@ public:
     template<typename... Targs>
     static void debug(int aLevel, Targs... aArgs)
     {
+#ifndef RELEASE
         if (aLevel >= mDebugLevel)
         {
             log(std::cout, "[Debug", aLevel, "] " , aArgs...);
         }
+#endif /* ifndef RELEASE */
     };
     template<typename... Targs>
     static void info(Targs... aArgs)
