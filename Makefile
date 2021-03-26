@@ -7,7 +7,7 @@ OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
 THIRD_PARTY_DIR := third_party
 INC := -Iinclude -I$(THIRD_PARTY_DIR)/pdcurses-3.9/include
-LIB := -L$(THIRD_PARTY_DIR)/pdcurses-3.9/lib -l:pdcurses.a
+LIB := -L$(THIRD_PARTY_DIR)/pdcurses-3.9/lib -lpdcurses
 CPPFLAGS := $(INC) -MMD -MP
 CFLAGS   := -Wall -std=c++11
 DEPS := $(OBJ:.o=.d)
@@ -45,6 +45,8 @@ lint:
 clean:
 	rm -fr $(OBJ_DIR)
 	rm -f $(ARTIFACT)
+
+clean_all: clean
 	$(MAKE) -C $(THIRD_PARTY_DIR) clean
 
 -include $(DEPS)

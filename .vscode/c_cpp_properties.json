@@ -7,7 +7,7 @@
       {
         "name": "Catan",
         "intelliSenseMode": "clang-x64",
-        "includePath": ["${myDefaultIncludePath}", "${workspaceFolder}/third_party/pdcurses/include"],
+        "includePath": ["${myDefaultIncludePath}", "${workspaceFolder}/third_party/pdcurses-3.9/include"],
         // "forcedInclude": ["${workspaceFolder}/include/config.h"],
         "cStandard": "c11",
         "browse": {

@@ -55,7 +55,7 @@ ifeq ($(UTF8),Y)
 endif
 
 LIBFLAGS = rcv
-LIBCURSES = $(LIB_DIR)/pdcurses.a
+LIBCURSES = $(LIB_DIR)/libpdcurses.a
 
 ifeq ($(INFOEX),N)
 	CFLAGS += -DHAVE_NO_INFOEX
