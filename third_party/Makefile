@@ -1,3 +1,7 @@
+#
+# recursive make subdirectories
+# add directory name to $LIB_DIRS to add to build
+#
 
 LIB_DIRS := pdcurses-3.9
 
@@ -9,9 +13,9 @@ CLEAN_ALL := $(addprefix CLEAN_TARGET.,$(LIB_DIRS))
 libs: $(LIB_DIRS)
 
 $(LIB_DIRS):
-	make -C $@
+	$(MAKE) -C $@
 
 clean: $(CLEAN_ALL)
 
 CLEAN_TARGET.%:
-	make -C $* clean
+	$(MAKE) -C $* clean

@@ -20,13 +20,13 @@ endif
 osdir		= $(PDCURSES_SRCDIR)/wincon
 common		= $(PDCURSES_SRCDIR)/common
 
-bindir		= $(PDCURSES_SRCDIR)/bin
-libdir		= $(PDCURSES_SRCDIR)/lib
+BIN_DIR		= $(PDCURSES_SRCDIR)/bin
+LIB_DIR		= $(PDCURSES_SRCDIR)/lib
 
 include $(common)/libobjs.mif
 
-LIBOBJS_WITH_DIR = $(addprefix $(bindir)/,$(LIBOBJS))
-PDCOBJS_WITH_DIR = $(addprefix $(bindir)/,$(PDCOBJS))
+LIBOBJS_WITH_DIR = $(addprefix $(BIN_DIR)/,$(LIBOBJS))
+PDCOBJS_WITH_DIR = $(addprefix $(BIN_DIR)/,$(PDCOBJS))
 
 PDCURSES_WIN_H	= $(osdir)/pdcwin.h
 
@@ -55,40 +55,34 @@ ifeq ($(UTF8),Y)
 endif
 
 LIBFLAGS = rcv
-LIBCURSES = $(libdir)/pdcurses.a
+LIBCURSES = $(LIB_DIR)/pdcurses.a
 
 ifeq ($(INFOEX),N)
 	CFLAGS += -DHAVE_NO_INFOEX
 endif
 
-.PHONY: all libs clean directories
+.PHONY: all libs clean
 
 all:	libs
 
-libs:	directories $(LIBCURSES)
+libs:	$(LIBCURSES)
 
 clean:
-	-$(RM) $(bindir) $(libdir)
+	-$(RM) $(BIN_DIR) $(LIB_DIR)
 
-directories: $(bindir) $(libdir)
-
-$(bindir):
+$(BIN_DIR):
 	mkdir -p $@
-$(libdir):
+$(LIB_DIR):
 	mkdir -p $@
 
-$(LIBCURSES) : $(LIBOBJS_WITH_DIR) $(PDCOBJS_WITH_DIR) $(RESOURCE)
+$(LIBCURSES) : $(LIBOBJS_WITH_DIR) $(PDCOBJS_WITH_DIR) $(RESOURCE) | $(LIB_DIR)
 	$(AR) $(LIBFLAGS) $@ $?
 
-pdcurses.o: $(common)/pdcurses.rc
-	$(WINDRES) -i $(common)/pdcurses.rc pdcurses.o
+$(LIBOBJS_WITH_DIR) $(PDCOBJS_WITH_DIR) : $(PDCURSES_HEADERS) | $(BIN_DIR)
+$(PDCOBJS_WITH_DIR) : $(PDCURSES_WIN_H) | $(BIN_DIR)
 
-$(LIBOBJS_WITH_DIR) $(PDCOBJS_WITH_DIR) : $(PDCURSES_HEADERS)
-$(PDCOBJS_WITH_DIR) : $(PDCURSES_WIN_H)
-panel.o : $(PANEL_HEADER)
-
-$(LIBOBJS_WITH_DIR) : $(bindir)/%.o: $(srcdir)/%.c
+$(LIBOBJS_WITH_DIR) : $(BIN_DIR)/%.o: $(srcdir)/%.c
 	$(CC) -c $(CFLAGS) $< -o $@
 
-$(PDCOBJS_WITH_DIR) : $(bindir)/%.o: $(osdir)/%.c
+$(PDCOBJS_WITH_DIR) : $(BIN_DIR)/%.o: $(osdir)/%.c
 	$(CC) -c $(CFLAGS) $< -o $@
