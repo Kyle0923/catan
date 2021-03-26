@@ -1,15 +1,17 @@
 CC := g++
-LINT_REPORT := lint_report.txt
 ARTIFACT := catan.exe
 SRC_DIR := src
 SRC := $(wildcard $(SRC_DIR)/*.cpp)
 OBJ_DIR := bin
 OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
-INC := -Iinclude -Ithird_party/pdcurses-3.9/include
-LIB := -Lthird_party/pdcurses-3.9/lib -l:pdcurses.a
+
+THIRD_PARTY_DIR := third_party
+INC := -Iinclude -I$(THIRD_PARTY_DIR)/pdcurses-3.9/include
+LIB := -L$(THIRD_PARTY_DIR)/pdcurses-3.9/lib -l:pdcurses.a
 CPPFLAGS := $(INC) -MMD -MP
 CFLAGS   := -Wall -std=c++11
 DEPS := $(OBJ:.o=.d)
+
 
 # use `RELEASE=1 make -j8` to build release
 ifneq ($(RELEASE),)
@@ -19,22 +21,24 @@ else
 CFLAGS += -g
 endif
 
-all: $(LINT_REPORT) $(ARTIFACT)
+all: lint $(THIRD_PARTY_DIR) $(ARTIFACT)
+.PHONY: all lint $(THIRD_PARTY_DIR) clean
 
-$(ARTIFACT): $(OBJ)
-	$(CC) $^ $(LIB) $(CFLAGS) -o $@
+$(ARTIFACT): $(OBJ) $(THIRD_PARTY_DIR)
+	$(CC) $(OBJ) $(LIB) $(CFLAGS) -o $@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	mkdir -p $(OBJ_DIR)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -MF $(patsubst %.o,%.d,$@) -c $< -o $@
 
-.PHONY: $(LINT_REPORT)
-$(LINT_REPORT):
-	rm -f $(LINT_REPORT)
-	./lint.sh > $(LINT_REPORT) || (echo -e "\nLint failed\nSee $(LINT_REPORT)\n" && exit 1)
+$(THIRD_PARTY_DIR):
+	make -C $(THIRD_PARTY_DIR)
 
-.PHONY: clean
+lint:
+	bash ./lint.sh
+
 clean:
 	rm -f $(OBJ_DIR)/*.o $(OBJ_DIR)/*.d $(ARTIFACT)
+	make -C $(THIRD_PARTY_DIR) clean
 
 -include $(DEPS)
