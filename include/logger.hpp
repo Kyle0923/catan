@@ -39,7 +39,7 @@ private:
     static std::string log(std::ostream& ostr, Targs... aArgs)
     {
         std::stringstream strstream;
-        _log(strstream, aArgs...);
+        _formatString(strstream, aArgs...);
         std::string logMessage = strstream.str();
         if (mLogger)
         {
@@ -54,20 +54,20 @@ private:
     };
 #ifndef RECURSION
     template<typename... Targs>
-    static void _log(std::stringstream& ostr, Targs... aArgs)
+    static void _formatString(std::stringstream& ostr, Targs... aArgs)
     {
         // pack expansion using brace-enclosed initializer
         __attribute__((unused)) int expander[sizeof...(Targs)] = { (ostr << aArgs, 0)... };
     };
 #else
     template<typename T, typename... Targs>
-    static void _log(std::stringstream& ostr, T aValue, Targs... aArgs)
+    static void _formatString(std::stringstream& ostr, T aValue, Targs... aArgs)
     {
         ostr << aValue;
-        _log(ostr, aArgs...);
+        _formatString(ostr, aArgs...);
     };
     template<typename T>
-    static void _log(std::stringstream& ostr, T aValue)
+    static void _formatString(std::stringstream& ostr, T aValue)
     {
         ostr << aValue;
     };
@@ -90,7 +90,7 @@ public:
     static std::string formatString(Targs... aArgs)
     {
         std::stringstream strstream;
-        _log(strstream, aArgs...);
+        _formatString(strstream, aArgs...);
         return strstream.str();
     };
     template<typename... Targs>

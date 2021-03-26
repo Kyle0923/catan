@@ -28,7 +28,7 @@ void Logger::initLogfile(std::string aLogFilename)
     mLogger = &logger;
     logger.mLogFile.open(aLogFilename);
 #ifdef RELEASE
-    log(std::cout, "Copyright (c) 2021, Zonghao Huang [kyle0923@qq.com]\n"
+    log(std::cout, "Copyright (c) 2021, Zonghao Huang <kyle0923@qq.com>\n"
                     "All rights reserved.\n"
                     "cantan.exe - Version ", VER_MAJOR, '.', VER_MINOR, '.', VER_PATCH, ", Built on " __DATE__ " " __TIME__ "\n");
 #endif /* RELEASE */

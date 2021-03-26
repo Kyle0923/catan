@@ -5,8 +5,8 @@ SRC_DIR := src
 SRC := $(wildcard $(SRC_DIR)/*.cpp)
 OBJ_DIR := bin
 OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
-INC := -Iinclude -Ithird_party/pdcurses/include
-LIB := -Lthird_party/pdcurses/lib -lpdcurses
+INC := -Iinclude -Ithird_party/pdcurses-3.9/include
+LIB := -Lthird_party/pdcurses-3.9/lib -l:pdcurses.a
 CPPFLAGS := $(INC) -MMD -MP
 CFLAGS   := -Wall -std=c++11
 DEPS := $(OBJ:.o=.d)
