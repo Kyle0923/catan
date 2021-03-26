@@ -1,3 +1,13 @@
+/**
+ * Project: catan
+ * @file blank.hpp
+ * @brief singleton class, handles the blank points on the map
+ *
+ * @author Zonghao Huang <kyle0923@qq.com>
+ *
+ * All right reserved.
+ */
+
 #ifndef INCLUDE_BLANK_HPP
 #define INCLUDE_BLANK_HPP
 

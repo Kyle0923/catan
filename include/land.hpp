@@ -1,3 +1,13 @@
+/**
+ * Project: catan
+ * @file land.hpp
+ * @brief abstraction of the resource tiles
+ *
+ * @author Zonghao Huang <kyle0923@qq.com>
+ *
+ * All right reserved.
+ */
+
 #ifndef INCLUDE_LAND_HPP
 #define INCLUDE_LAND_HPP
 

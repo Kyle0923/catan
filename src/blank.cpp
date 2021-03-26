@@ -1,3 +1,12 @@
+/**
+ * Project: catan
+ * @file blank.cpp
+ *
+ * @author Zonghao Huang <kyle0923@qq.com>
+ *
+ * All right reserved.
+ */
+
 #include "blank.hpp"
 
 Blank* Blank::mBlank = nullptr;

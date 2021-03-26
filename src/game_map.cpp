@@ -1,3 +1,12 @@
+/**
+ * Project: catan
+ * @file game_map.cpp
+ *
+ * @author Zonghao Huang <kyle0923@qq.com>
+ *
+ * All right reserved.
+ */
+
 #include <unordered_map>
 #include <algorithm>
 #include <random>

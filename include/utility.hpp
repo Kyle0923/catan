@@ -1,3 +1,13 @@
+/**
+ * Project: catan
+ * @file utility.hpp
+ * @brief handy helper functions
+ *
+ * @author Zonghao Huang <kyle0923@qq.com>
+ *
+ * All right reserved.
+ */
+
 #ifndef INCLUDE_UTILITY_HPP
 #define INCLUDE_UTILITY_HPP
 

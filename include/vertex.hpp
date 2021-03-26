@@ -1,3 +1,13 @@
+/**
+ * Project: catan
+ * @file vertex.hpp
+ * @brief abstraction of the vertices (where players will build settlements and cities)
+ *
+ * @author Zonghao Huang <kyle0923@qq.com>
+ *
+ * All right reserved.
+ */
+
 #ifndef INCLUDE_VERTEX_HPP
 #define INCLUDE_VERTEX_HPP
 

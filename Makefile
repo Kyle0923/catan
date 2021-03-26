@@ -13,6 +13,7 @@ DEPS := $(OBJ:.o=.d)
 
 # use `RELEASE=1 make -j8` to build release
 ifneq ($(RELEASE),)
+ARTIFACT := $(ARTIFACT:%.exe=%_release.exe)
 CFLAGS += -DRELEASE -O3
 else
 CFLAGS += -g

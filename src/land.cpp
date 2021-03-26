@@ -1,3 +1,12 @@
+/**
+ * Project: catan
+ * @file land.cpp
+ *
+ * @author Zonghao Huang <kyle0923@qq.com>
+ *
+ * All right reserved.
+ */
+
 #include "game_map.hpp"
 #include "land.hpp"
 #include "blank.hpp"

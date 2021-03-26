@@ -1,7 +1,23 @@
+/**
+ * Project: catan
+ * @file constant.hpp
+ * @brief global constants
+ *
+ * @author Zonghao Huang <kyle0923@qq.com>
+ *
+ * All right reserved.
+ */
+
 #ifndef INCLUDE_CONSTANT_HPP
 #define INCLUDE_CONSTANT_HPP
 
 #include <cstddef>
+
+#ifdef RELEASE
+constexpr uint32_t VER_MAJOR = 0;
+constexpr uint32_t VER_MINOR = 1;
+constexpr uint32_t VER_PATCH = 0;
+#endif /* RELEASE */
 
 namespace constant
 {

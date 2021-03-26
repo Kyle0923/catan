@@ -1,3 +1,13 @@
+/**
+ * Project: catan
+ * @file game_map.hpp
+ * @brief 2D array, represents the game map
+ *
+ * @author Zonghao Huang <kyle0923@qq.com>
+ *
+ * All right reserved.
+ */
+
 #ifndef INCLUDE_GAME_MAP_HPP
 #define INCLUDE_GAME_MAP_HPP
 
@@ -76,6 +86,9 @@ public:
 
     int initMap();
     void printMap(bool aUseId = false);
+
+    GameMap(const GameMap &) = delete;
+    GameMap& operator=(const GameMap&) = delete;
     ~GameMap();
 };
 

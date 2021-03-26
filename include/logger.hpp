@@ -1,3 +1,13 @@
+/**
+ * Project: catan
+ * @file logger.hpp
+ * @brief logging utility, print message to file and console
+ *
+ * @author Zonghao Huang <kyle0923@qq.com>
+ *
+ * All right reserved.
+ */
+
 #ifndef INCLUDE_LOGGER_HPP
 #define INCLUDE_LOGGER_HPP
 

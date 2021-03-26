@@ -1,3 +1,13 @@
+/**
+ * Project: catan
+ * @file main.cpp
+ * @brief catan.exe entry point
+ *
+ * @author Zonghao Huang <kyle0923@qq.com>
+ *
+ * All right reserved.
+ */
+
 #include <iostream>
 #include <fstream>
 #include <curses.h>

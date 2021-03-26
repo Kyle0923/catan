@@ -1,3 +1,13 @@
+/**
+ * Project: catan
+ * @file harbour.hpp
+ * @brief abstraction of the harbours
+ *
+ * @author Zonghao Huang <kyle0923@qq.com>
+ *
+ * All right reserved.
+ */
+
 #ifndef INCLUDE_HARBOUR_HPP
 #define INCLUDE_HARBOUR_HPP
 

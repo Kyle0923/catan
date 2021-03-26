@@ -1,3 +1,12 @@
+/**
+ * Project: catan
+ * @file utility.cpp
+ *
+ * @author Zonghao Huang <kyle0923@qq.com>
+ *
+ * All right reserved.
+ */
+
 #include "utility.hpp"
 
 size_t PointHash::operator()(const Point_t& aPoint) const

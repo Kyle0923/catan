@@ -1,3 +1,13 @@
+/**
+ * Project: catan
+ * @file common.hpp
+ * @brief common data types
+ *
+ * @author Zonghao Huang <kyle0923@qq.com>
+ *
+ * All right reserved.
+ */
+
 #ifndef INCLUDE_COMMON_HPP
 #define INCLUDE_COMMON_HPP
 

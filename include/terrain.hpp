@@ -1,3 +1,13 @@
+/**
+ * Project: catan
+ * @file terrain.hpp
+ * @brief base class, abstraction of different types of points on the map
+ *
+ * @author Zonghao Huang <kyle0923@qq.com>
+ *
+ * All right reserved.
+ */
+
 #ifndef INCLUDE_TERRAIN_HPP
 #define INCLUDE_TERRAIN_HPP
 

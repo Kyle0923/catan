@@ -1,3 +1,12 @@
+/**
+ * Project: catan
+ * @file map_file_io.cpp
+ *
+ * @author Zonghao Huang <kyle0923@qq.com>
+ *
+ * All right reserved.
+ */
+
 #include "map_file_io.hpp"
 
 int MapIO::readMap(GameMap& aGameMap)

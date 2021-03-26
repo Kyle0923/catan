@@ -1,3 +1,13 @@
+/**
+ * Project: catan
+ * @file map_file_io.hpp
+ * @brief handles file I/O
+ *
+ * @author Zonghao Huang <kyle0923@qq.com>
+ *
+ * All right reserved.
+ */
+
 #ifndef INCLUDE_MAP_FILE_IO_HPP
 #define INCLUDE_MAP_FILE_IO_HPP
 

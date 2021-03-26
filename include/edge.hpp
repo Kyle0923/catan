@@ -1,3 +1,13 @@
+/**
+ * Project: catan
+ * @file edge.hpp
+ * @brief abstraction of the links (roads)
+ *
+ * @author Zonghao Huang <kyle0923@qq.com>
+ *
+ * All right reserved.
+ */
+
 #ifndef INCLUDE_EDGE_HPP
 #define INCLUDE_EDGE_HPP
 

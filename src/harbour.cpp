@@ -1,3 +1,12 @@
+/**
+ * Project: catan
+ * @file harbour.cpp
+ *
+ * @author Zonghao Huang <kyle0923@qq.com>
+ *
+ * All right reserved.
+ */
+
 #include <algorithm>
 #include "game_map.hpp"
 #include "harbour.hpp"
