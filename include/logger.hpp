@@ -17,20 +17,20 @@
 #include <stdexcept>
 
 #define INFO_LOG(...) \
-    Logger::info("In " __FILE__ ":", __LINE__, ": ", __VA_ARGS__)
+    Logger::info(__FILE__ ":", __LINE__, ": ", __VA_ARGS__)
 #define WARN_LOG(...) \
-    Logger::warn("In " __FILE__ ":", __LINE__, ": ", __VA_ARGS__)
+    Logger::warn(__FILE__ ":", __LINE__, ": ", __VA_ARGS__)
 #define ERROR_LOG(...) \
-    Logger::error("In " __FILE__ ":", __LINE__, ": ", __VA_ARGS__)
+    Logger::error(__FILE__ ":", __LINE__, ": ", __VA_ARGS__)
 
 #define DEBUG_LOG_L0(...) \
-    Logger::debug(0, "In " __FILE__ ":", __LINE__, ": ", __VA_ARGS__)
+    Logger::debug(0, __FILE__ ":", __LINE__, ": ", __VA_ARGS__)
 #define DEBUG_LOG_L1(...) \
-    Logger::debug(1, "In " __FILE__ ":", __LINE__, ": ", __VA_ARGS__)
+    Logger::debug(1, __FILE__ ":", __LINE__, ": ", __VA_ARGS__)
 #define DEBUG_LOG_L2(...) \
-    Logger::debug(2, "In " __FILE__ ":", __LINE__, ": ", __VA_ARGS__)
+    Logger::debug(2, __FILE__ ":", __LINE__, ": ", __VA_ARGS__)
 #define DEBUG_LOG_L3(...) \
-    Logger::debug(3, "In " __FILE__ ":", __LINE__, ": ", __VA_ARGS__)
+    Logger::debug(3, __FILE__ ":", __LINE__, ": ", __VA_ARGS__)
 
 class Logger
 {

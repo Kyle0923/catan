@@ -40,23 +40,23 @@ int Vertex::populateNeighbours(GameMap& aMap)
 
 int Vertex::populateNeighbour(GameMap& aMap, const size_t aPointX, const size_t aPointY)
 {
-    Terrain* const pTerrain = aMap.getTerrain(aPointX, aPointY);
-    if (Edge* pEdge = dynamic_cast<Edge*>(pTerrain))
+    const Terrain* const pTerrain = aMap.getTerrain(aPointX, aPointY);
+    if (const Edge* const pEdge = dynamic_cast<const Edge*>(pTerrain))
     {
         // is edge
         mNeighbour.push_back(pTerrain);
-        Vertex* const pAdjacentVertex = pEdge->getVertex(this);
+        const Vertex* const pAdjacentVertex = pEdge->getVertex(this);
         mAdjacentVertices.push_back(pAdjacentVertex);
         DEBUG_LOG_L1("Added adjacent " + pAdjacentVertex->getStringId() + " for " + getStringId());
     }
-    else if (dynamic_cast<Blank*>(pTerrain))
+    else if (dynamic_cast<const Blank*>(pTerrain))
     {
         mIsCoastal = true;
     }
     return 0;
 }
 
-const std::vector<Vertex*>& Vertex::getAdjacentVertices() const
+const std::vector<const Vertex*>& Vertex::getAdjacentVertices() const
 {
     return mAdjacentVertices;
 }

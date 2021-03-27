@@ -75,23 +75,23 @@ int Land::populateNeighbours(GameMap& aMap)
 
 int Land::populateNeighbour(GameMap& aMap, bool aIsVertex, const int aPointX, const int aPointY, const char aPattern)
 {
-    Terrain* pTerrain = aMap.getTerrain(aPointX, aPointY);
+    const Terrain* pTerrain = aMap.getTerrain(aPointX, aPointY);
     bool isCorrectTerrain;
     std::string expectedTerrain;
     if (aIsVertex)
     {
-        isCorrectTerrain = static_cast<bool>(dynamic_cast<Vertex*>(pTerrain));
+        isCorrectTerrain = static_cast<bool>(dynamic_cast<const Vertex*>(pTerrain));
         expectedTerrain = "Vertex";
     }
     else
     {
-        isCorrectTerrain = static_cast<bool>(dynamic_cast<Edge*>(pTerrain));
+        isCorrectTerrain = static_cast<bool>(dynamic_cast<const Edge*>(pTerrain));
         expectedTerrain = "Edge";
     }
     if (!isCorrectTerrain)
     {
         // incorrect terrain
-        if (dynamic_cast<Blank*>(pTerrain) || pTerrain == nullptr)
+        if (dynamic_cast<const Blank*>(pTerrain) || pTerrain == nullptr)
         {
             // is blank, add correct terrain
             if (aIsVertex)

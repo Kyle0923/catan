@@ -29,10 +29,10 @@ private:
     Harbour* mHarbour;
     std::string mOwner;
     BuildingType mBuilding;
-    std::vector<Vertex*> mAdjacentVertices;  //neighbours only store edges, adjacentVertices are store here
+    std::vector<const Vertex*> mAdjacentVertices;  //neighbours only store edges, adjacentVertices are store here
     int populateNeighbour(GameMap& aMap, const size_t aPointX, const size_t aPointY);
 public:
-    const std::vector<Vertex*>& getAdjacentVertices() const;
+    const std::vector<const Vertex*>& getAdjacentVertices() const;
     void setOwner(std::string aOwner, BuildingType aBuilding = BuildingType::SETTLEMENT);
     std::string getOwner();
     bool isCoastal() const;

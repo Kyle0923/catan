@@ -67,8 +67,8 @@ int Edge::populateNeighbours(GameMap& aMap)
 
 int Edge::populateNeighbour(GameMap& aMap, const size_t aPointX, const size_t aPointY)
 {
-    Terrain* pTerrain = aMap.getTerrain(aPointX, aPointY);
-    if (!dynamic_cast<Vertex*>(pTerrain))
+    const Terrain* const pTerrain = aMap.getTerrain(aPointX, aPointY);
+    if (!dynamic_cast<const Vertex*>(pTerrain))
     {
         // not vertex
         WARN_LOG("At Point [", aPointX, ", ", aPointY, "], Expected Vertex - Actual ", pTerrain->getStringId());
@@ -78,12 +78,12 @@ int Edge::populateNeighbour(GameMap& aMap, const size_t aPointX, const size_t aP
     return 0;
 }
 
-Vertex* Edge::getVertex(Vertex* const aVertex)
+const Vertex* Edge::getVertex(Vertex* const aVertex) const
 {
-    for (Terrain* const pTerrain : mNeighbour)
+    for (const Terrain* const pTerrain : mNeighbour)
     {
         if (pTerrain != aVertex)
-            return dynamic_cast<Vertex*>(pTerrain);
+            return dynamic_cast<const Vertex*>(pTerrain);
     }
     return nullptr;
 }

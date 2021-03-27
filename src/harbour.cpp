@@ -51,7 +51,7 @@ int Harbour::calculatePoints(GameMap& aMap)
         Point_t pointB = mVertex2;  // the other point
         int dx = -1;
         int dy = -1;
-        Terrain* pTest = aMap.getTerrain(mVertex1.x + 1, mVertex1.y);
+        const Terrain* pTest = aMap.getTerrain(mVertex1.x + 1, mVertex1.y);
         if (pTest == Blank::getBlank() || pTest == nullptr)
         {
             // harbour is right to the vertices
@@ -85,7 +85,7 @@ int Harbour::calculatePoints(GameMap& aMap)
         Point_t pointB = mVertex1;  // the other point
         int dx = -1;
         int dy = 1;
-        Terrain* pTest = aMap.getTerrain(mVertex1.x + 1, mVertex1.y);
+        const Terrain* pTest = aMap.getTerrain(mVertex1.x + 1, mVertex1.y);
         if (pTest == Blank::getBlank() || pTest == nullptr)
         {
             // harbour is right to the vertices

@@ -63,12 +63,12 @@ public:
 
     int clearAndResize(const int aSizeHorizontal, const int aSizeVertical);
 
-    Terrain* getTerrain(const int x, const int y);
-    Terrain* getTerrain(const Point_t& aPoint);
+    const Terrain* getTerrain(const int x, const int y);
+    const Terrain* getTerrain(const Point_t& aPoint);
 
-    Vertex* addVertex(const size_t aTopRightX, const size_t aTopRightY);
-    Edge* addEdge(const size_t aTopRightX, const size_t aTopRightY, const char aPattern);
-    Land* addLand(const size_t aTopRightX, const size_t aTopRightY, const ResourceTypes aResource);
+    const Vertex* addVertex(const size_t aTopRightX, const size_t aTopRightY);
+    const Edge* addEdge(const size_t aTopRightX, const size_t aTopRightY, const char aPattern);
+    const Land* addLand(const size_t aTopRightX, const size_t aTopRightY, const ResourceTypes aResource);
 
     // /* add a vertex to be a condidate of harbour
     //  * a condidate must be coastal

@@ -144,16 +144,17 @@ int GameMap::populateHarbours(bool aUseDefaultPosition, bool aUseDefaultResource
 int GameMap::createHarboursDefault()
 {
     std::vector<int> harbourCandidates;
-    Vertex* pVertex = nullptr;
-    // find a coastal vertex as the starting point
+    const Vertex* pVertex = nullptr;
     for (Vertex* pVertexTemp : mVertices)
     {
-        if (pVertexTemp->isCoastal())
+        // reset harbours
+        pVertexTemp->setHarbour(nullptr);
+        // find a coastal vertex as the starting point
+        if ((pVertex == nullptr) && (pVertexTemp->isCoastal()))
         {
             harbourCandidates.push_back(pVertexTemp->getId());
             pVertexTemp->setHarbour(nullptr);
             pVertex = pVertexTemp;
-            break;
         }
     }
     if (!pVertex)
@@ -161,11 +162,11 @@ int GameMap::createHarboursDefault()
         ERROR_LOG("Unable to find a string point");
         return 1;
     }
-    Vertex* pPreviousVertex = pVertex;
+    const Vertex* pPreviousVertex = pVertex;
     do
     {
-        const std::vector<Vertex*>& adjacentVertices = pVertex->getAdjacentVertices();
-        for (Vertex* const pNextVertex : adjacentVertices)
+        const std::vector<const Vertex*>& adjacentVertices = pVertex->getAdjacentVertices();
+        for (const Vertex* const pNextVertex : adjacentVertices)
         {
             if (pNextVertex == pPreviousVertex)
             {
@@ -174,7 +175,6 @@ int GameMap::createHarboursDefault()
             if (pNextVertex->isCoastal())
             {
                 harbourCandidates.push_back(pNextVertex->getId());
-                pNextVertex->setHarbour(nullptr);
                 pPreviousVertex = pVertex;
                 pVertex = pNextVertex;
                 break;
@@ -200,6 +200,11 @@ int GameMap::createHarboursDefault()
 
 int GameMap::createHarboursRandom()
 {
+    if (mHarbours.size() >= mNumHarbour)
+    {
+        mNumHarbour = mHarbours.size();
+        return 0;
+    }
     std::vector<int> harbourCandidates;
     for (Vertex* const pVertex : mVertices)
     {
@@ -225,7 +230,7 @@ int GameMap::createHarboursRandom()
         {
             continue;
         }
-        const std::vector<Vertex*>& adjacentVertices = mVertices[idVertex]->getAdjacentVertices();
+        const std::vector<const Vertex*>& adjacentVertices = mVertices[idVertex]->getAdjacentVertices();
         int idOtherVertex = -1;
         for (const Vertex* const pVertex : adjacentVertices)
         {
@@ -366,7 +371,7 @@ int GameMap::assignResourceAndDice()
     return 0;
 }
 
-Terrain* GameMap::getTerrain(const int x, const int y)
+const Terrain* GameMap::getTerrain(const int x, const int y)
 {
     if (boundaryCheck(x,y))
     {
@@ -379,12 +384,12 @@ Terrain* GameMap::getTerrain(const int x, const int y)
     }
 }
 
-Terrain* GameMap::getTerrain(const Point_t& aPoint)
+const Terrain* GameMap::getTerrain(const Point_t& aPoint)
 {
     return getTerrain(aPoint.x, aPoint.y);
 }
 
-Vertex* GameMap::addVertex(const size_t aTopRightX, const size_t aTopRightY)
+const Vertex* GameMap::addVertex(const size_t aTopRightX, const size_t aTopRightY)
 {
     if (mInitialized)
     {
@@ -397,7 +402,7 @@ Vertex* GameMap::addVertex(const size_t aTopRightX, const size_t aTopRightY)
     return pVertex;
 }
 
-Edge* GameMap::addEdge(const size_t aTopRightX, const size_t aTopRightY, const char aPattern)
+const Edge* GameMap::addEdge(const size_t aTopRightX, const size_t aTopRightY, const char aPattern)
 {
     if (mInitialized)
     {
@@ -411,7 +416,7 @@ Edge* GameMap::addEdge(const size_t aTopRightX, const size_t aTopRightY, const c
 
 }
 
-Land* GameMap::addLand(const size_t aTopRightX, const size_t aTopRightY, const ResourceTypes aResource)
+const Land* GameMap::addLand(const size_t aTopRightX, const size_t aTopRightY, const ResourceTypes aResource)
 {
     if (mInitialized)
     {

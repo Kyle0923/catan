@@ -28,7 +28,7 @@ protected:
      * for vertices => edges
      * for edges    => vertices
      */
-    std::vector<Terrain*> mNeighbour;
+    std::vector<const Terrain*> mNeighbour;
 public:
     // return the top-right point (top first)
     Point_t getTopRight();

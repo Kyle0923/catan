@@ -33,7 +33,7 @@ int MapIO::readMap(GameMap& aGameMap)
             {
                 continue;
             }
-            Terrain* const pTerrain = aGameMap.getTerrain(ii, jj);
+            const Terrain* const pTerrain = aGameMap.getTerrain(ii, jj);
             if (pTerrain)
             {
                 // occupied
