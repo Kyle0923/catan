@@ -10,10 +10,9 @@
 
 #include <iostream>
 #include <fstream>
-#include <curses.h>
 #include <time.h>
 #include <string.h>
-
+#include "logger.hpp"
 #include "common.hpp"
 #include "game_map.hpp"
 #include "map_file_io.hpp"

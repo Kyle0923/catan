@@ -11,7 +11,8 @@
 #ifndef INCLUDE_COMMON_HPP
 #define INCLUDE_COMMON_HPP
 
-#include "logger.hpp"
+#include <string>
+#include "curses.h"
 
 struct Point_t
 {

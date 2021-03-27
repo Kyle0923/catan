@@ -8,6 +8,7 @@
  */
 
 #include <algorithm>
+#include "logger.hpp"
 #include "game_map.hpp"
 #include "harbour.hpp"
 #include "blank.hpp"

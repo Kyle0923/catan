@@ -13,6 +13,7 @@
 #include <chrono>
 #include <set>
 #include <cstdlib>
+#include "logger.hpp"
 #include "utility.hpp"
 #include "game_map.hpp"
 #include "blank.hpp"

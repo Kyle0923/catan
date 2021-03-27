@@ -7,6 +7,7 @@
  * All right reserved.
  */
 
+#include "iostream"
 #include "utility.hpp"
 
 size_t PointHash::operator()(const Point_t& aPoint) const

@@ -1,6 +1,5 @@
 /bin/
-catan.exe
-log.txt
+catan*.exe
 lint_report.txt
 third_party/pdcurses-3.9/bin/
 third_party/pdcurses-3.9/lib/pdcurses.a

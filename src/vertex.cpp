@@ -7,6 +7,7 @@
  * All right reserved.
  */
 
+#include "logger.hpp"
 #include "game_map.hpp"
 #include "vertex.hpp"
 #include "edge.hpp"

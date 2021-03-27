@@ -7,8 +7,9 @@
  * All right reserved.
  */
 
-#include "game_map.hpp"
+#include "logger.hpp"
 #include "edge.hpp"
+#include "game_map.hpp"
 
 std::vector<Point_t> Edge::getAllPoints() const
 {

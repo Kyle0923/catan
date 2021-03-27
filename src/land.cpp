@@ -7,6 +7,7 @@
  * All right reserved.
  */
 
+#include "logger.hpp"
 #include "game_map.hpp"
 #include "land.hpp"
 #include "blank.hpp"

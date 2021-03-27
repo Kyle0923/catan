@@ -8,6 +8,7 @@
  */
 
 #include "map_file_io.hpp"
+#include "logger.hpp"
 
 int MapIO::readMap(GameMap& aGameMap)
 {
