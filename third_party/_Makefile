@@ -1,0 +1,25 @@
+#
+# recursive make subdirectories
+# add directory name to $LIB_DIRS to add to build
+#
+
+# !! No longer in use
+# this file is here for reference only
+# the functionality is moved to the top level makefile
+
+LIB_DIRS := pdcurses-3.9
+
+# phony targets to clean all subdirectories, using recipe - CLEAN_SUBDIR.%
+CLEAN_ALL := $(addprefix CLEAN_SUBDIR.,$(LIB_DIRS))
+
+.PHONY: libs $(LIB_DIRS) clean
+
+libs: $(LIB_DIRS)
+
+$(LIB_DIRS):
+	$(MAKE) -C $@
+
+clean: $(CLEAN_ALL)
+
+CLEAN_SUBDIR.%:
+	$(MAKE) -C $* clean
