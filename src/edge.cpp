@@ -14,20 +14,20 @@
 std::vector<Point_t> Edge::getAllPoints() const
 {
     std::vector<Point_t> allPoints;
-    allPoints.push_back(mTopRight);
+    allPoints.push_back(mTopLeft);
     switch (mDirection)
     {
         case '-':
             for (int ii = 1; ii <= HORIZONTAL_LENGTH; ++ii)
             {
-                allPoints.push_back(Point_t{mTopRight.x + ii, mTopRight.y});
+                allPoints.push_back(Point_t{mTopLeft.x + ii, mTopLeft.y});
             }
             break;
         case '/':
-            allPoints.push_back(Point_t{mTopRight.x - 1, mTopRight.y + 1});
+            allPoints.push_back(Point_t{mTopLeft.x - 1, mTopLeft.y + 1});
             break;
         case '\\':
-            allPoints.push_back(Point_t{mTopRight.x + 1, mTopRight.y + 1});
+            allPoints.push_back(Point_t{mTopLeft.x + 1, mTopLeft.y + 1});
             break;
         default:
             ERROR_LOG("Unknow Edge direction [", mDirection, "]");
@@ -43,15 +43,15 @@ int Edge::populateNeighbours(GameMap& aMap)
     switch (mDirection)
     {
     case '-':
-        rc |= populateNeighbour(aMap, mTopRight.x - 1, mTopRight.y);
+        rc |= populateNeighbour(aMap, mTopLeft.x - 1, mTopLeft.y);
         rc |= populateNeighbour(aMap, mOtherEnd.x + 1, mOtherEnd.y);
         break;
     case '/':
-        rc |= populateNeighbour(aMap, mTopRight.x + 1, mTopRight.y - 1);
+        rc |= populateNeighbour(aMap, mTopLeft.x + 1, mTopLeft.y - 1);
         rc |= populateNeighbour(aMap, mOtherEnd.x - 1, mOtherEnd.y + 1);
         break;
     case '\\':
-        rc |= populateNeighbour(aMap, mTopRight.x - 1, mTopRight.y - 1);
+        rc |= populateNeighbour(aMap, mTopLeft.x - 1, mTopLeft.y - 1);
         rc |= populateNeighbour(aMap, mOtherEnd.x + 1, mOtherEnd.y + 1);
         break;
     default:
@@ -88,8 +88,8 @@ const Vertex* Edge::getVertex(Vertex* const aVertex) const
     return nullptr;
 }
 
-Edge::Edge(const int aId, const Point_t aTopRight, const char aDirection) :
-    Terrain(aId, aTopRight)
+Edge::Edge(const int aId, const Point_t aTopLeft, const char aDirection) :
+    Terrain(aId, aTopLeft)
 {
     mOwner = "None";
     if (aDirection == '-' || aDirection == '/' || aDirection == '\\' )
@@ -103,13 +103,13 @@ Edge::Edge(const int aId, const Point_t aTopRight, const char aDirection) :
     switch (mDirection)
     {
         case '-':
-            mOtherEnd = Point_t{mTopRight.x + HORIZONTAL_LENGTH, mTopRight.y};
+            mOtherEnd = Point_t{mTopLeft.x + HORIZONTAL_LENGTH, mTopLeft.y};
             break;
         case '/':
-            mOtherEnd = Point_t{mTopRight.x - 1, mTopRight.y + 1};
+            mOtherEnd = Point_t{mTopLeft.x - 1, mTopLeft.y + 1};
             break;
         case '\\':
-            mOtherEnd = Point_t{mTopRight.x + 1, mTopRight.y + 1};
+            mOtherEnd = Point_t{mTopLeft.x + 1, mTopLeft.y + 1};
             break;
         default:
             ERROR_LOG("Unknow Edge direction [", mDirection, "]");

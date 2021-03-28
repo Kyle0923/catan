@@ -18,7 +18,7 @@ class Blank : public Terrain
 {
 private:
     static Blank* mBlank;
-    Blank(const int aId, const Point_t aTopRight);
+    Blank(const int aId, const Point_t aTopLeft);
 public:
     static Blank* getBlank();
     char getCharRepresentation(const size_t aPointX, const size_t aPointY, const bool aUseId = false) const override;

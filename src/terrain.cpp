@@ -10,9 +10,9 @@
 #include "terrain.hpp"
 #include "game_map.hpp"
 
-Point_t Terrain::getTopRight()
+Point_t Terrain::getTopLeft()
 {
-    return mTopRight;
+    return mTopLeft;
 }
 
 int Terrain::getId() const
@@ -33,16 +33,16 @@ int Terrain::populateNeighbours(GameMap& aMap)
     return 0;
 }
 
-Terrain::Terrain(const int aId, const Point_t aTopRight) :
+Terrain::Terrain(const int aId, const Point_t aTopLeft) :
     mId(aId),
-    mTopRight(aTopRight)
+    mTopLeft(aTopLeft)
 {
     // empty
 }
 
 std::vector<Point_t> Terrain::getAllPoints() const
 {
-    return std::vector<Point_t>{mTopRight};
+    return std::vector<Point_t>{mTopLeft};
 }
 
 Terrain::~Terrain()

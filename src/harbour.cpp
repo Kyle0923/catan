@@ -38,8 +38,8 @@ int Harbour::calculatePoints(GameMap& aMap)
         mLinks.push_back(Point_t{mVertex2.x - 3, mVertex1.y + dy * 2});
         mLinks.push_back(Point_t{mVertex2.x - 4, mVertex1.y + dy * 2});
 
-        mTopRight.x = mVertex1.x + 4;
-        mTopRight.y = mVertex1.y + dy * 3;
+        mTopLeft.x = mVertex1.x + 4;
+        mTopLeft.y = mVertex1.y + dy * 3;
     }
     else if (mVertex1.x > mVertex2.x)
     {
@@ -60,11 +60,11 @@ int Harbour::calculatePoints(GameMap& aMap)
             dx = 1;
             dy = 1;
 
-            mTopRight.x = pointB.x + 2;
+            mTopLeft.x = pointB.x + 2;
         }
         else
         {
-            mTopRight.x = pointB.x - 1 - resourceTypesToStr(mResourceType).length();
+            mTopLeft.x = pointB.x - 1 - resourceTypesToStr(mResourceType).length();
         }
         mLinks.push_back(Point_t{pointA.x + dx * 1, pointA.y});
         mLinks.push_back(Point_t{pointA.x + dx * 2, pointA.y});
@@ -73,7 +73,7 @@ int Harbour::calculatePoints(GameMap& aMap)
 
         mLinks.push_back(Point_t{pointB.x + dx, pointB.y + dy});
 
-        mTopRight.y = pointA.y - dy;
+        mTopLeft.y = pointA.y - dy;
     }
     else
     {
@@ -94,11 +94,11 @@ int Harbour::calculatePoints(GameMap& aMap)
             dx = 1;
             dy = -1;
 
-            mTopRight.x = pointB.x + 2;
+            mTopLeft.x = pointB.x + 2;
         }
         else
         {
-            mTopRight.x = pointB.x - 1 - resourceTypesToStr(mResourceType).length();
+            mTopLeft.x = pointB.x - 1 - resourceTypesToStr(mResourceType).length();
         }
         mLinks.push_back(Point_t{pointA.x + dx * 1, pointA.y});
         mLinks.push_back(Point_t{pointA.x + dx * 2, pointA.y});
@@ -107,7 +107,7 @@ int Harbour::calculatePoints(GameMap& aMap)
 
         mLinks.push_back(Point_t{pointB.x + dx, pointB.y + dy});
 
-        mTopRight.y = pointA.y - dy;
+        mTopLeft.y = pointA.y - dy;
     }
     return 0;
 }
@@ -117,7 +117,7 @@ std::vector<Point_t> Harbour::getAllPoints() const
     std::vector<Point_t> allPoints(mLinks);
     for (size_t ii = 0; ii < std::min(resourceTypesToStr(mResourceType).length(), 5U); ++ii)
     {
-        allPoints.push_back(Point_t{mTopRight.x + ii, mTopRight.y});
+        allPoints.push_back(Point_t{mTopLeft.x + ii, mTopLeft.y});
     }
     return allPoints;
 }
@@ -169,12 +169,12 @@ char Harbour::getCharRepresentation(const size_t aPointX, const size_t aPointY, 
         {
             if (mResourceType != ResourceTypes::ANY)
             {
-                return resourceTypesToStr(mResourceType).at(aPointX - mTopRight.x);
+                return resourceTypesToStr(mResourceType).at(aPointX - mTopLeft.x);
             }
             else
             {
                 static const std::vector<char> harbourAny = {'3', ':', '1'};
-                return harbourAny[aPointX - mTopRight.x];
+                return harbourAny[aPointX - mTopLeft.x];
             }
         }
     }

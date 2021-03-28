@@ -38,8 +38,8 @@ std::string Blank::getStringId() const
     return "Blank";
 }
 
-Blank::Blank(const int aId, const Point_t aTopRight) :
-    Terrain(aId, aTopRight)
+Blank::Blank(const int aId, const Point_t aTopLeft) :
+    Terrain(aId, aTopLeft)
 {
     // empty
 }

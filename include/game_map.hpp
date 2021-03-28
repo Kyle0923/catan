@@ -46,8 +46,9 @@ private:
 
     /*
      * aUseDefaultPosition - randomize the position of the harbours, though the harbours tend to not evenly distributed
+     *                       useful when using user defined map
      * aUseDefaultResourceType - by default, 1 ANY harbour is placed between 2 Resource harbours (where possible)
-     *                           set this to true to lift that restriction
+     *                           set this to false to lift that restriction
      */
     int populateHarbours(bool aUseDefaultPosition, bool aUseDefaultResourceType);
     int createHarboursDefault();
@@ -66,9 +67,9 @@ public:
     const Terrain* getTerrain(const int x, const int y);
     const Terrain* getTerrain(const Point_t& aPoint);
 
-    const Vertex* addVertex(const size_t aTopRightX, const size_t aTopRightY);
-    const Edge* addEdge(const size_t aTopRightX, const size_t aTopRightY, const char aPattern);
-    const Land* addLand(const size_t aTopRightX, const size_t aTopRightY, const ResourceTypes aResource);
+    const Vertex* addVertex(const size_t aTopLeftX, const size_t aTopLeftY);
+    const Edge* addEdge(const size_t aTopLeftX, const size_t aTopLeftY, const char aPattern);
+    const Land* addLand(const size_t aTopLeftX, const size_t aTopLeftY, const ResourceTypes aResource);
 
     // /* add a vertex to be a condidate of harbour
     //  * a condidate must be coastal

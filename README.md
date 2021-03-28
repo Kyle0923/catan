@@ -20,40 +20,40 @@ To clean all including third party libraries, run `make clean_all`
 This project uses command line and mouse to accept user's input and print out ASCII graph as output.  
 An example of the ASCII graph of the game map:
 ```
-                                          3:1                                           
-                                         xx  xx                                         
-                                       xx      xx                                       
-                                      +----------+                                      
-                                     /            \                                     
-                                    /              \                                    
-                    xxxx+----------+     SHEEP      +----------+xxxx                    
-               WHEAT   /            \      5       /            \   3:1                 
-                    x /              \            /              \ x                    
-          +----------+     WHEAT      +----------+     DESERT     +----------+          
-         /            \      6       /            \              /            \         
-        /              \            /              \            /              \        
-       +     SHEEP      +----------+      ORE       +----------+      WOOD      +       
-        \      4       /            \      3       /            \      9       /        
-         \            /              \            /              \            /         
-      xxxx+----------+     WHEAT      +----------+      ORE       +----------+xxxx      
-   3:1   /            \      6       /            \      8       /            \   SHEEP 
-      x /              \            /              \            /              \ x      
-       +      CLAY      +----------+      CLAY      +----------+     SHEEP      +       
-        \      4       /            \      10      /            \      11      /        
-         \            /              \            /              \            /         
-          +----------+      ORE       +----------+     WHEAT      +----------+          
-         /            \      11      /            \      12      /            \         
-        /              \            /              \            /              \        
-       +      WOOD      +----------+      CLAY      +----------+      WOOD      +       
-      x \      10      /            \      2       /            \      8       / x      
-   3:1   \            /              \            /              \            /   3:1   
-      xxxx+----------+     WHEAT      +----------+     SHEEP      +----------+xxxx      
-                      \      9       /            \      5       /                      
-                       \            /              \            /                       
-                        +----------+      WOOD      +----------+                        
-                         xx      xx \      3       / xx      xx                         
-                           xx  xx    \            /    xx  xx                           
-                            3:1       +----------+      3:1                             
+                                          WOOD                                         
+                                         xx  xx                                        
+                                       xx      xx                                      
+                                      +----------+                                     
+                                     /            \                                    
+                                    /              \                                   
+                    xxxx+----------+     SHEEP      +----------+xxxx                   
+                 ORE   /            \      5       /            \   3:1                
+                    x /              \            /              \ x                   
+          +----------+      WOOD      +----------+      WOOD      +----------+         
+         /            \      9       /            \      12      /            \        
+        /              \            /              \            /              \       
+       +     WHEAT      +----------+     SHEEP      +----------+      CLAY      +      
+        \      8       /            \      5       /            \      6       /       
+         \            /              \            /              \            /        
+      xxxx+----------+      ORE       +----------+     SHEEP      +----------+xxxx     
+   3:1   /            \      11      /            \      9       /            \   CLAY 
+      x /              \            /              \            /              \ x     
+       +     WHEAT      +----------+      ORE       +----------+      CLAY      +      
+        \      10      /            \      3       /            \      4       /       
+         \            /              \            /              \            /        
+          +----------+      WOOD      +----------+      WOOD      +----------+         
+         /            \      11      /            \      2       /            \        
+        /              \            /              \            /              \       
+       +      CLAY      +----------+     WHEAT      +----------+      ORE       +      
+      x \      4       /            \      6       /            \      8       / x     
+ WHEAT   \            /              \            /              \            /   3:1  
+      xxxx+----------+     DESERT     +----------+     WHEAT      +----------+xxxx     
+                      \              /            \      3       /                     
+                       \            /              \            /                      
+                        +----------+     SHEEP      +----------+                       
+                         xx      xx \      10      / xx      xx                        
+                           xx  xx    \            /    xx  xx                          
+                            3:1       +----------+      SHEEP                          
 ```
 
 ## Acknowledgment

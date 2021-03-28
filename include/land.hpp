@@ -22,7 +22,7 @@ private:
     int populateNeighbour(GameMap& aMap, bool aIsVertex, const int aPointX, const int aPointY, const char aPattern = '.');
 public:
     std::vector<Point_t> getAllPoints() const override;
-    Land(const int aId, const Point_t aTopRight, const ResourceTypes aResourceType);
+    Land(const int aId, const Point_t aTopLeft, const ResourceTypes aResourceType);
     void setResourceType(ResourceTypes aResourceType);
     ResourceTypes getResourceType();
     void setDiceNum(int aDice);

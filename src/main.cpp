@@ -12,6 +12,7 @@
 #include <fstream>
 #include <time.h>
 #include <string.h>
+#include <cstdlib>
 #include "logger.hpp"
 #include "common.hpp"
 #include "game_map.hpp"
@@ -29,10 +30,21 @@ short color_table[] =
     COLOR_RED, COLOR_MAGENTA, COLOR_YELLOW, COLOR_WHITE
 };
 
-int main(int argc, char **argv)
+// command line options
+struct CliOpt_t
+{
+    static constexpr char debugOpt[] = "--debug";
+    int debugValue = 0;
+};
+
+int processOpt(int argc, char** argv, CliOpt_t& aOpt);
+
+int main(int argc, char** argv)
 {
     Logger::initLogfile();
-    Logger::setDebugLevel(3);
+    CliOpt_t cliOpt;
+    processOpt(argc, argv, cliOpt);
+    Logger::setDebugLevel(cliOpt.debugValue);
     DEBUG_LOG_L0("Begin ", " of ", "main");
     GameMap gameMap;
     MapIO mapFile("map.txt");
@@ -169,4 +181,20 @@ void get_color(void)
 {
     chtype bold = (rand() % 2) ? A_BOLD : A_NORMAL;
     attrset(COLOR_PAIR(rand() % 8) | bold);
+}
+
+constexpr char CliOpt_t::debugOpt[];
+
+int processOpt(int argc, char** argv, CliOpt_t& aOpt)
+{
+    for (int ii = 0; ii < argc; ++ii)
+    {
+        if (!strcmp(argv[ii], CliOpt_t::debugOpt))
+        {
+            if (++ii < argc) {
+                aOpt.debugValue = static_cast<int>(strtol(argv[ii], nullptr, 10));
+            }
+        }
+    }
+    return 0;
 }

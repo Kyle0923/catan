@@ -21,7 +21,7 @@ class Terrain
 {
 protected:
     const int mId;
-    Point_t mTopRight;
+    Point_t mTopLeft;
 
     /* mNeighbour stores the neighbours of insterest (not all neighbours)
      * for lands    => vertices
@@ -30,10 +30,10 @@ protected:
      */
     std::vector<const Terrain*> mNeighbour;
 public:
-    // return the top-right point (top first)
-    Point_t getTopRight();
+    // return the top-left point (top first)
+    Point_t getTopLeft();
     int getId() const;
-    Terrain(const int aId, const Point_t aTopRight);
+    Terrain(const int aId, const Point_t aTopLeft);
 
     // Register all points of current terrain to map
     void registerToMap(GameMap& aMap);

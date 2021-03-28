@@ -14,6 +14,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <vector>
 #include <stdexcept>
 
 #define INFO_LOG(...) \
@@ -31,6 +32,18 @@
     Logger::debug(2, __FILE__ ":", __LINE__, ": ", __VA_ARGS__)
 #define DEBUG_LOG_L3(...) \
     Logger::debug(3, __FILE__ ":", __LINE__, ": ", __VA_ARGS__)
+
+template<typename T>
+extern std::ostream& operator<< (std::ostream& aStream, const std::vector<T>& aVec)
+{
+    auto iter = aVec.begin();
+    aStream << "Vec[" << *iter++;
+    for (; iter != aVec.end(); ++iter)
+    {
+        aStream << ", " << *iter;
+    }
+    return aStream << ']';
+};
 
 class Logger
 {

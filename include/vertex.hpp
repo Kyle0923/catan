@@ -41,7 +41,7 @@ public:
     int populateNeighbours(GameMap& aMap) override;
     char getCharRepresentation(const size_t aPointX, const size_t aPointY, const bool aUseId = false) const override;
     std::string getStringId() const override;
-    Vertex(const int aId, const Point_t aTopRight);
+    Vertex(const int aId, const Point_t aTopLeft);
     virtual ~Vertex();
 };
 

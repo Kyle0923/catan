@@ -21,9 +21,9 @@ bool operator==(const Point_t& aPointA, const Point_t& aPointB)
     return (aPointA.x == aPointB.x) && (aPointA.y == aPointB.y);
 }
 
-std::ostream & operator<< (std::ostream &aStream, const Point_t& aPoint)
+std::ostream& operator<< (std::ostream& aStream, const Point_t& aPoint)
 {
-    return aStream << aPoint.x << ',' << aPoint.y;
+    return aStream << '(' << aPoint.x << ',' << aPoint.y << ')';
 }
 
 std::string resourceTypesToStr(const ResourceTypes aResource)

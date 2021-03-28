@@ -24,12 +24,12 @@ int Vertex::populateNeighbours(GameMap& aMap)
     mNeighbour.clear();
 
     int rc = 0;
-    rc |= populateNeighbour(aMap, mTopRight.x - 1, mTopRight.y);
-    rc |= populateNeighbour(aMap, mTopRight.x - 1, mTopRight.y - 1);
-    rc |= populateNeighbour(aMap, mTopRight.x + 1, mTopRight.y - 1);
-    rc |= populateNeighbour(aMap, mTopRight.x + 1, mTopRight.y);
-    rc |= populateNeighbour(aMap, mTopRight.x + 1, mTopRight.y + 1);
-    rc |= populateNeighbour(aMap, mTopRight.x - 1, mTopRight.y + 1);
+    rc |= populateNeighbour(aMap, mTopLeft.x - 1, mTopLeft.y);
+    rc |= populateNeighbour(aMap, mTopLeft.x - 1, mTopLeft.y - 1);
+    rc |= populateNeighbour(aMap, mTopLeft.x + 1, mTopLeft.y - 1);
+    rc |= populateNeighbour(aMap, mTopLeft.x + 1, mTopLeft.y);
+    rc |= populateNeighbour(aMap, mTopLeft.x + 1, mTopLeft.y + 1);
+    rc |= populateNeighbour(aMap, mTopLeft.x - 1, mTopLeft.y + 1);
 
     (rc != 0) ?
         WARN_LOG("Failed to populate neighbours of ", getStringId())
@@ -122,8 +122,8 @@ std::string Vertex::getStringId() const
     return Logger::formatString("Vertex#", mId);
 }
 
-Vertex::Vertex(const int aId, const Point_t aTopRight) :
-    Terrain(aId, aTopRight),
+Vertex::Vertex(const int aId, const Point_t aTopLeft) :
+    Terrain(aId, aTopLeft),
     mIsCoastal(false),
     mHarbour(nullptr)
 {

@@ -99,8 +99,9 @@ int GameMap::populateHarbours(bool aUseDefaultPosition, bool aUseDefaultResource
     if (aUseDefaultResourceType && mHarbours.size() == constant::NUM_OF_HARBOUR)
     {
         DEBUG_LOG_L3("Using default 9 harbours");
-        config[ResourceTypes::ANY] = constant::NUM_HARBOUR_ANY;
+        config[ResourceTypes::ANY] = 0; // ANY is determined by (index % 2 != 0)
         std::vector<int> randomSeq = randomizeResource(config);
+        DEBUG_LOG_L2("Assigning randomSeq ", randomSeq, " to harbours");
         for (size_t index = 0; index < mHarbours.size(); ++index)
         {
             if (index % 2 != 0)
@@ -153,7 +154,6 @@ int GameMap::createHarboursDefault()
         if ((pVertex == nullptr) && (pVertexTemp->isCoastal()))
         {
             harbourCandidates.push_back(pVertexTemp->getId());
-            pVertexTemp->setHarbour(nullptr);
             pVertex = pVertexTemp;
         }
     }
@@ -389,41 +389,41 @@ const Terrain* GameMap::getTerrain(const Point_t& aPoint)
     return getTerrain(aPoint.x, aPoint.y);
 }
 
-const Vertex* GameMap::addVertex(const size_t aTopRightX, const size_t aTopRightY)
+const Vertex* GameMap::addVertex(const size_t aTopLeftX, const size_t aTopLeftY)
 {
     if (mInitialized)
     {
         ERROR_LOG("Map initialized, cannot add vertex");
         return nullptr;
     }
-    Vertex* const pVertex = new Vertex(mVertices.size(), Point_t{aTopRightX, aTopRightY});
+    Vertex* const pVertex = new Vertex(mVertices.size(), Point_t{aTopLeftX, aTopLeftY});
     pVertex->registerToMap(*this);
     mVertices.push_back(pVertex);
     return pVertex;
 }
 
-const Edge* GameMap::addEdge(const size_t aTopRightX, const size_t aTopRightY, const char aPattern)
+const Edge* GameMap::addEdge(const size_t aTopLeftX, const size_t aTopLeftY, const char aPattern)
 {
     if (mInitialized)
     {
         ERROR_LOG("Map initialized, cannot add edge");
         return nullptr;
     }
-    Edge* const pEdge = new Edge(mEdges.size(), Point_t{aTopRightX, aTopRightY}, aPattern);
+    Edge* const pEdge = new Edge(mEdges.size(), Point_t{aTopLeftX, aTopLeftY}, aPattern);
     pEdge->registerToMap(*this);
     mEdges.push_back(pEdge);
     return pEdge;
 
 }
 
-const Land* GameMap::addLand(const size_t aTopRightX, const size_t aTopRightY, const ResourceTypes aResource)
+const Land* GameMap::addLand(const size_t aTopLeftX, const size_t aTopLeftY, const ResourceTypes aResource)
 {
     if (mInitialized)
     {
         ERROR_LOG("Map initialized, cannot add land");
         return nullptr;
     }
-    Land* const pLand = new Land(mLands.size(), Point_t{aTopRightX, aTopRightY}, aResource);
+    Land* const pLand = new Land(mLands.size(), Point_t{aTopLeftX, aTopLeftY}, aResource);
     pLand->registerToMap(*this);
     mLands.push_back(pLand);
     return pLand;
@@ -433,7 +433,7 @@ Harbour* GameMap::addHarbour(const int aId1, const int aId2)
 {
     DEBUG_LOG_L2("adding port#", mHarbours.size(), " for ", aId1, " and ", aId2);
     Harbour* const pHarbour = new Harbour(mHarbours.size(), ResourceTypes::NONE, \
-                                        mVertices[aId1]->getTopRight(), mVertices[aId2]->getTopRight());
+                                        mVertices[aId1]->getTopLeft(), mVertices[aId2]->getTopLeft());
     mVertices[aId1]->setHarbour(pHarbour);
     mVertices[aId2]->setHarbour(pHarbour);
 

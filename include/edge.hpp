@@ -18,14 +18,14 @@
 class Edge : public Terrain
 {
 private:
-    Point_t mOtherEnd; // the end other than mTopRight
+    Point_t mOtherEnd; // the end other than mTopLeft
     char mDirection;
     std::string mOwner;
     int populateNeighbour(GameMap& aMap, const size_t aPointX, const size_t aPointY);
 public:
     static constexpr int HORIZONTAL_LENGTH = 9;
     std::vector<Point_t> getAllPoints() const override;
-    Edge(const int aId, const Point_t aTopRight, const char aDirection);
+    Edge(const int aId, const Point_t aTopLeft, const char aDirection);
     const Vertex* getVertex(Vertex* const aVertex) const; //get connected vertex that is not the input
     int populateNeighbours(GameMap& aMap) override;
     char getCharRepresentation(const size_t aPointX, const size_t aPointY, const bool aUseId = false) const override;
