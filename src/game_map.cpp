@@ -214,6 +214,7 @@ int GameMap::createHarboursRandom()
         }
     }
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    DEBUG_LOG_L3("createHarboursRandom seed: ", seed);
     std::default_random_engine generator(seed);
     while (mHarbours.size() < mNumHarbour)
     {
@@ -266,6 +267,7 @@ std::vector<int> GameMap::randomizeResource(SequenceConfig_t aConfig)
         }
     }
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    DEBUG_LOG_L3("randomizeResource seed: ", seed);
     std::shuffle(resourceSequence.begin(), resourceSequence.end(), std::default_random_engine(seed));
     return resourceSequence;
 }

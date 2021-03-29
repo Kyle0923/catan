@@ -49,7 +49,11 @@ public:
     CliOpt() {
         // setup the opt matching string and the default values
         cliOptNames.at(CliOptIndex::DEBUG_LEVEL) = "--debug";
+#ifndef RELEASE
         std::get<CliOptIndex::DEBUG_LEVEL>(cliOptList) = 1;
+#else
+        std::get<CliOptIndex::DEBUG_LEVEL>(cliOptList) = 5;
+#endif /* RELEASE */
     }
 
     int processArg(const int argc, const char* const *argv)

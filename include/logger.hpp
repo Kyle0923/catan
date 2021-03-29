@@ -49,7 +49,7 @@ class Logger
 {
 private:
     template<typename... Targs>
-    static std::string log(std::ostream& ostr, Targs... aArgs)
+    static std::string log(bool aLogToConsole, Targs... aArgs)
     {
         std::stringstream strstream;
         _formatString(strstream, aArgs...);
@@ -62,7 +62,10 @@ private:
         {
             std::cout << "[Info] Log file not initialized" << std::endl;
         }
-        ostr << logMessage << std::endl;
+        if (aLogToConsole)
+        {
+            std::cout << logMessage << std::endl;
+        }
         return logMessage;
     };
 #ifndef RECURSION
@@ -109,29 +112,24 @@ public:
     template<typename... Targs>
     static void debug(int aLevel, Targs... aArgs)
     {
-#ifndef RELEASE
-        if (aLevel >= mDebugLevel)
-        {
-            log(std::cout, "[Debug", aLevel, "] " , aArgs...);
-        }
-#endif /* ifndef RELEASE */
+        log((aLevel >= mDebugLevel), "[Debug", aLevel, "] " , aArgs...);
     };
     template<typename... Targs>
     static void info(Targs... aArgs)
     {
-        log(std::cout, "[Info] ", aArgs...);
+        log(true, "[Info] ", aArgs...);
     };
     template<typename... Targs>
     static void warn(Targs... aArgs)
     {
-        log(std::cerr, "[Warn] ", aArgs...);
+        log(true, "[Warn] ", aArgs...);
     };
 
     // Error log will terminate the program
     template<typename... Targs>
     static void error(Targs... aArgs)
     {
-        std::string ErrMsg = log(std::cerr, "[Error] ", aArgs...);
+        std::string ErrMsg = log(true, "[Error] ", aArgs...);
         throw std::runtime_error(ErrMsg);
     };
 };
