@@ -17,6 +17,7 @@
 #include "common.hpp"
 #include "game_map.hpp"
 #include "map_file_io.hpp"
+#include "cli_opt.hpp"
 
 #define DELAYSIZE 200
 
@@ -30,21 +31,16 @@ short color_table[] =
     COLOR_RED, COLOR_MAGENTA, COLOR_YELLOW, COLOR_WHITE
 };
 
-// command line options
-struct CliOpt_t
-{
-    static constexpr char debugOpt[] = "--debug";
-    int debugValue = 0;
-};
-
-int processOpt(int argc, char** argv, CliOpt_t& aOpt);
-
 int main(int argc, char** argv)
 {
     Logger::initLogfile();
-    CliOpt_t cliOpt;
-    processOpt(argc, argv, cliOpt);
-    Logger::setDebugLevel(cliOpt.debugValue);
+    // CliOpt_t cliOpt;
+    // processOpt(argc, argv, cliOpt);
+    // Logger::setDebugLevel(cliOpt.debugValue);
+    CliOpt cliOpt;
+    cliOpt.processArg(argc, argv);
+    Logger::setDebugLevel(cliOpt.getOpt<CliOptIndex::DEBUG_LEVEL>());
+
     DEBUG_LOG_L0("Begin ", " of ", "main");
     GameMap gameMap;
     MapIO mapFile("map.txt");
@@ -52,7 +48,6 @@ int main(int argc, char** argv)
     gameMap.initMap();
     gameMap.printMap();
     return 0;
-    //TODO: read in map.txt, generate map
     time_t seed;
     int start, end, row, diff, flag, direction;
     short i;
@@ -181,20 +176,4 @@ void get_color(void)
 {
     chtype bold = (rand() % 2) ? A_BOLD : A_NORMAL;
     attrset(COLOR_PAIR(rand() % 8) | bold);
-}
-
-constexpr char CliOpt_t::debugOpt[];
-
-int processOpt(int argc, char** argv, CliOpt_t& aOpt)
-{
-    for (int ii = 0; ii < argc; ++ii)
-    {
-        if (!strcmp(argv[ii], CliOpt_t::debugOpt))
-        {
-            if (++ii < argc) {
-                aOpt.debugValue = static_cast<int>(strtol(argv[ii], nullptr, 10));
-            }
-        }
-    }
-    return 0;
 }
