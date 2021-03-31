@@ -31,84 +31,86 @@ short color_table[] =
     COLOR_RED, COLOR_MAGENTA, COLOR_YELLOW, COLOR_WHITE
 };
 
+short available[] =
+{
+    COLOR_RED, COLOR_BLUE, COLOR_YELLOW, COLOR_MAGENTA, COLOR_WHITE
+};
+
 int main(int argc, char** argv)
 {
     Logger::initLogfile();
-    // CliOpt_t cliOpt;
-    // processOpt(argc, argv, cliOpt);
-    // Logger::setDebugLevel(cliOpt.debugValue);
+    DEBUG_LOG_L0("Begin of Catan.exe");
+
     CliOpt cliOpt;
     cliOpt.processArg(argc, argv);
     Logger::setDebugLevel(cliOpt.getOpt<CliOptIndex::DEBUG_LEVEL>());
 
-    DEBUG_LOG_L0("Begin ", " of ", "main");
     GameMap gameMap;
     MapIO mapFile("map.txt");
     mapFile.readMap(gameMap);
-    gameMap.initMap();
-    gameMap.printMap();
-    return 0;
+    // gameMap.initMap();
+    // gameMap.printMap();
+
     time_t seed;
     int start, end, row, diff, flag, direction;
-    short i;
 
     initscr();
     keypad(stdscr, TRUE);  //return special keyboard stroke
     nodelay(stdscr, FALSE); // wait for input
     nocbreak(); // wait for new line
 
-    if (has_colors())
-        start_color();
+    // alias stdscr to userWindow, for consistence and readability
+    WINDOW* & userWindow = stdscr;
+    resize_window(userWindow, LINES - gameMap.getSizeVertical() - 1, COLS);
+    mvwin(userWindow, gameMap.getSizeVertical() + 1, 0);
 
-    for (i = 0; i < 8; i++)
-        init_pair(i, color_table[i], COLOR_BLACK);
+    WINDOW* gameWindow = newwin(gameMap.getSizeVertical(), gameMap.getSizeHorizontal(), 0, 0);
+    // WINDOW* userWindow = newwin(LINES - gameMap.getSizeVertical() - 1, 0, gameMap.getSizeVertical() + 1, 0);
+
+    if (has_colors())
+    {
+        start_color();
+    }
+
+    init_pair(1, COLOR_BLACK, COLOR_CYAN);
+    init_pair(2, COLOR_BLACK, COLOR_WHITE);
+    init_pair(3, COLOR_BLUE, COLOR_BLUE);
+    init_pair(4, COLOR_YELLOW, COLOR_YELLOW);
+
+    wbkgd(gameWindow, COLOR_PAIR(1));
+    wbkgd(userWindow, COLOR_PAIR(2));
+
+    wborder(gameWindow, COLOR_PAIR(3), COLOR_PAIR(3), COLOR_PAIR(3), COLOR_PAIR(3), COLOR_PAIR(3), COLOR_PAIR(3), COLOR_PAIR(3), COLOR_PAIR(3));
+    wborder(userWindow, COLOR_PAIR(4), COLOR_PAIR(4), COLOR_PAIR(4), COLOR_PAIR(4), COLOR_PAIR(4), COLOR_PAIR(4), COLOR_PAIR(4), COLOR_PAIR(4));
+
+    mvwaddch(userWindow, 1, 1, '>');
+    wrefresh(gameWindow);
+    wrefresh(userWindow);
 
     seed = time((time_t *)0);
     srand(seed);
     flag = 0;
-
+    gameMap.initMap();
+    gameMap.printMap();
     char line[1024];
+    int ctr = 0;
+    std::string numStr = "/-\\|";
     while (1)      /* loop until a key is hit */
     {
         getnstr(line, 2014);
-        if (!strcmp(line, "quit"))
+        if (!strcmp(line, "quit") || !strcmp(line, "exit"))
         {
             break;
         }
-        do {
-            start = rand() % (COLS - 3);
-            end = rand() % (COLS - 3);
-            start = (start < 2) ? 2 : start;
-            end = (end < 2) ? 2 : end;
-            direction = (start > end) ? -1 : 1;
-            diff = abs(start - end);
-
-        } while (diff < 2 || diff >= LINES - 2);
-
-        attrset(A_NORMAL);
-
-        for (row = 0; row < diff; row++)
-        {
-            mvaddstr(LINES - row, row * direction + start,
-                (direction < 0) ? "\\" : "/");
-
-            if (flag++)
-            {
-                myrefresh();
-                erase();
-                flag = 0;
-            }
-        }
-
-        if (flag++)
-        {
-            myrefresh();
-            flag = 0;
-        }
-
-        explode(LINES - row, diff * direction + start);
-        erase();
-        myrefresh();
+        gameMap.printMap(gameWindow);
+        mvwaddch(gameWindow, 1, 1, COLOR_PAIR(1) | numStr.at(ctr++ % numStr.length()));
+        // clear user window, reset cursor position
+        wclear(userWindow);
+        wborder(gameWindow, COLOR_PAIR(3), COLOR_PAIR(3), COLOR_PAIR(3), COLOR_PAIR(3), COLOR_PAIR(3), COLOR_PAIR(3), COLOR_PAIR(3), COLOR_PAIR(3));
+        wborder(userWindow, COLOR_PAIR(4), COLOR_PAIR(4), COLOR_PAIR(4), COLOR_PAIR(4), COLOR_PAIR(4), COLOR_PAIR(4), COLOR_PAIR(4), COLOR_PAIR(4));
+        mvwaddch(userWindow, 1, 1, '>');
+        wrefresh(gameWindow);
+        wrefresh(userWindow);
     }
 
     endwin();

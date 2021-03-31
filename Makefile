@@ -39,14 +39,14 @@ CLEAN_THIRD_PARTY := $(addprefix CLEAN.,$(THIRD_PARTY_LIB_DIR))
 
 # use `RELEASE=1 make` to build release
 ifneq ($(RELEASE),)
-ARTIFACT := $(ARTIFACT:%.exe=%_release.exe)
+ARTIFACT := $(ARTIFACT:.exe=_release.exe)
 CFLAGS += -DRELEASE -O3
 else
 CFLAGS += -g
 endif
 
-all: lint $(THIRD_PARTY_LIB_DIR) $(ARTIFACT)
-.PHONY: all lint clean clean_all $(THIRD_PARTY_LIB_DIR) $(CLEAN_THIRD_PARTY)
+all: $(THIRD_PARTY_LIB_DIR) $(ARTIFACT)
+.PHONY: all clean clean_all $(THIRD_PARTY_LIB_DIR) $(CLEAN_THIRD_PARTY)
 
 $(ARTIFACT): $(OBJ) $(THIRD_PARTY_LIB)
 	$(CC) $(OBJ) $(LIB) $(CFLAGS) -o $@
@@ -54,7 +54,7 @@ ifneq ($(RELEASE),)
 	@echo -e "\nBuilding for RELEASE completed: $(ARTIFACT)"
 endif
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR) $(THIRD_PARTY_LIB_DIR)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -MF $(patsubst %.o,%.d,$@) -c $< -o $@
 
 $(THIRD_PARTY_LIB): $(THIRD_PARTY_LIB_DIR)
@@ -64,12 +64,12 @@ $(THIRD_PARTY_LIB_DIR):
 $(OBJ_DIR):
 	mkdir -p $(OBJ_DIR)
 
-lint:
-	bash ./lint.sh
+# lint:
+# 	bash ./lint.sh
 
 clean:
 	rm -fr $(OBJ_DIR)
-	rm -f $(ARTIFACT)
+	rm -f $(ARTIFACT) $(ARTIFACT:.exe=_release.exe)
 
 clean_all: clean $(CLEAN_THIRD_PARTY)
 

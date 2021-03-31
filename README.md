@@ -7,7 +7,7 @@ Author: Zonghao Huang <kyle0923@qq.com>
 This project is intended to build for Windows.  
 The tool chain is MinGW GCC and G++ compilers.  
 Makefiles are provided and tested using git-bash.  
-This project uses recursive make. Dependencies are configured such that third party libraries only rebuild at link time (if required).  
+This project uses recursive make. Dependencies are configured such that third party libraries' Makefiles are run before Catan's source files.  
 Makefiles use bash commands `mkdir` and `rm`, so they are not expected to work under powershell; though it should be relatively easy to refactor to work under powershell  
 ### Compile command and flags
 To compile, simply run `make`, this will build the debug version of the program.  
