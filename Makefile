@@ -46,8 +46,8 @@ else
 CFLAGS += -g
 endif
 
-all: $(THIRD_PARTY_LIB_DIR) $(ARTIFACT)
-.PHONY: all clean clean_all $(THIRD_PARTY_LIB_DIR) $(CLEAN_THIRD_PARTY)
+all: lint $(THIRD_PARTY_LIB_DIR) $(ARTIFACT)
+.PHONY: all lint clean clean_all $(THIRD_PARTY_LIB_DIR) $(CLEAN_THIRD_PARTY)
 
 $(ARTIFACT): $(OBJ) $(THIRD_PARTY_LIB)
 	$(CC) $(OBJ) $(LIB) $(CFLAGS) -o $@
@@ -65,8 +65,8 @@ $(THIRD_PARTY_LIB_DIR):
 $(OBJ_DIR):
 	mkdir -p $(OBJ_DIR)
 
-# lint:
-# 	bash ./lint.sh
+lint:
+	bash ./lint.sh
 
 clean:
 	rm -fr $(OBJ_DIR)

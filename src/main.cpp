@@ -17,6 +17,15 @@
 #include "cli_opt.hpp"
 #include "utility.hpp"
 
+enum ColorIndex
+{
+    RESERVED = 0,
+    GAME_WIN_BACKGROUND,
+    USER_WIN_BACKGROUND,
+    GAME_WIN_BORDER,
+    USER_WIN_BORDER
+};
+
 void printHelper(PANEL* const aPanel, std::string aInput);
 int readStringFromWindow(WINDOW* const aWindow, int aStartingY, int aStartingX, bool aUntilEol, std::string& aString);
 void printBorder(WINDOW* const aWindow, const chtype aColor);
@@ -51,7 +60,6 @@ int main(int argc, char** argv)
 
     // helper panel
     WINDOW* helperWindow = newwin(LINES - gameMap.getSizeVertical() - 4, COLS - 2, gameMap.getSizeVertical() + 3, 1);
-    wbkgd(helperWindow, COLOR_PAIR(2));
     PANEL* helperPanel = new_panel(helperWindow);
 
     keypad(userWindow, TRUE);  //return special keyboard stroke
@@ -65,13 +73,14 @@ int main(int argc, char** argv)
         start_color();
     }
 
-    init_pair(1, COLOR_BLACK, COLOR_CYAN);
-    init_pair(2, COLOR_BLACK, COLOR_WHITE);
-    init_pair(3, COLOR_BLUE, COLOR_BLUE);
-    init_pair(4, COLOR_YELLOW, COLOR_YELLOW);
+    init_pair(ColorIndex::GAME_WIN_BACKGROUND, COLOR_BLACK, COLOR_CYAN);
+    init_pair(ColorIndex::USER_WIN_BACKGROUND, COLOR_BLACK, COLOR_WHITE);
+    init_pair(ColorIndex::GAME_WIN_BORDER, COLOR_BLUE, COLOR_BLUE);
+    init_pair(ColorIndex::USER_WIN_BORDER, COLOR_YELLOW, COLOR_YELLOW);
 
-    wbkgd(gameWindow, COLOR_PAIR(1));
-    wbkgd(userWindow, COLOR_PAIR(2));
+    wbkgd(gameWindow, COLOR_PAIR(ColorIndex::GAME_WIN_BACKGROUND));
+    wbkgd(userWindow, COLOR_PAIR(ColorIndex::USER_WIN_BACKGROUND));
+    wbkgd(helperWindow, COLOR_PAIR(2));
 
     mvwaddch(userWindow, 1, 1, '>');
     wrefresh(userWindow);
@@ -80,8 +89,8 @@ int main(int argc, char** argv)
     gameMap.initMap();
     gameMap.printMap(gameWindow);
 
-    printBorder(gameWindow, COLOR_PAIR(3));
-    printBorder(userWindow, COLOR_PAIR(4));
+    printBorder(gameWindow, COLOR_PAIR(ColorIndex::GAME_WIN_BORDER));
+    printBorder(userWindow, COLOR_PAIR(ColorIndex::USER_WIN_BORDER));
     wrefresh(userWindow);
     wrefresh(gameWindow);
 
@@ -216,7 +225,7 @@ int main(int argc, char** argv)
         {
             // echo to userWindow, advance cursor
             winsch(userWindow, keystroke);
-            printBorder(userWindow, COLOR_PAIR(4));
+            printBorder(userWindow, COLOR_PAIR(ColorIndex::USER_WIN_BORDER)); // winsch will remove the char at the end of current line
             int curX, curY;
             getyx(userWindow, curY, curX);
             wmove(userWindow, curY, curX + 1);
@@ -244,8 +253,8 @@ int main(int argc, char** argv)
         wclear(userWindow);
         mvwaddch(userWindow, 1, 1, '>');
         input.clear();
-        printBorder(gameWindow, COLOR_PAIR(3));
-        printBorder(userWindow, COLOR_PAIR(4));
+        printBorder(gameWindow, COLOR_PAIR(ColorIndex::GAME_WIN_BORDER));
+        printBorder(userWindow, COLOR_PAIR(ColorIndex::USER_WIN_BORDER));
         // mvwaddch(userWindow, 1, 1, '>');
         wrefresh(gameWindow);
         wrefresh(userWindow);
@@ -401,16 +410,16 @@ void refreshAll(const GameMap& aMap, WINDOW* const aUserWindow, WINDOW* const aG
     mvwin(aUserWindow, aMap.getSizeVertical() + 2, 0);
     resize_window(aGameWindow, aMap.getSizeVertical(), aMap.getSizeHorizontal());
 
-    wbkgd(aGameWindow, COLOR_PAIR(1));
-    wbkgd(aUserWindow, COLOR_PAIR(2));
+    wbkgd(aGameWindow, COLOR_PAIR(ColorIndex::GAME_WIN_BACKGROUND));
+    wbkgd(aUserWindow, COLOR_PAIR(ColorIndex::USER_WIN_BACKGROUND));
 
     mvwin(aGameWindow, 0, 0);
     move_panel(aHelperPanel, aMap.getSizeVertical() + 3, 1);
     hide_panel(aHelperPanel);
 
     mvwaddch(aUserWindow, 1, 1, '>');
-    printBorder(aGameWindow, COLOR_PAIR(3));
-    printBorder(aUserWindow, COLOR_PAIR(4));
+    printBorder(aGameWindow, COLOR_PAIR(ColorIndex::GAME_WIN_BORDER));
+    printBorder(aUserWindow, COLOR_PAIR(ColorIndex::USER_WIN_BORDER));
     wrefresh(aUserWindow);
     wrefresh(aGameWindow);
     update_panels();

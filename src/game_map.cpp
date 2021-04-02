@@ -549,7 +549,7 @@ void GameMap::printMap(bool aUseId)
     }
 }
 
-void GameMap::printMap(WINDOW* aWindow)
+void GameMap::printMap(WINDOW* const aWindow)
 {
     if (!mInitialized)
     {

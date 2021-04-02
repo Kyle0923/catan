@@ -90,7 +90,7 @@ public:
 
     int initMap();
     void printMap(bool aUseId = false);
-    void printMap(WINDOW* aWindow);
+    void printMap(WINDOW* const aWindow);
 
     GameMap(const GameMap &) = delete;
     GameMap& operator=(const GameMap&) = delete;
