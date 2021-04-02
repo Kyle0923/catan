@@ -28,10 +28,29 @@ void Logger::initLogfile(std::string aLogFilename)
     mLogger = &logger;
     logger.mLogFile.open(aLogFilename);
 #ifdef RELEASE
-    log(true, "Copyright (c) 2021, Zonghao Huang <kyle0923@qq.com>\n"
-                    "All rights reserved.\n"
-                    "cantan.exe - Version ", VER_MAJOR, '.', VER_MINOR, '.', VER_PATCH, ", Built on " __DATE__ " " __TIME__ "\n");
+    log(true, "Copyright (c) 2021, Zonghao Huang <kyle0923@qq.com>\n"   \
+                "All rights reserved.\n"    \
+                "cantan.exe - Release version ", VER_MAJOR, '.', VER_MINOR, '.', VER_PATCH,  \
+                ", Built on " __DATE__ " " __TIME__ "\n");
 #endif /* RELEASE */
+}
+
+template<>
+int Logger::print(std::stringstream& ostr, char aArg)
+{
+    if (isprint(aArg))
+    {
+        ostr << aArg;
+    }
+    else if (aArg == 13)
+    {
+        ostr << "\\n"; // print out "\n" instead of newline
+    }
+    else
+    {
+        ostr << aArg << " ASCII[" << (int)aArg << ']';
+    }
+    return 0;
 }
 
 Logger::Logger()

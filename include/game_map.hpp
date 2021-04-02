@@ -64,6 +64,9 @@ public:
 
     int clearAndResize(const int aSizeHorizontal, const int aSizeVertical);
 
+    int getSizeHorizontal() const;
+    int getSizeVertical() const;
+
     const Terrain* getTerrain(const int x, const int y);
     const Terrain* getTerrain(const Point_t& aPoint);
 
@@ -87,6 +90,7 @@ public:
 
     int initMap();
     void printMap(bool aUseId = false);
+    void printMap(WINDOW* aWindow);
 
     GameMap(const GameMap &) = delete;
     GameMap& operator=(const GameMap&) = delete;

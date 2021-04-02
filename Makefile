@@ -16,6 +16,7 @@ SRC := $(wildcard $(SRC_DIR)/*.cpp)
 OBJ_DIR := bin
 OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 INC := -Iinclude
+LIB :=
 
 # third_party related
 THIRD_PARTY_DIR_ROOT := third_party
@@ -27,7 +28,7 @@ THIRD_PARTY_LIB_DIR := $(patsubst %/lib/,%, $(dir $(THIRD_PARTY_LIB)))
 
 INC += $(THIRD_PARTY_LIB_DIR:%=-I%/include)
 
-LIB := $(THIRD_PARTY_LIB_DIR:%=-L%/lib) \
+LIB += $(THIRD_PARTY_LIB_DIR:%=-L%/lib) \
        $(patsubst lib%,-l%,$(basename $(notdir $(THIRD_PARTY_LIB)))) \
 
 CPPFLAGS := $(INC) -MMD -MP

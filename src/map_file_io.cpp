@@ -99,8 +99,8 @@ int MapIO::saveMap(GameMap* const aGameMap)
 
 Point_t MapIO::validateMapBoundary()
 {
-    constexpr int MIN_TOP_BOTTOM_PADDING = 4;
-    constexpr int MIN_LEFT_RIGHT_PADDING = 7;
+    constexpr int MIN_TOP_BOTTOM_PADDING = 5;
+    constexpr int MIN_LEFT_RIGHT_PADDING = 8;
 
     size_t horizontalSize = 0;
     size_t verticalSize = 0;

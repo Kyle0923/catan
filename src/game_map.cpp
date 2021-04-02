@@ -541,11 +541,29 @@ void GameMap::printMap(bool aUseId)
         const std::deque<Terrain*>& row = mGameMap.at(jj);
         for (size_t ii = 0; ii < mSizeHorizontal; ++ii)
         {
-            // easier to debug using char c
+            // easier to debug using an extra char c
             char c = row.at(ii)->getCharRepresentation(ii, jj, aUseId); //print ID
             std::cout << c;
         }
         std::cout << std::endl;
+    }
+}
+
+void GameMap::printMap(WINDOW* aWindow)
+{
+    if (!mInitialized)
+    {
+        ERROR_LOG("Map not initialized, cannot printMap");
+    }
+    for (size_t jj = 0; jj < mSizeVertical; ++jj)
+    {
+        const std::deque<Terrain*>& row = mGameMap.at(jj);
+        for (size_t ii = 0; ii < mSizeHorizontal; ++ii)
+        {
+            // easier to debug using an extra char c
+            char c = row.at(ii)->getCharRepresentation(ii, jj);
+            mvwaddch(aWindow, jj, ii, COLOR_PAIR(1) | c);
+        }
     }
 }
 
@@ -567,6 +585,15 @@ int GameMap::clearAndResize(const int aSizeHorizontal, const int aSizeVertical)
         mGameMap.push_back(row);
     }
     return 0;
+}
+
+int GameMap::getSizeHorizontal() const
+{
+    return mSizeHorizontal;
+}
+int GameMap::getSizeVertical() const
+{
+    return mSizeVertical;
 }
 
 GameMap::GameMap(const int aSizeHorizontal, const int aSizeVertical) :

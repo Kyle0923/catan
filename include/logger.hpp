@@ -68,12 +68,19 @@ private:
         }
         return logMessage;
     };
+    template<typename T>
+    static int print(std::stringstream& ostr, T aArg)
+    {
+        ostr << aArg;
+        return 0;
+    }
+
 #ifndef RECURSION
     template<typename... Targs>
     static void _formatString(std::stringstream& ostr, Targs... aArgs)
     {
         // pack expansion using brace-enclosed initializer
-        __attribute__((unused)) int expander[sizeof...(Targs)] = { (ostr << aArgs, 0)... };
+        __attribute__((unused)) int expander[sizeof...(Targs)] = { (print(ostr, aArgs), 0)... };
     };
 #else
     template<typename T, typename... Targs>
@@ -133,5 +140,10 @@ public:
         throw std::runtime_error(ErrMsg);
     };
 };
+
+// special handle for non-printable characters
+template<>
+int Logger::print(std::stringstream& ostr, char aArg);
+
 
 #endif /* INCLUDE_LOGGER_HPP */
