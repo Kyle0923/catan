@@ -36,13 +36,20 @@
 template<typename T>
 extern std::ostream& operator<< (std::ostream& aStream, const std::vector<T>& aVec)
 {
-    auto iter = aVec.begin();
-    aStream << "Vec[" << *iter++;
-    for (; iter != aVec.end(); ++iter)
+    if (aVec.size() == 0)
     {
-        aStream << ", " << *iter;
+        return aStream << "Vec[]";
     }
-    return aStream << ']';
+    else
+    {
+        auto iter = aVec.begin();
+        aStream << "Vec[" << *iter++;
+        for (; iter != aVec.end(); ++iter)
+        {
+            aStream << ", " << *iter;
+        }
+        return aStream << ']';
+    }
 };
 
 class Logger
