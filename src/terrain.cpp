@@ -25,11 +25,11 @@ void Terrain::registerToMap(GameMap& aMap)
     aMap.registerTerrain(getAllPoints(), this);
 }
 
-int Terrain::populateNeighbours(GameMap& aMap)
+int Terrain::populateAdjacencies(GameMap& aMap)
 {
     // empty
     // override by derive classes
-    // populate vector<Terrain*> mNeighbour
+    // populate vector<Terrain*> mAdjacencies
     return 0;
 }
 

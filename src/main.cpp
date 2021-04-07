@@ -80,7 +80,7 @@ int main(int argc, char** argv)
 
     wbkgd(gameWindow, COLOR_PAIR(ColorIndex::GAME_WIN_BACKGROUND));
     wbkgd(userWindow, COLOR_PAIR(ColorIndex::USER_WIN_BACKGROUND));
-    wbkgd(helperWindow, COLOR_PAIR(2));
+    wbkgd(helperWindow, COLOR_PAIR(ColorIndex::USER_WIN_BACKGROUND));
 
     mvwaddch(userWindow, 1, 1, '>');
     wrefresh(userWindow);
@@ -271,6 +271,9 @@ std::vector<std::string> stringMatcher(std::string aInput, std::string* const aL
         "This is a string we want to match, pretty long, isn't it?",
         "This is another string we want to match",
         "This is yet another string we want to match",
+        "exit",
+        "quit",
+        "help"
     };
     if (aInput.length() == 0)
     {

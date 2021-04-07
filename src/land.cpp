@@ -34,46 +34,46 @@ std::vector<Point_t> Land::getAllPoints() const
     return allPoints;
 }
 
-int Land::populateNeighbours(GameMap& aMap)
+int Land::populateAdjacencies(GameMap& aMap)
 {
     // check vertices and edges clockwise from top-left corner
     // add vertex or edge if needed
     int rc = 0;
     constexpr int horizontalLength = Edge::HORIZONTAL_LENGTH + 3;
     // top-left vertex
-    rc |= populateNeighbour(aMap, true, mTopLeft.x, mTopLeft.y - 1);
+    rc |= addAdjacency(aMap, true, mTopLeft.x, mTopLeft.y - 1);
     // top left vertex
-    rc |= populateNeighbour(aMap, true, mTopLeft.x + horizontalLength - 1, mTopLeft.y - 1);
+    rc |= addAdjacency(aMap, true, mTopLeft.x + horizontalLength - 1, mTopLeft.y - 1);
     // left vertex
-    rc |= populateNeighbour(aMap, true, mTopLeft.x + horizontalLength + 2, mTopLeft.y + 2);
+    rc |= addAdjacency(aMap, true, mTopLeft.x + horizontalLength + 2, mTopLeft.y + 2);
     // bottom left vertex
-    rc |= populateNeighbour(aMap, true, mTopLeft.x + horizontalLength - 1, mTopLeft.y + 5);
+    rc |= addAdjacency(aMap, true, mTopLeft.x + horizontalLength - 1, mTopLeft.y + 5);
     // bottom right vertex
-    rc |= populateNeighbour(aMap, true, mTopLeft.x, mTopLeft.y + 5);
+    rc |= addAdjacency(aMap, true, mTopLeft.x, mTopLeft.y + 5);
     // right vertex
-    rc |= populateNeighbour(aMap, true, mTopLeft.x - 3, mTopLeft.y + 2);
+    rc |= addAdjacency(aMap, true, mTopLeft.x - 3, mTopLeft.y + 2);
 
     // top edge
-    rc |= populateNeighbour(aMap, false, mTopLeft.x + 1, mTopLeft.y - 1, '-');
+    rc |= addAdjacency(aMap, false, mTopLeft.x + 1, mTopLeft.y - 1, '-');
     // left top edge
-    rc |= populateNeighbour(aMap, false, mTopLeft.x + horizontalLength, mTopLeft.y, '\\');
+    rc |= addAdjacency(aMap, false, mTopLeft.x + horizontalLength, mTopLeft.y, '\\');
     // left bottom edge
-    rc |= populateNeighbour(aMap, false, mTopLeft.x + horizontalLength + 1, mTopLeft.y + 3, '/');
+    rc |= addAdjacency(aMap, false, mTopLeft.x + horizontalLength + 1, mTopLeft.y + 3, '/');
     // bottom edge
-    rc |= populateNeighbour(aMap, false, mTopLeft.x + 1, mTopLeft.y + 5, '-');
+    rc |= addAdjacency(aMap, false, mTopLeft.x + 1, mTopLeft.y + 5, '-');
     // right bottom edge
-    rc |= populateNeighbour(aMap, false, mTopLeft.x - 2, mTopLeft.y + 3, '\\');
+    rc |= addAdjacency(aMap, false, mTopLeft.x - 2, mTopLeft.y + 3, '\\');
     // right top edge
-    rc |= populateNeighbour(aMap, false, mTopLeft.x - 1, mTopLeft.y, '/');
+    rc |= addAdjacency(aMap, false, mTopLeft.x - 1, mTopLeft.y, '/');
 
     (rc != 0) ?
-        WARN_LOG("Failed to populate neighbours of ", getStringId())
+        WARN_LOG("Failed to populate adjacencies of ", getStringId())
         :
-        DEBUG_LOG_L2("Successfully populated neighbours of ", getStringId());
+        DEBUG_LOG_L2("Successfully populated adjacencies of ", getStringId());
     return rc;
 }
 
-int Land::populateNeighbour(GameMap& aMap, bool aIsVertex, const int aPointX, const int aPointY, const char aPattern)
+int Land::addAdjacency(GameMap& aMap, bool aIsVertex, const int aPointX, const int aPointY, const char aPattern)
 {
     const Terrain* pTerrain = aMap.getTerrain(aPointX, aPointY);
     bool isCorrectTerrain;
@@ -113,7 +113,7 @@ int Land::populateNeighbour(GameMap& aMap, bool aIsVertex, const int aPointX, co
     }
     if (aIsVertex)
     {
-        mNeighbour.push_back(pTerrain);
+        mAdjacencies.push_back(pTerrain);
     }
     return 0;
 }

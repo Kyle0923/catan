@@ -23,12 +23,12 @@ protected:
     const int mId;
     Point_t mTopLeft;
 
-    /* mNeighbour stores the neighbours of insterest (not all neighbours)
+    /* mAdjacencies stores the adjacencies of insterest (not all adjacencies)
      * for lands    => vertices
      * for vertices => edges
      * for edges    => vertices
      */
-    std::vector<const Terrain*> mNeighbour;
+    std::vector<const Terrain*> mAdjacencies;
 public:
     // return the top-left point (top first)
     Point_t getTopLeft();
@@ -40,7 +40,7 @@ public:
 
     virtual std::vector<Point_t> getAllPoints() const;
 
-    virtual int populateNeighbours(GameMap& aMap);
+    virtual int populateAdjacencies(GameMap& aMap);
 
     virtual char getCharRepresentation(const size_t aPointX, const size_t aPointY, const bool aUseId = false) const = 0;
     virtual std::string getStringId() const = 0;

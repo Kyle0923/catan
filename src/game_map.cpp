@@ -39,9 +39,9 @@ int GameMap::populateMap()
 {
     /* populate terrains
      * order matters!!
-     * Land::populateNeighbours adds necessary edges and vertices and records neighbour vertices
-     * Edge::populateNeighbours records vertices on both end
-     * Vertex::populateNeighbours records connected edges and adjcent vertices
+     * Land::populateAdjacencies adds necessary edges and vertices and records adjacent vertices
+     * Edge::populateAdjacencies records vertices on both end
+     * Vertex::populateAdjacencies records connected edges and adjcent vertices
      */
 
     // return codes
@@ -51,30 +51,30 @@ int GameMap::populateMap()
 
     for (Land* const pLand : mLands)
     {
-        rcLand |= pLand->populateNeighbours(*this);
+        rcLand |= pLand->populateAdjacencies(*this);
     }
     rcLand ?
-        ERROR_LOG("Failed to populate neighbours for Lands")
+        ERROR_LOG("Failed to populate adjacencies for Lands")
         :
-        INFO_LOG("Successfully populated neighbours of Lands");
+        INFO_LOG("Successfully populated adjacencies of Lands");
 
     for (Edge* const pEdge : mEdges)
     {
-        rcEdge |= pEdge->populateNeighbours(*this);
+        rcEdge |= pEdge->populateAdjacencies(*this);
     }
     rcEdge ?
-        ERROR_LOG("Failed to populate neighbours for Edges")
+        ERROR_LOG("Failed to populate adjacencies for Edges")
         :
-        INFO_LOG("Successfully populated neighbours of Edges");
+        INFO_LOG("Successfully populated adjacencies of Edges");
 
     for (Vertex* const pVertex : mVertices)
     {
-        rcVertex |= pVertex->populateNeighbours(*this);
+        rcVertex |= pVertex->populateAdjacencies(*this);
     }
     rcVertex ?
-        ERROR_LOG("Failed to populate neighbours for Vertices")
+        ERROR_LOG("Failed to populate adjacencies for Vertices")
         :
-        INFO_LOG("Successfully populated neighbours of Vertices");
+        INFO_LOG("Successfully populated adjacencies of Vertices");
 
     return (rcLand | rcEdge | rcVertex);
 }
@@ -433,13 +433,13 @@ const Land* GameMap::addLand(const size_t aTopLeftX, const size_t aTopLeftY, con
 
 Harbour* GameMap::addHarbour(const int aId1, const int aId2)
 {
-    DEBUG_LOG_L2("adding port#", mHarbours.size(), " for ", aId1, " and ", aId2);
     Harbour* const pHarbour = new Harbour(mHarbours.size(), ResourceTypes::NONE, \
                                         mVertices[aId1]->getTopLeft(), mVertices[aId2]->getTopLeft());
     mVertices[aId1]->setHarbour(pHarbour);
     mVertices[aId2]->setHarbour(pHarbour);
 
     mHarbours.push_back(pHarbour);
+    DEBUG_LOG_L2("added port#", mHarbours.size(), " for ", aId1, " and ", aId2);
     return pHarbour;
 }
 

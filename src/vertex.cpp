@@ -13,7 +13,7 @@
 #include "edge.hpp"
 #include "blank.hpp"
 
-int Vertex::populateNeighbours(GameMap& aMap)
+int Vertex::populateAdjacencies(GameMap& aMap)
 {
     // reset vertex
     mOwner = "";
@@ -21,30 +21,30 @@ int Vertex::populateNeighbours(GameMap& aMap)
     mIsCoastal = false;
     mHarbour = nullptr;
     mAdjacentVertices.clear();
-    mNeighbour.clear();
+    mAdjacencies.clear();
 
     int rc = 0;
-    rc |= populateNeighbour(aMap, mTopLeft.x - 1, mTopLeft.y);
-    rc |= populateNeighbour(aMap, mTopLeft.x - 1, mTopLeft.y - 1);
-    rc |= populateNeighbour(aMap, mTopLeft.x + 1, mTopLeft.y - 1);
-    rc |= populateNeighbour(aMap, mTopLeft.x + 1, mTopLeft.y);
-    rc |= populateNeighbour(aMap, mTopLeft.x + 1, mTopLeft.y + 1);
-    rc |= populateNeighbour(aMap, mTopLeft.x - 1, mTopLeft.y + 1);
+    rc |= addAdjacency(aMap, mTopLeft.x - 1, mTopLeft.y);
+    rc |= addAdjacency(aMap, mTopLeft.x - 1, mTopLeft.y - 1);
+    rc |= addAdjacency(aMap, mTopLeft.x + 1, mTopLeft.y - 1);
+    rc |= addAdjacency(aMap, mTopLeft.x + 1, mTopLeft.y);
+    rc |= addAdjacency(aMap, mTopLeft.x + 1, mTopLeft.y + 1);
+    rc |= addAdjacency(aMap, mTopLeft.x - 1, mTopLeft.y + 1);
 
     (rc != 0) ?
-        WARN_LOG("Failed to populate neighbours of ", getStringId())
+        WARN_LOG("Failed to populate adjacencies of ", getStringId())
         :
-        DEBUG_LOG_L2("Successfully populated neighbours of ", getStringId());
+        DEBUG_LOG_L2("Successfully populated adjacencies of ", getStringId());
     return rc;
 }
 
-int Vertex::populateNeighbour(GameMap& aMap, const size_t aPointX, const size_t aPointY)
+int Vertex::addAdjacency(GameMap& aMap, const size_t aPointX, const size_t aPointY)
 {
     const Terrain* const pTerrain = aMap.getTerrain(aPointX, aPointY);
     if (const Edge* const pEdge = dynamic_cast<const Edge*>(pTerrain))
     {
         // is edge
-        mNeighbour.push_back(pTerrain);
+        mAdjacencies.push_back(pTerrain);
         const Vertex* const pAdjacentVertex = pEdge->getVertex(this);
         mAdjacentVertices.push_back(pAdjacentVertex);
         DEBUG_LOG_L1("Added adjacent " + pAdjacentVertex->getStringId() + " for " + getStringId());

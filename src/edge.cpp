@@ -36,36 +36,36 @@ std::vector<Point_t> Edge::getAllPoints() const
     return allPoints;
 }
 
-int Edge::populateNeighbours(GameMap& aMap)
+int Edge::populateAdjacencies(GameMap& aMap)
 {
     mOwner = ""; // reset edge
     int rc = 0;
     switch (mDirection)
     {
     case '-':
-        rc |= populateNeighbour(aMap, mTopLeft.x - 1, mTopLeft.y);
-        rc |= populateNeighbour(aMap, mOtherEnd.x + 1, mOtherEnd.y);
+        rc |= addAdjacency(aMap, mTopLeft.x - 1, mTopLeft.y);
+        rc |= addAdjacency(aMap, mOtherEnd.x + 1, mOtherEnd.y);
         break;
     case '/':
-        rc |= populateNeighbour(aMap, mTopLeft.x + 1, mTopLeft.y - 1);
-        rc |= populateNeighbour(aMap, mOtherEnd.x - 1, mOtherEnd.y + 1);
+        rc |= addAdjacency(aMap, mTopLeft.x + 1, mTopLeft.y - 1);
+        rc |= addAdjacency(aMap, mOtherEnd.x - 1, mOtherEnd.y + 1);
         break;
     case '\\':
-        rc |= populateNeighbour(aMap, mTopLeft.x - 1, mTopLeft.y - 1);
-        rc |= populateNeighbour(aMap, mOtherEnd.x + 1, mOtherEnd.y + 1);
+        rc |= addAdjacency(aMap, mTopLeft.x - 1, mTopLeft.y - 1);
+        rc |= addAdjacency(aMap, mOtherEnd.x + 1, mOtherEnd.y + 1);
         break;
     default:
         ERROR_LOG("Unknow Edge direction [", mDirection, "]");
         break;
     }
     (rc != 0) ?
-        WARN_LOG("Failed to populate neighbours of ", getStringId())
+        WARN_LOG("Failed to populate adjacencies of ", getStringId())
         :
-        DEBUG_LOG_L2("Successfully populated neighbours of ", getStringId());
+        DEBUG_LOG_L2("Successfully populated adjacencies of ", getStringId());
     return rc;
 }
 
-int Edge::populateNeighbour(GameMap& aMap, const size_t aPointX, const size_t aPointY)
+int Edge::addAdjacency(GameMap& aMap, const size_t aPointX, const size_t aPointY)
 {
     const Terrain* const pTerrain = aMap.getTerrain(aPointX, aPointY);
     if (!dynamic_cast<const Vertex*>(pTerrain))
@@ -74,13 +74,13 @@ int Edge::populateNeighbour(GameMap& aMap, const size_t aPointX, const size_t aP
         WARN_LOG("At Point [", aPointX, ", ", aPointY, "], Expected Vertex - Actual ", pTerrain->getStringId());
         return 1;
     }
-    mNeighbour.push_back(pTerrain);
+    mAdjacencies.push_back(pTerrain);
     return 0;
 }
 
 const Vertex* Edge::getVertex(Vertex* const aVertex) const
 {
-    for (const Terrain* const pTerrain : mNeighbour)
+    for (const Terrain* const pTerrain : mAdjacencies)
     {
         if (pTerrain != aVertex)
             return dynamic_cast<const Vertex*>(pTerrain);

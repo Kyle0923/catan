@@ -77,7 +77,7 @@ public:
     // /* add a vertex to be a condidate of harbour
     //  * a condidate must be coastal
     //  * a pair of connected candidates is considered a valid habour and will be assign a harbour
-    //  * for a dangling condidate, GameMap will try to find a neighbour to form a pair
+    //  * for a dangling condidate, GameMap will try to find a adjacent vertex to form a pair
     //  * for three connected candidates, the rightmost / bottommost will be treated as dangling
     //  */
     // int addHarbourCandidate(Vertex* const aVertex); //TODO: not supported currently
