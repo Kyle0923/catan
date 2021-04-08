@@ -27,11 +27,11 @@ enum ColorIndex
     USER_WIN_BORDER
 };
 
-void printHelper(PANEL* const aPanel, const std::vector<std::string>& aMsg, std::string aInput = "");
+void printToConsole(PANEL* const aPanel, const std::vector<std::string>& aMsg, size_t aNormalSize = 0);
 int readStringFromWindow(WINDOW* const aWindow, int aStartingY, int aStartingX, bool aUntilEol, std::string& aString);
 void printBorder(WINDOW* const aWindow, const chtype aColor);
 void checkSize(const GameMap& aMap, const int aBottomPadding, const int aRightPadding);
-void refreshAll(const GameMap& aMap, WINDOW* const aUserWindow, WINDOW* const aGameWindow, PANEL* const aHelperPanel);
+void refreshAll(const GameMap& aMap, WINDOW* const aUserWindow, WINDOW* const aGameWindow, PANEL* const aPrintPanel);
 
 int main(int argc, char** argv)
 {
@@ -51,16 +51,23 @@ int main(int argc, char** argv)
     // check size
     checkSize(gameMap, 10, 10);
 
-    // alias stdscr to userWindow, for consistence and readability
-    WINDOW* & userWindow = stdscr;
-    resize_window(userWindow, LINES - gameMap.getSizeVertical() - 1, COLS);
-    mvwin(userWindow, gameMap.getSizeVertical() + 1, 0);
-
     WINDOW* gameWindow = newwin(gameMap.getSizeVertical(), gameMap.getSizeHorizontal(), 0, 0);
+    PANEL* gamePanel = new_panel(gameWindow);
+    move_panel(gamePanel, 0, 0);
+    top_panel(gamePanel);
 
-    // helper panel
-    WINDOW* helperWindow = newwin(LINES - gameMap.getSizeVertical() - 4, COLS - 2, gameMap.getSizeVertical() + 3, 1);
-    PANEL* helperPanel = new_panel(helperWindow);
+    // user panel
+    WINDOW* userWindow = newwin(LINES - gameMap.getSizeVertical() - 1, 0, 0, 0);
+    PANEL* userPanel = new_panel(userWindow);
+    move_panel(userPanel, gameMap.getSizeVertical() + 1, 0);
+    bottom_panel(userPanel);
+
+    // printout panel
+    WINDOW* printoutWindow = newwin(LINES - gameMap.getSizeVertical() - 4, COLS - 2, 0, 0);
+    PANEL* printoutPanel = new_panel(printoutWindow);
+    move_panel(printoutPanel, gameMap.getSizeVertical() + 3, 1);
+    bottom_panel(printoutPanel);
+    update_panels();
 
     keypad(userWindow, TRUE);  //return special keyboard stroke
     nocbreak();
@@ -80,7 +87,7 @@ int main(int argc, char** argv)
 
     wbkgd(gameWindow, COLOR_PAIR(ColorIndex::GAME_WIN_BACKGROUND));
     wbkgd(userWindow, COLOR_PAIR(ColorIndex::USER_WIN_BACKGROUND));
-    wbkgd(helperWindow, COLOR_PAIR(ColorIndex::USER_WIN_BACKGROUND));
+    wbkgd(printoutWindow, COLOR_PAIR(ColorIndex::USER_WIN_BACKGROUND));
 
     mvwaddch(userWindow, 1, 1, '>');
     wrefresh(userWindow);
@@ -93,6 +100,8 @@ int main(int argc, char** argv)
     printBorder(userWindow, COLOR_PAIR(ColorIndex::USER_WIN_BORDER));
     wrefresh(userWindow);
     wrefresh(gameWindow);
+    update_panels();
+    doupdate();
 
     CliCommandManager cmdHandler;
     cmdHandler.init();
@@ -120,7 +129,7 @@ int main(int argc, char** argv)
             // case KEY_F(5):
             // {
             //     resize_term(0, 0);
-            //     refreshAll(gameMap, userWindow, gameWindow, helperPanel);
+            //     refreshAll(gameMap, userWindow, gameWindow, printoutPanel);
             //     continue;
             // }
             case 27: // esc
@@ -142,13 +151,13 @@ int main(int argc, char** argv)
                 if (curX > 2)
                 {
                     wmove(userWindow, curY, curX - 1);
-                    delch();
+                    wdelch(userWindow);
                 }
                 break;
             }
             case KEY_DC: //delete
             {
-                delch();
+                wdelch(userWindow);;
                 break;
             }
 
@@ -228,7 +237,7 @@ int main(int argc, char** argv)
         {
             // echo to userWindow, advance cursor
             winsch(userWindow, keystroke);
-            printBorder(userWindow, COLOR_PAIR(ColorIndex::USER_WIN_BORDER)); // winsch will remove the char at the end of current line
+            printBorder(userWindow, COLOR_PAIR(ColorIndex::USER_WIN_BORDER)); // winsch will remove the border (char) at the end of current line
             int curX, curY;
             getyx(userWindow, curY, curX);
             wmove(userWindow, curY, curX + 1);
@@ -236,7 +245,7 @@ int main(int argc, char** argv)
         input.clear();
         readStringFromWindow(userWindow, 1, 2, false, input);
         std::vector<std::string> matchedCmd = cmdHandler.commandMatcher(input);
-        printHelper(helperPanel, matchedCmd, input);
+        printToConsole(printoutPanel, matchedCmd, input.length());
 
         if (!(keystroke == KEY_ENTER || keystroke == PADENTER || (char)keystroke == '\n' || (char)keystroke == '\r'))
         {
@@ -254,21 +263,23 @@ int main(int argc, char** argv)
         }
         std::vector<std::string> info;
         ActionStatus rc = cmdHandler.act(input, info);
+        printToConsole(printoutPanel, info, 0);
         if (rc == ActionStatus::INFO)
         {
-            printHelper(helperPanel, info, input);
+            // command requires more info
             continue;
         }
         gameMap.printMap(gameWindow);
         // clear user window, reset cursor position
-        wclear(userWindow);
         mvwaddch(userWindow, 1, 1, '>');
+        wclrtoeol(userWindow);
         input.clear();
         printBorder(gameWindow, COLOR_PAIR(ColorIndex::GAME_WIN_BORDER));
         printBorder(userWindow, COLOR_PAIR(ColorIndex::USER_WIN_BORDER));
-        // mvwaddch(userWindow, 1, 1, '>');
         wrefresh(gameWindow);
         wrefresh(userWindow);
+        update_panels();
+        doupdate();
     }
 
     endwin();
@@ -276,7 +287,7 @@ int main(int argc, char** argv)
     return 0;
 }
 
-void printHelper(PANEL* const aPanel, const std::vector<std::string>& aMsg, std::string aInput)
+void printToConsole(PANEL* const aPanel, const std::vector<std::string>& aMsg, size_t aNormalSize)
 {
     if (!aPanel)
     {
@@ -289,14 +300,21 @@ void printHelper(PANEL* const aPanel, const std::vector<std::string>& aMsg, std:
         wattrset(aPanel->win, A_NORMAL);
         mvwaddch(aPanel->win, curY, 0, '|');
         mvwaddnstr(aPanel->win, curY + 1, 0, "|-", 2);
-        waddnstr(aPanel->win, msg.c_str(), aInput.length());
-        wattrset(aPanel->win, A_BOLD);
-        waddnstr(aPanel->win, msg.c_str() + aInput.length(), msg.length() - aInput.length());
+        if (aNormalSize == 0)
+        {
+            waddnstr(aPanel->win, msg.c_str(), msg.length());
+        }
+        else
+        {
+            waddnstr(aPanel->win, msg.c_str(), aNormalSize);
+            wattrset(aPanel->win, A_BOLD);
+            waddnstr(aPanel->win, msg.c_str() + aNormalSize, msg.length() - aNormalSize);
+        }
         curY += 2;
     }
     if (aMsg.size())
     {
-        show_panel(aPanel);
+        top_panel(aPanel);
     }
     else
     {
@@ -353,7 +371,7 @@ void checkSize(const GameMap& aMap, const int aBottomPadding, const int aRightPa
 }
 
 // used when resize of map is out of order
-void refreshAll(const GameMap& aMap, WINDOW* const aUserWindow, WINDOW* const aGameWindow, PANEL* const aHelperPanel)
+void refreshAll(const GameMap& aMap, WINDOW* const aUserWindow, WINDOW* const aGameWindow, PANEL* const aPrintPanel)
 {
     checkSize(aMap, 10, 10);
     resize_window(aUserWindow, LINES - aMap.getSizeVertical() - 1, COLS);
@@ -364,8 +382,8 @@ void refreshAll(const GameMap& aMap, WINDOW* const aUserWindow, WINDOW* const aG
     wbkgd(aUserWindow, COLOR_PAIR(ColorIndex::USER_WIN_BACKGROUND));
 
     mvwin(aGameWindow, 0, 0);
-    move_panel(aHelperPanel, aMap.getSizeVertical() + 3, 1);
-    hide_panel(aHelperPanel);
+    move_panel(aPrintPanel, aMap.getSizeVertical() + 3, 1);
+    hide_panel(aPrintPanel);
 
     mvwaddch(aUserWindow, 1, 1, '>');
     printBorder(aGameWindow, COLOR_PAIR(ColorIndex::GAME_WIN_BORDER));
