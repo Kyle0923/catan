@@ -1,7 +1,7 @@
 /**
  * Project: catan
  * @file cli_opt.hpp
- * @brief process command line inputs
+ * @brief process command line parameters
  *
  * @author Zonghao Huang <kyle0923@qq.com>
  *
