@@ -91,18 +91,20 @@ ActionStatus CliCommandManager::act(std::string aInput, std::vector<std::string>
         ERROR_LOG("CliCommandManager not initialized");
     }
     std::vector<std::string> matchingCommand = commandMatcher(aInput);
-    if (matchingCommand.size() == 0)
+    if (matchingCommand.size() != 1)
     {
         aInfoMsg.push_back("Unknown command: \'" + aInput + '\'');
         return ActionStatus::INFO;
     }
-    else if (matchingCommand.size() > 1)
-    {
-        // too much command
-        return ActionStatus::NO_ACTION;
-    }
 
     std::string& command = matchingCommand.at(0);
+    if (command.length() > aInput.length())
+    {
+        // incomplete command
+        aInfoMsg.push_back("Unknown command: \'" + aInput + '\'');
+        aInfoMsg.push_back("maybe: \'" + command + "\'?");
+        return ActionStatus::INFO;
+    }
     // parse aInput, extra word are split by whitespace and pass to command_handler as parameter
     size_t pos = aInput.find(command);
     std::vector<std::string> commandParam = {};
@@ -126,11 +128,6 @@ int CliCommandManager::init()
     addCommandHandler(new QuitHandler());
     addCommandHandler(new HelpHandler(this));
 
-    for (auto iter = mCommandAction.begin(); iter != mCommandAction.end(); ++iter)
-    {
-        mCommand.push_back(iter->first);
-    }
-
     if (mCommandAction.size() != mCommand.size())
     {
         ERROR_LOG("CliCommandManager::init failed, size of mCommand and mCommandAction do not match");
@@ -153,6 +150,7 @@ int CliCommandManager::addCommandHandler(CommandHandler* const aHandler)
     else
     {
         mCommandAction.emplace(aHandler->command(), aHandler);
+        mCommand.push_back(aHandler->command());
         return 0;
     }
 }
@@ -160,6 +158,11 @@ int CliCommandManager::addCommandHandler(CommandHandler* const aHandler)
 const std::vector<std::string>& CliCommandManager::getCommands() const
 {
     return mCommand;
+}
+
+const std::map<std::string, CommandHandler*>& CliCommandManager::getHandlers() const
+{
+    return mCommandAction;
 }
 
 CliCommandManager::CliCommandManager(/* args */) : mInitialized(false)

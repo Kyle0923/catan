@@ -17,8 +17,7 @@
 enum class ActionStatus
 {
     SUCCESS = 0,
-    NO_ACTION,  // "SUCCESS" without doing anything
-    INFO,       // print aInfo returned by CommandHandler::act
+    INFO,       // incomplete command, do not remove current cli
     FAILED,     // internal error, write to log
 };
 
@@ -27,7 +26,8 @@ class CliCommandManager; // forward declare CliCommandManager
 class CommandHandler
 {
 public:
-    virtual std::string command() = 0;
+    virtual std::string command() const = 0;
+    virtual std::string description() const;
     virtual ActionStatus act(std::vector<std::string> aArgs, std::vector<std::string>& aInfo) = 0;
     CommandHandler() = default;
     virtual ~CommandHandler() = default;
@@ -35,13 +35,13 @@ public:
 
 class ExitHandler: public CommandHandler
 {
-    virtual std::string command() override final;
+    virtual std::string command() const override final;
     virtual ActionStatus act(std::vector<std::string> aArgs, std::vector<std::string>& aInfo) override final;
 };
 
 class QuitHandler: public CommandHandler
 {
-    virtual std::string command() override final;
+    virtual std::string command() const override final;
     virtual ActionStatus act(std::vector<std::string> aArgs, std::vector<std::string>& aInfo) override final;
 };
 
@@ -50,7 +50,7 @@ class HelpHandler: public CommandHandler
 private:
     CliCommandManager* const mManager;
 public:
-    virtual std::string command() override final;
+    virtual std::string command() const override final;
     virtual ActionStatus act(std::vector<std::string> aArgs, std::vector<std::string>& aInfo) override final;
     HelpHandler(CliCommandManager* const aManager);
 };

@@ -28,6 +28,7 @@ public:
     std::vector<std::string> commandMatcher(std::string aInput, std::string* const aLongestCommonStr = nullptr) const;
     ActionStatus act(std::string aInput, std::vector<std::string>& aInfoMsg);
     const std::vector<std::string>& getCommands() const;
+    const std::map<std::string, CommandHandler*>& getHandlers() const;
     int init();
     CliCommandManager(/* args */);
     ~CliCommandManager();

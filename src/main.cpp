@@ -27,7 +27,7 @@ enum ColorIndex
     USER_WIN_BORDER
 };
 
-void printToConsole(PANEL* const aPanel, const std::vector<std::string>& aMsg, size_t aNormalSize = 0);
+void printToConsole(PANEL* const aPanel, const std::vector<std::string>& aMsg, bool aIsList, size_t aNormalSize = 0);
 int readStringFromWindow(WINDOW* const aWindow, int aStartingY, int aStartingX, bool aUntilEol, std::string& aString);
 void printBorder(WINDOW* const aWindow, const chtype aColor);
 void checkSize(const GameMap& aMap, const int aBottomPadding, const int aRightPadding);
@@ -245,7 +245,7 @@ int main(int argc, char** argv)
         input.clear();
         readStringFromWindow(userWindow, 1, 2, false, input);
         std::vector<std::string> matchedCmd = cmdHandler.commandMatcher(input);
-        printToConsole(printoutPanel, matchedCmd, input.length());
+        printToConsole(printoutPanel, matchedCmd, true, input.length());
 
         if (!(keystroke == KEY_ENTER || keystroke == PADENTER || (char)keystroke == '\n' || (char)keystroke == '\r'))
         {
@@ -263,19 +263,18 @@ int main(int argc, char** argv)
         }
         std::vector<std::string> info;
         ActionStatus rc = cmdHandler.act(input, info);
-        printToConsole(printoutPanel, info, 0);
-        if (rc == ActionStatus::INFO)
+        if (rc != ActionStatus::INFO)
         {
-            // command requires more info
-            continue;
+            // clear user window, reset cursor position
+            mvwaddch(userWindow, 1, 1, '>');
+            wclrtoeol(userWindow);
         }
         gameMap.printMap(gameWindow);
-        // clear user window, reset cursor position
-        mvwaddch(userWindow, 1, 1, '>');
-        wclrtoeol(userWindow);
         input.clear();
         printBorder(gameWindow, COLOR_PAIR(ColorIndex::GAME_WIN_BORDER));
         printBorder(userWindow, COLOR_PAIR(ColorIndex::USER_WIN_BORDER));
+
+        printToConsole(printoutPanel, info, false, 0);  // for some reason, printTo printout panel has to come after printBorder userWindow
         wrefresh(gameWindow);
         wrefresh(userWindow);
         update_panels();
@@ -287,7 +286,7 @@ int main(int argc, char** argv)
     return 0;
 }
 
-void printToConsole(PANEL* const aPanel, const std::vector<std::string>& aMsg, size_t aNormalSize)
+void printToConsole(PANEL* const aPanel, const std::vector<std::string>& aMsg, bool aIsList, size_t aNormalSize)
 {
     if (!aPanel)
     {
@@ -298,8 +297,15 @@ void printToConsole(PANEL* const aPanel, const std::vector<std::string>& aMsg, s
     for (const std::string& msg : aMsg)
     {
         wattrset(aPanel->win, A_NORMAL);
-        mvwaddch(aPanel->win, curY, 0, '|');
-        mvwaddnstr(aPanel->win, curY + 1, 0, "|-", 2);
+        if (aIsList)
+        {
+            mvwaddch(aPanel->win, curY, 0, '|');
+            mvwaddnstr(aPanel->win, curY + 1, 0, "|-", 2);
+        }
+        else
+        {
+            mvwaddnstr(aPanel->win, curY, 0, ">>", 2);
+        }
         if (aNormalSize == 0)
         {
             waddnstr(aPanel->win, msg.c_str(), msg.length());
@@ -310,7 +316,7 @@ void printToConsole(PANEL* const aPanel, const std::vector<std::string>& aMsg, s
             wattrset(aPanel->win, A_BOLD);
             waddnstr(aPanel->win, msg.c_str() + aNormalSize, msg.length() - aNormalSize);
         }
-        curY += 2;
+        curY += aIsList ? 2 : 1;
     }
     if (aMsg.size())
     {
