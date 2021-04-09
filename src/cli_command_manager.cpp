@@ -94,7 +94,7 @@ ActionStatus CliCommandManager::act(std::string aInput, std::vector<std::string>
     if (matchingCommand.size() != 1)
     {
         aInfoMsg.push_back("Unknown command: \'" + aInput + '\'');
-        return ActionStatus::INFO;
+        return ActionStatus::SUCCESS;
     }
 
     std::string& command = matchingCommand.at(0);
