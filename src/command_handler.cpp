@@ -51,12 +51,12 @@ HelpHandler::HelpHandler(CliCommandManager* const aManager): mManager(aManager)
 {
 }
 
-std::string InternalHandler::command() const
+std::string BackdoorHandler::command() const
 {
     return "__";
 }
 
-ActionStatus InternalHandler::act(std::vector<std::string> aArgs, std::vector<std::string>& aInfo)
+ActionStatus BackdoorHandler::act(std::vector<std::string> aArgs, std::vector<std::string>& aInfo)
 {
     // credit http://www.ascii-art.de/ascii/s/sharks.txt
     const std::string shark = \
@@ -136,11 +136,11 @@ ActionStatus InternalHandler::act(std::vector<std::string> aArgs, std::vector<st
     // credit https://www.asciiart.eu/animals/cats
     const std::string cat = \
     "\n"
-    "              __..--''``---....___   _..._    __\n"    \
-    "  _       _.-'    .-/\";  `        ``<._  ``.''_ `.\n" \
-    " (@)  _.-' _..--.'_    \\                    `( ) )\n" \
-    "  `  (_..-'    (< _     ;_..__               ; `'\n"   \
-    "                `-._,_)'      ``--...____..-'\n"       \
+    "              __..--''``---....___   _..._    __\n"            \
+    "    /// //_.-'    .-/\";  `        ``<._  ``.''_ `. / // /\n" \
+    "  (@) _.-' _..--.'_    \\                    `( ) ) // // \n" \
+    "   / (_..-' // (< _     ;_..__               ; `' / ///   \n" \
+    "    / // // //  `-._,_)' // / ``--...____..-' /// / //    \n" \
     ;
     if (aArgs.size() > 0)
     {

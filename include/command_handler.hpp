@@ -28,8 +28,7 @@ enum class ActionStatus
 
 class CliCommandManager; // forward declare CliCommandManager
 
-// internal commands, backdoor
-class InternalHandler
+class BackdoorHandler
 {
 public:
     std::string command() const;

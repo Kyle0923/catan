@@ -103,16 +103,16 @@ ActionStatus CliCommandManager::act(std::string aInput, std::vector<std::string>
         ERROR_LOG("CliCommandManager not initialized");
     }
     std::string command;
-    if (aInput.find("__ ") != std::string::npos)
+    if (aInput.find(mBackdoorHandler->command() + " ") != std::string::npos)
     {
-        // backdoor
-        command = "__";
+        command = mBackdoorHandler->command();
     }
     else
     {
         std::vector<std::string> matchingCommand = commandMatcher(aInput);
         if (matchingCommand.size() != 1)
         {
+            INFO_LOG("Unknown command: \'" + aInput + '\'');
             aInfoMsg.push_back("Unknown command: \'" + aInput + '\'');
             return ActionStatus::SUCCESS;
         }
@@ -122,6 +122,7 @@ ActionStatus CliCommandManager::act(std::string aInput, std::vector<std::string>
     if (command.length() > aInput.length())
     {
         // incomplete command
+        INFO_LOG("Possible incomplete command: \'" + aInput + "\', maybe: " + command);
         aInfoMsg.push_back("Unknown command: \'" + aInput + '\'');
         aInfoMsg.push_back("maybe: \'" + command + "\'?");
         return ActionStatus::INCOMPLETE;
@@ -142,9 +143,9 @@ ActionStatus CliCommandManager::act(std::string aInput, std::vector<std::string>
         }
     }
     INFO_LOG("calling handler for cmd \'" + command + "\', arg: ", commandParam);
-    if (command == "__")
+    if (command == mBackdoorHandler->command())
     {
-        return mInternalCmdHandler->act(commandParam, aInfoMsg);
+        return mBackdoorHandler->act(commandParam, aInfoMsg);
     }
     else
     {
@@ -197,7 +198,7 @@ const std::map<std::string, CommandHandler*>& CliCommandManager::getHandlers() c
 
 CliCommandManager::CliCommandManager(/* args */) :
     mInitialized(false),
-    mInternalCmdHandler(new InternalHandler())
+    mBackdoorHandler(new BackdoorHandler())
 {
 }
 
@@ -207,5 +208,5 @@ CliCommandManager::~CliCommandManager()
     {
         delete iter.second;
     }
-    delete mInternalCmdHandler;
+    delete mBackdoorHandler;
 }

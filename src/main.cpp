@@ -103,6 +103,12 @@ int main(int argc, char** argv)
 
     printBorder(gameWindow, COLOR_PAIR(ColorPairIndex::GAME_WIN_BORDER));
     printBorder(userWindow, COLOR_PAIR(ColorPairIndex::USER_WIN_BORDER));
+
+    // coord of '>' in the input window
+    constexpr int inputX = 1;
+    constexpr int inputY = 1;
+    mvwaddch(userWindow, inputY, inputX, '>');
+
     update_panels();
     doupdate();
 
@@ -115,11 +121,7 @@ int main(int argc, char** argv)
     std::string input = "";
     int keystroke;
 
-    // coord of '>' in the input window
-    constexpr int inputX = 1;
-    constexpr int inputY = 1;
-    mvwaddch(userWindow, inputY, inputX, '>');
-    while (1)      /* loop until a key is hit */
+    while (1)
     {
         keystroke = wgetch(userWindow);
         if (keystroke == ERR)
@@ -133,10 +135,9 @@ int main(int argc, char** argv)
             break;
         }
 
-        DEBUG_LOG_L0("keystroke recorded: ", (char)keystroke, " int: ", keystroke);
+        INFO_LOG("keystroke recorded: ", (char)keystroke, " int: ", keystroke);
         switch (keystroke)
         {
-            // pdcurses resize does not work
             case KEY_RESIZE:
             case KEY_F(5): // F5 function key
             {
@@ -186,7 +187,7 @@ int main(int argc, char** argv)
             {
                 int curX, curY;
                 getyx(userWindow, curY, curX);
-                wmove(userWindow, curY, curX - 1);
+                wmove(userWindow, curY, std::max(inputX + 1, curX - 1));
                 break;
             }
             case KEY_RIGHT:
@@ -233,6 +234,7 @@ int main(int argc, char** argv)
                     mvwaddnstr(userWindow, inputY, inputX + 1, autoFillString.c_str(), autoFillString.length());
                     wmove(userWindow, inputY, 2 + autoFillString.length());
                 }
+                break;
             }
         }
 
@@ -257,7 +259,7 @@ int main(int argc, char** argv)
         // user hit 'enter'
         readStringFromWindow(userWindow, inputY, inputX + 1, true, input);
 
-        INFO_LOG("USER input str: ", input);
+        INFO_LOG("USER input cmd: ", input);
         if (!input.compare("quit") || !input.compare("exit"))
         {
             break;
@@ -338,10 +340,9 @@ int readStringFromWindow(WINDOW* const aWindow, int aStartingY, int aStartingX, 
     getyx(aWindow, curY, curX);
     const int bufferSize = COLS - aStartingX;
     char buffer[bufferSize] = {0};
-    int readInLength = 0;
     if (aUntilEol)
     {
-        readInLength = mvwinnstr(aWindow, aStartingY, aStartingX, buffer, bufferSize);
+        mvwinnstr(aWindow, aStartingY, aStartingX, buffer, bufferSize);
     }
     else
     {
@@ -351,25 +352,16 @@ int readStringFromWindow(WINDOW* const aWindow, int aStartingY, int aStartingX, 
         }
         else
         {
-            readInLength = mvwinnstr(aWindow, aStartingY, aStartingX, buffer, curX - aStartingX + 1);
+            mvwinnstr(aWindow, aStartingY, aStartingX, buffer, curX - aStartingX + 1);
         }
-    }
-    DEBUG_LOG_L0("readInLength ", readInLength);
-    // trim trailing space
-    int index = readInLength - 1;
-    while (index >= 0)
-    {
-        if (isspace(buffer[index]) || buffer[index] == 0)
-        {
-            buffer[index] = 0;
-        }
-        else
-        {
-            break;
-        }
-        --index;
     }
     aString = std::string(buffer);
+    // trim trailing space
+    while (aString.back() == ' ')
+    {
+        aString.pop_back();
+    }
+
     wmove(aWindow, curY, curX);
     return aStartingX + aString.size();
 }
@@ -423,7 +415,6 @@ void resizeAll(const GameMap& aMap, WINDOW* const aUserWindow, WINDOW* const aGa
     wbkgd(aGameWindow, COLOR_PAIR(ColorPairIndex::GAME_WIN_BACKGROUND));
     wbkgd(aUserWindow, COLOR_PAIR(ColorPairIndex::USER_WIN_BACKGROUND));
     wbkgd(aPrintPanel->win, COLOR_PAIR(ColorPairIndex::PRINTOUT_WIN_BACKGROUND));
-
 
     wclear(aUserWindow);
     mvwaddch(aUserWindow, 1, 1, '>');
