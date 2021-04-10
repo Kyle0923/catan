@@ -211,33 +211,16 @@ int main(int argc, char** argv)
             case KEY_NPAGE:
             {
                 std::string str;
-                int curX = readStringFromWindow(userWindow, 1, 1, true, str);
-                wmove(userWindow, 1, curX);
+                int lastX = readStringFromWindow(userWindow, 1, 1, true, str);
+                wmove(userWindow, 1, lastX);
                 break;
-            }
-            case ' ':
-            {
-                int curX, curY;
-                getyx(userWindow, curY, curX);
-                char prevPos = static_cast<char>(mvwinch(userWindow, curY, curX - 1));
-                char currPos = static_cast<char>(mvwinch(userWindow, curY, curX));
-                if (prevPos == ' ' && currPos == ' ')
-                {
-                    // discard
-                }
-                else
-                {
-                    break;
-                }
             }
             case '\t':
             {
                 // auto fill
-                input.clear();
                 readStringFromWindow(userWindow, 1, 2, false, input);
                 std::string autoFillString;
                 std::vector<std::string> matched = cmdHandler.commandMatcher(input, &autoFillString);
-                DEBUG_LOG_L0("match size == ", matched.size());
                 if (matched.size() == 1)
                 {
                     // overwrite the longestCommonStr to the matched string
@@ -261,7 +244,6 @@ int main(int argc, char** argv)
             getyx(userWindow, curY, curX);
             wmove(userWindow, curY, curX + 1);
         }
-        input.clear();
         readStringFromWindow(userWindow, 1, 2, false, input);
         std::vector<std::string> matchedCmd = cmdHandler.commandMatcher(input);
         printToConsole(printoutPanel, matchedCmd, true, input.length());
@@ -272,7 +254,6 @@ int main(int argc, char** argv)
         }
 
         // user hit 'enter'
-        input.clear();
         readStringFromWindow(userWindow, 1, 2, true, input);
 
         INFO_LOG("USER input str: ", input);
@@ -282,7 +263,7 @@ int main(int argc, char** argv)
         }
         std::vector<std::string> info;
         ActionStatus rc = cmdHandler.act(input, info);
-        if (rc != ActionStatus::INFO)
+        if (rc != ActionStatus::INCOMPLETE)
         {
             // clear user window, reset cursor position
             wclear(userWindow);
@@ -291,7 +272,6 @@ int main(int argc, char** argv)
         printToConsole(printoutPanel, info, false, 0);
 
         gameMap.printMap(gameWindow);
-        input.clear();
         printBorder(gameWindow, COLOR_PAIR(ColorPairIndex::GAME_WIN_BORDER));
         printBorder(userWindow, COLOR_PAIR(ColorPairIndex::USER_WIN_BORDER));
         update_panels();
@@ -329,9 +309,10 @@ void printToConsole(PANEL* const aPanel, const std::vector<std::string>& aMsg, b
         }
         else
         {
-            waddnstr(aPanel->win, msg.c_str(), aNormalSize);
+            const size_t normalSize = std::min(msg.length(), aNormalSize);
+            waddnstr(aPanel->win, msg.c_str(), normalSize);
             wattrset(aPanel->win, A_BOLD);
-            waddnstr(aPanel->win, msg.c_str() + aNormalSize, msg.length() - aNormalSize);
+            waddnstr(aPanel->win, msg.c_str() + normalSize, msg.length() - normalSize);
         }
         curY += aIsList ? 2 : 1;
     }
@@ -349,34 +330,46 @@ void printToConsole(PANEL* const aPanel, const std::vector<std::string>& aMsg, b
     doupdate();
 }
 
-// aUntilEol: true - read until eol(two spaces); false - read up to cursor
+// aUntilEol: true - read until end-of-line; false - read up to cursor
 int readStringFromWindow(WINDOW* const aWindow, int aStartingY, int aStartingX, bool aUntilEol, std::string& aString)
 {
     int curX, curY; // save cursor position, restore it later
     getyx(aWindow, curY, curX);
-    char currPos = static_cast<char>(mvwinch(aWindow, aStartingY, aStartingX));
+    const int bufferSize = COLS - aStartingX;
+    char buffer[bufferSize] = {0};
+    int readInLength = 0;
     if (aUntilEol)
     {
-        char nextPos = static_cast<char>(mvwinch(aWindow, aStartingY, aStartingX + 1));
-        while (currPos != ' ' || nextPos != ' ')
-        {
-            aString += currPos;
-            ++aStartingX;
-            currPos = static_cast<char>(mvwinch(aWindow, aStartingY, aStartingX));
-            nextPos = static_cast<char>(mvwinch(aWindow, aStartingY, aStartingX + 1));
-        }
+        readInLength = mvwinnstr(aWindow, aStartingY, aStartingX, buffer, bufferSize);
     }
     else
     {
-        while (aStartingX < curX)
+        if (curX - aStartingX + 1 <= 0)
         {
-            aString += currPos;
-            ++aStartingX;
-            currPos = static_cast<char>(mvwinch(aWindow, aStartingY, aStartingX));
+            WARN_LOG("curX - aStartingX + 1 <= 0");
+        }
+        else
+        {
+            readInLength = mvwinnstr(aWindow, aStartingY, aStartingX, buffer, curX - aStartingX + 1);
         }
     }
+    // trim trailing space
+    int index = readInLength - 1;
+    while (index >= 0)
+    {
+        if (isspace(buffer[index]))
+        {
+            buffer[index] = 0;
+        }
+        else
+        {
+            break;
+        }
+        --index;
+    }
+    aString = std::string(buffer);
     wmove(aWindow, curY, curX);
-    return aStartingX;
+    return aStartingX + aString.size();
 }
 
 void printBorder(WINDOW* const aWindow, const chtype aColor)
@@ -391,7 +384,6 @@ void restoreBorder(WINDOW* const aWindow, const chtype aColor)
     int curX, curY; // save cursor position, restore it later
     getyx(aWindow, curY, curX);
     const int maxX = getmaxx(aWindow) - 1; // max index = size - 1
-    DEBUG_LOG_L0("maxX ", maxX);
     wmove(aWindow, curY, maxX - 1);
     wclrtoeol(aWindow);
     mvwaddch(aWindow, curY, maxX, aColor|' ');
@@ -402,7 +394,6 @@ bool checkSize(const GameMap& aMap, const int aBottomPadding, const int aRightPa
 {
     int windowSizeVertical = aMap.getSizeVertical() + aBottomPadding;
     int windowSizeHorizontal = aMap.getSizeHorizontal() + aRightPadding;
-    DEBUG_LOG_L0("COLS: ", COLS, " LINES: ", LINES);
     if (COLS < windowSizeHorizontal || LINES < windowSizeVertical)
     {
         if (aExitOnFailure)

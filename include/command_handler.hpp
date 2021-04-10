@@ -17,8 +17,8 @@
 enum class ActionStatus
 {
     SUCCESS = 0,
-    INFO,       // incomplete command, do not remove current cli
-    FAILED,     // internal error, write to log
+    INCOMPLETE,  // incomplete command, do not remove current cli
+    FAILED,      // internal error, write to log
 };
 
 class CliCommandManager; // forward declare CliCommandManager

@@ -13,13 +13,25 @@ std::vector<std::string> CliCommandManager::stringMatcher(std::string aInput, co
     for (const std::string& matchingString : aMatchPool)
     {
         bool found = false;
-        if (matchingString.find(aInput) == 0) // starting with aInput
+        if (matchingString.length() > aInput.size())
         {
-            found = true;
+            if (matchingString.find(aInput) == 0)
+            {
+                // cmd starts with aInput, partial match
+                found = true;
+            }
         }
-        else if (aInput.find(matchingString) == 0) // aInput with matchingString
+        else
         {
-            found = true;
+            if (aInput.find(matchingString) == 0) // aInput includes matchingString
+            {
+                if (aInput.size() == matchingString.size() || aInput.at(matchingString.size()) == ' ')
+                {
+                    // either aInput is extra the same as matchingString or aInput has a whitespace terminating the command
+                    // to prevent "helpX" matching "help"
+                    found = true;
+                }
+            }
         }
 
         if (found)
@@ -103,22 +115,24 @@ ActionStatus CliCommandManager::act(std::string aInput, std::vector<std::string>
         // incomplete command
         aInfoMsg.push_back("Unknown command: \'" + aInput + '\'');
         aInfoMsg.push_back("maybe: \'" + command + "\'?");
-        return ActionStatus::INFO;
+        return ActionStatus::INCOMPLETE;
     }
     // parse aInput, extra word are split by whitespace and pass to command_handler as parameter
-    size_t pos = aInput.find(command);
-    std::vector<std::string> commandParam = {};
-    if (pos != std::string::npos)
+    std::vector<std::string> commandParam;
+    if (aInput.size() > command.size())
     {
-        std::string params = aInput.substr(pos);
+        std::string params = aInput.substr(command.size());
         std::string temp;
         std::istringstream paramStream(params);
         while (getline(paramStream, temp, ' '))
         {
-            commandParam.push_back(temp);
+            if (temp != "")
+            {
+                commandParam.push_back(temp);
+            }
         }
     }
-    INFO_LOG("calling handler for cmd \'" + aInput + '\'');
+    INFO_LOG("calling handler for cmd \'" + aInput + "\', arg: ", commandParam);
     return mCommandAction.at(command)->act(commandParam, aInfoMsg);
 }
 
