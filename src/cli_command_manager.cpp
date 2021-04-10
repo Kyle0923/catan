@@ -102,14 +102,23 @@ ActionStatus CliCommandManager::act(std::string aInput, std::vector<std::string>
     {
         ERROR_LOG("CliCommandManager not initialized");
     }
-    std::vector<std::string> matchingCommand = commandMatcher(aInput);
-    if (matchingCommand.size() != 1)
+    std::string command;
+    if (aInput.find("__ ") != std::string::npos)
     {
-        aInfoMsg.push_back("Unknown command: \'" + aInput + '\'');
-        return ActionStatus::SUCCESS;
+        // backdoor
+        command = "__";
+    }
+    else
+    {
+        std::vector<std::string> matchingCommand = commandMatcher(aInput);
+        if (matchingCommand.size() != 1)
+        {
+            aInfoMsg.push_back("Unknown command: \'" + aInput + '\'');
+            return ActionStatus::SUCCESS;
+        }
+        command = matchingCommand.front();
     }
 
-    std::string& command = matchingCommand.at(0);
     if (command.length() > aInput.length())
     {
         // incomplete command
@@ -132,8 +141,15 @@ ActionStatus CliCommandManager::act(std::string aInput, std::vector<std::string>
             }
         }
     }
-    INFO_LOG("calling handler for cmd \'" + aInput + "\', arg: ", commandParam);
-    return mCommandAction.at(command)->act(commandParam, aInfoMsg);
+    INFO_LOG("calling handler for cmd \'" + command + "\', arg: ", commandParam);
+    if (command == "__")
+    {
+        return mInternalCmdHandler->act(commandParam, aInfoMsg);
+    }
+    else
+    {
+        return mCommandHandler.at(command)->act(commandParam, aInfoMsg);
+    }
 }
 
 int CliCommandManager::init()
@@ -142,9 +158,9 @@ int CliCommandManager::init()
     addCommandHandler(new QuitHandler());
     addCommandHandler(new HelpHandler(this));
 
-    if (mCommandAction.size() != mCommand.size())
+    if (mCommandHandler.size() != mCommand.size())
     {
-        ERROR_LOG("CliCommandManager::init failed, size of mCommand and mCommandAction do not match");
+        ERROR_LOG("CliCommandManager::init failed, size of mCommand and mCommandHandler do not match");
     }
     else
     {
@@ -163,7 +179,7 @@ int CliCommandManager::addCommandHandler(CommandHandler* const aHandler)
     }
     else
     {
-        mCommandAction.emplace(aHandler->command(), aHandler);
+        mCommandHandler.emplace(aHandler->command(), aHandler);
         mCommand.push_back(aHandler->command());
         return 0;
     }
@@ -176,13 +192,20 @@ const std::vector<std::string>& CliCommandManager::getCommands() const
 
 const std::map<std::string, CommandHandler*>& CliCommandManager::getHandlers() const
 {
-    return mCommandAction;
+    return mCommandHandler;
 }
 
-CliCommandManager::CliCommandManager(/* args */) : mInitialized(false)
+CliCommandManager::CliCommandManager(/* args */) :
+    mInitialized(false),
+    mInternalCmdHandler(new InternalHandler())
 {
 }
 
 CliCommandManager::~CliCommandManager()
 {
+    for (auto& iter : mCommandHandler)
+    {
+        delete iter.second;
+    }
+    delete mInternalCmdHandler;
 }

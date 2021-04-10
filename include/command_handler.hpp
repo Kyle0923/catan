@@ -14,6 +14,11 @@
 #include <vector>
 #include "common.hpp"
 
+/**
+ *  @usage:
+ * every command handler need to add to int CliCommandManager::init()
+ */
+
 enum class ActionStatus
 {
     SUCCESS = 0,
@@ -22,6 +27,14 @@ enum class ActionStatus
 };
 
 class CliCommandManager; // forward declare CliCommandManager
+
+// internal commands, backdoor
+class InternalHandler
+{
+public:
+    std::string command() const;
+    ActionStatus act(std::vector<std::string> aArgs, std::vector<std::string>& aInfo);
+};
 
 class CommandHandler
 {

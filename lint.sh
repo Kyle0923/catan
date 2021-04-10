@@ -6,6 +6,7 @@ rm -fr $report
 const_ptr=`grep -nr '\w\s*\*\s*a[A-Z]' src include`
 if [[ $const_ptr != '' ]]; then
     echo error
+    echo "$const_ptr"
     echo "$const_ptr" >> $report
     rc=1
 fi

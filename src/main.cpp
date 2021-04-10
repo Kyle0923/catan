@@ -98,8 +98,6 @@ int main(int argc, char** argv)
     wbkgd(userWindow, COLOR_PAIR(ColorPairIndex::USER_WIN_BACKGROUND));
     wbkgd(printoutWindow, COLOR_PAIR(ColorPairIndex::PRINTOUT_WIN_BACKGROUND));
 
-    mvwaddch(userWindow, 1, 1, '>');
-
     gameMap.initMap();
     gameMap.printMap(gameWindow);
 
@@ -116,7 +114,11 @@ int main(int argc, char** argv)
     std::string spinner = "/-\\|";
     std::string input = "";
     int keystroke;
-    mvwaddch(userWindow, 1, 1, '>');
+
+    // coord of '>' in the input window
+    constexpr int inputX = 1;
+    constexpr int inputY = 1;
+    mvwaddch(userWindow, inputY, inputX, '>');
     while (1)      /* loop until a key is hit */
     {
         keystroke = wgetch(userWindow);
@@ -155,9 +157,9 @@ int main(int argc, char** argv)
             case 3:  // ASCII 3 ctrl-C
             case 4:  // ASCII 4 ctrl-D
             {
-                wmove(userWindow, 1, 2);
+                wmove(userWindow, inputY, inputX + 1);
                 wclrtoeol(userWindow);
-                wgetch(userWindow);
+                restoreBorder(userWindow, COLOR_PAIR(USER_WIN_BORDER));
                 break;
             }
             case KEY_BACKSPACE:
@@ -204,21 +206,21 @@ int main(int argc, char** argv)
             case KEY_HOME:
             case KEY_PPAGE:
             {
-                wmove(userWindow, 1, 2);
+                wmove(userWindow, inputY, inputX + 1);
                 break;
             }
             case KEY_END:
             case KEY_NPAGE:
             {
                 std::string str;
-                int lastX = readStringFromWindow(userWindow, 1, 1, true, str);
+                int lastX = readStringFromWindow(userWindow, inputY, inputX + 1, true, str);
                 wmove(userWindow, 1, lastX);
                 break;
             }
             case '\t':
             {
                 // auto fill
-                readStringFromWindow(userWindow, 1, 2, false, input);
+                readStringFromWindow(userWindow, inputY, inputX + 1, false, input);
                 std::string autoFillString;
                 std::vector<std::string> matched = cmdHandler.commandMatcher(input, &autoFillString);
                 if (matched.size() == 1)
@@ -228,10 +230,9 @@ int main(int argc, char** argv)
                 }
                 if (autoFillString.length() > input.size())
                 {
-                    mvwaddnstr(userWindow, 1, 2, autoFillString.c_str(), autoFillString.length());
-                    wmove(userWindow, 1, 2 + autoFillString.length());
+                    mvwaddnstr(userWindow, inputY, inputX + 1, autoFillString.c_str(), autoFillString.length());
+                    wmove(userWindow, inputY, 2 + autoFillString.length());
                 }
-                break;
             }
         }
 
@@ -244,7 +245,7 @@ int main(int argc, char** argv)
             getyx(userWindow, curY, curX);
             wmove(userWindow, curY, curX + 1);
         }
-        readStringFromWindow(userWindow, 1, 2, false, input);
+        readStringFromWindow(userWindow, inputY, inputX + 1, false, input);
         std::vector<std::string> matchedCmd = cmdHandler.commandMatcher(input);
         printToConsole(printoutPanel, matchedCmd, true, input.length());
 
@@ -254,7 +255,7 @@ int main(int argc, char** argv)
         }
 
         // user hit 'enter'
-        readStringFromWindow(userWindow, 1, 2, true, input);
+        readStringFromWindow(userWindow, inputY, inputX + 1, true, input);
 
         INFO_LOG("USER input str: ", input);
         if (!input.compare("quit") || !input.compare("exit"))
@@ -267,7 +268,7 @@ int main(int argc, char** argv)
         {
             // clear user window, reset cursor position
             wclear(userWindow);
-            mvwaddch(userWindow, 1, 1, '>');
+            mvwaddch(userWindow, inputY, inputX, '>');
         }
         printToConsole(printoutPanel, info, false, 0);
 
@@ -353,11 +354,12 @@ int readStringFromWindow(WINDOW* const aWindow, int aStartingY, int aStartingX, 
             readInLength = mvwinnstr(aWindow, aStartingY, aStartingX, buffer, curX - aStartingX + 1);
         }
     }
+    DEBUG_LOG_L0("readInLength ", readInLength);
     // trim trailing space
     int index = readInLength - 1;
     while (index >= 0)
     {
-        if (isspace(buffer[index]))
+        if (isspace(buffer[index]) || buffer[index] == 0)
         {
             buffer[index] = 0;
         }
@@ -403,6 +405,7 @@ bool checkSize(const GameMap& aMap, const int aBottomPadding, const int aRightPa
         }
         return false;
     }
+    INFO_LOG("checkSize passed, COLS: ", COLS, " LINES: ", LINES);
     return true;
 }
 

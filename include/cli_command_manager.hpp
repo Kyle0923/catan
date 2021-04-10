@@ -20,7 +20,8 @@ class CliCommandManager
 {
 private:
     bool mInitialized;
-    std::map<std::string, CommandHandler*> mCommandAction;
+    InternalHandler* const mInternalCmdHandler;  // internal cmd handler, "backdoor"
+    std::map<std::string, CommandHandler*> mCommandHandler;
     std::vector<std::string> mCommand;
     static std::vector<std::string> stringMatcher(std::string aInput, const std::vector<std::string>& aMatchPool, std::string* const aLongestCommonStr);
     int addCommandHandler(CommandHandler* const aHandler);
