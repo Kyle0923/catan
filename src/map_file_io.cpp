@@ -45,7 +45,7 @@ int MapIO::readMap(GameMap& aGameMap)
                 case '+':
                 {
                     // vertex
-                    DEBUG_LOG_L1("Read in char '", pattern, "', adding vertex at ", Point_t{ii, jj});
+                    DEBUG_LOG_L0("Read in char '", pattern, "', adding vertex at ", Point_t{ii, jj});
                     aGameMap.addVertex(ii, jj);
                     break;
                 }
@@ -54,7 +54,7 @@ int MapIO::readMap(GameMap& aGameMap)
                 case '\\':
                 {
                     // edge
-                    DEBUG_LOG_L1("Read in char '", pattern, "', adding edge at ", Point_t{ii, jj});
+                    DEBUG_LOG_L0("Read in char '", pattern, "', adding edge at ", Point_t{ii, jj});
                     aGameMap.addEdge(ii, jj, pattern);
                     break;
                 }
@@ -72,7 +72,7 @@ int MapIO::readMap(GameMap& aGameMap)
                         static_cast<ResourceTypes>(pattern - '0')
                         :
                         ResourceTypes::NONE;
-                    DEBUG_LOG_L1("Read in char '", pattern, "', adding land at ", Point_t{ii, jj}, " resource = " + resourceTypesToStr(resource));
+                    DEBUG_LOG_L0("Read in char '", pattern, "', adding land at ", Point_t{ii, jj}, " resource = " + resourceTypesToStr(resource));
                     aGameMap.addLand(ii, jj, resource);
                     break;
                 }

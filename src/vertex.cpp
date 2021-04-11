@@ -34,7 +34,7 @@ int Vertex::populateAdjacencies(GameMap& aMap)
     (rc != 0) ?
         WARN_LOG("Failed to populate adjacencies of ", getStringId())
         :
-        DEBUG_LOG_L2("Successfully populated adjacencies of ", getStringId());
+        DEBUG_LOG_L1("Successfully populated adjacencies of ", getStringId());
     return rc;
 }
 
@@ -47,7 +47,7 @@ int Vertex::addAdjacency(GameMap& aMap, const size_t aPointX, const size_t aPoin
         mAdjacencies.push_back(pTerrain);
         const Vertex* const pAdjacentVertex = pEdge->getVertex(this);
         mAdjacentVertices.push_back(pAdjacentVertex);
-        DEBUG_LOG_L1("Added adjacent " + pAdjacentVertex->getStringId() + " for " + getStringId());
+        DEBUG_LOG_L0("Added adjacent " + pAdjacentVertex->getStringId() + " for " + getStringId());
     }
     else if (dynamic_cast<const Blank*>(pTerrain))
     {

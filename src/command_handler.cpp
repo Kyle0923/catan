@@ -142,6 +142,20 @@ ActionStatus BackdoorHandler::act(std::vector<std::string> aArgs, std::vector<st
     "   / (_..-' // (< _     ;_..__               ; `' / ///   \n" \
     "    / // // //  `-._,_)' // / ``--...____..-' /// / //    \n" \
     ;
+
+    // credit https://www.asciiart.eu/animals/dogs
+    const std::string dog = \
+    "\n"
+    "     _=,_\n"             \
+    "  o_/6 /#\\\n"           \
+    "  \\__ |##/\n"           \
+    "   ='|--\\\n"            \
+    "     /   #'-.\n"         \
+    "     \\#|_   _'-. /\n"   \
+    "      |/ \\_( # |\"\n"   \
+    "     C/ ,--___/\n"       \
+    ;
+
     if (aArgs.size() > 0)
     {
         if (aArgs.front() == "shark") {
@@ -152,6 +166,8 @@ ActionStatus BackdoorHandler::act(std::vector<std::string> aArgs, std::vector<st
             aInfo.push_back(seal);
         } else if (aArgs.front() == "cat") {
             aInfo.push_back(cat);
+        } else if (aArgs.front() == "dog") {
+            aInfo.push_back(dog);
         }
     }
     return ActionStatus::SUCCESS;

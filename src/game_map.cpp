@@ -258,6 +258,10 @@ int GameMap::createHarboursRandom()
 
 std::vector<int> GameMap::randomizeResource(SequenceConfig_t aConfig)
 {
+    static const unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    static std::default_random_engine engine(seed);
+    DEBUG_LOG_L3("randomizeResource seed: ", seed);
+
     std::vector<int> resourceSequence;
     for (int index = 0; index < (int)aConfig.size(); ++index)
     {
@@ -266,9 +270,7 @@ std::vector<int> GameMap::randomizeResource(SequenceConfig_t aConfig)
             resourceSequence.push_back(index);
         }
     }
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-    DEBUG_LOG_L3("randomizeResource seed: ", seed);
-    std::shuffle(resourceSequence.begin(), resourceSequence.end(), std::default_random_engine(seed));
+    std::shuffle(resourceSequence.begin(), resourceSequence.end(), engine);
     return resourceSequence;
 }
 
@@ -439,7 +441,7 @@ Harbour* GameMap::addHarbour(const int aId1, const int aId2)
     mVertices[aId2]->setHarbour(pHarbour);
 
     mHarbours.push_back(pHarbour);
-    DEBUG_LOG_L2("added port#", mHarbours.size(), " for ", aId1, " and ", aId2);
+    DEBUG_LOG_L2("added harbour#", mHarbours.size(), " for ", aId1, " and ", aId2);
     return pHarbour;
 }
 

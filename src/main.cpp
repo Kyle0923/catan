@@ -45,7 +45,7 @@ void resizeAll(const GameMap& aMap, WINDOW* const aUserWindow, WINDOW* const aGa
 int main(int argc, char** argv)
 {
     Logger::initLogfile();
-    DEBUG_LOG_L0("Begin of Catan.exe");
+    INFO_LOG("Begin of Catan.exe");
 
     CliOpt cliOpt;
     cliOpt.processArg(argc, argv);

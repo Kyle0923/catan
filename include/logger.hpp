@@ -56,7 +56,7 @@ class Logger
 {
 private:
     template<typename... Targs>
-    static std::string log(bool aLogToConsole, Targs... aArgs)
+    static std::string log(Targs... aArgs)
     {
         std::stringstream strstream;
         _formatString(strstream, aArgs...);
@@ -69,10 +69,7 @@ private:
         {
             std::cout << "[Info] Log file not initialized" << std::endl;
         }
-        if (aLogToConsole)
-        {
-            std::cout << logMessage << std::endl;
-        }
+        std::cout << logMessage << std::endl;
         return logMessage;
     };
     template<typename T>
@@ -126,24 +123,27 @@ public:
     template<typename... Targs>
     static void debug(int aLevel, Targs... aArgs)
     {
-        log((aLevel >= mDebugLevel), "[Debug", aLevel, "] " , aArgs...);
+        if (aLevel >= mDebugLevel)
+        {
+            log("[Debug", aLevel, "] " , aArgs...);
+        }
     };
     template<typename... Targs>
     static void info(Targs... aArgs)
     {
-        log(true, "[Info] ", aArgs...);
+        log("[Info] ", aArgs...);
     };
     template<typename... Targs>
     static void warn(Targs... aArgs)
     {
-        log(true, "[Warn] ", aArgs...);
+        log("[Warn] ", aArgs...);
     };
 
     // Error log will terminate the program
     template<typename... Targs>
     static void error(Targs... aArgs)
     {
-        std::string ErrMsg = log(true, "[Error] ", aArgs...);
+        std::string ErrMsg = log("[Error] ", aArgs...);
         throw std::runtime_error(ErrMsg);
     };
 };

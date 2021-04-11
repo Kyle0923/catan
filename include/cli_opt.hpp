@@ -52,7 +52,7 @@ public:
 #ifndef RELEASE
         std::get<CliOptIndex::DEBUG_LEVEL>(cliOptList) = 1;
 #else
-        std::get<CliOptIndex::DEBUG_LEVEL>(cliOptList) = 5;
+        std::get<CliOptIndex::DEBUG_LEVEL>(cliOptList) = 3;
 #endif /* RELEASE */
     }
 

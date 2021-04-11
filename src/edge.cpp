@@ -61,7 +61,7 @@ int Edge::populateAdjacencies(GameMap& aMap)
     (rc != 0) ?
         WARN_LOG("Failed to populate adjacencies of ", getStringId())
         :
-        DEBUG_LOG_L2("Successfully populated adjacencies of ", getStringId());
+        DEBUG_LOG_L1("Successfully populated adjacencies of ", getStringId());
     return rc;
 }
 
