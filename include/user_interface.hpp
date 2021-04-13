@@ -57,7 +57,10 @@ private:
     // aUntilEol: true - read until end-of-line; false - read up to cursor
     int readStringFromWindow(WINDOW* const aWindow, int aStartingY, int aStartingX, bool aUntilEol, std::string& aString);
 
-
+    /**
+     * @param aIsList: print the vector using list format
+     * @param aNormalSize: print up to aNormalSize in normal style, the rest are printed and grey out
+     */
     void printToConsole(const std::vector<std::string>& aMsg, bool aIsList, size_t aNormalSize);
 
 public:
