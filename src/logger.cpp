@@ -10,7 +10,7 @@
 #include "logger.hpp"
 #include "constant.hpp"
 
-int Logger::mDebugLevel = 0;
+int Logger::mDebugLevel = constant::DEFAULT_DEBUG_LEVEL;
 Logger* Logger::mLogger = nullptr;
 
 void Logger::setDebugLevel(int aDebugLevel)

@@ -82,14 +82,27 @@ int GameMap::populateMap()
 int GameMap::populateHarbours(bool aUseDefaultPosition, bool aUseDefaultResourceType)
 {
     int rc = 0;
+    if (mLands.size() != constant::NUM_LANDS_DEFAULT)
+    {
+        // override to use ramdon position when not using the default map
+        aUseDefaultPosition = false;
+    }
     if (aUseDefaultPosition)
     {
+        INFO_LOG("using default position for harbours");
         rc = createHarboursDefault();
     }
     else
     {
+        INFO_LOG("using random position for harbours");
         rc = createHarboursRandom();
     }
+
+    rc ?
+        WARN_LOG("Failed to create all harbours, created: ", mHarbours.size(), ", expected: ", mNumHarbour)
+        :
+        INFO_LOG("Successfully created all harbours");
+
     SequenceConfig_t config(static_cast<size_t>(ResourceTypes::ANY) + 1);
     config[ResourceTypes::CLAY]  = constant::NUM_HARBOUR_CLAY;
     config[ResourceTypes::SHEEP] = constant::NUM_HARBOUR_SHEEP;
@@ -98,7 +111,7 @@ int GameMap::populateHarbours(bool aUseDefaultPosition, bool aUseDefaultResource
     config[ResourceTypes::ORE]   = constant::NUM_HARBOUR_ORE;
     if (aUseDefaultResourceType && mHarbours.size() == constant::NUM_OF_HARBOUR)
     {
-        DEBUG_LOG_L3("Using default 9 harbours");
+        DEBUG_LOG_L3("Using 9 default harbour types");
         config[ResourceTypes::ANY] = 0; // ANY is determined by (index % 2 != 0)
         std::vector<int> randomSeq = randomizeResource(config);
         DEBUG_LOG_L2("Assigning randomSeq ", randomSeq, " to harbours");
@@ -139,6 +152,11 @@ int GameMap::populateHarbours(bool aUseDefaultPosition, bool aUseDefaultResource
         rc |= pHarbour->calculatePoints(*this);
         pHarbour->registerToMap(*this);
     }
+
+    rc ?
+        WARN_LOG("Failed to populateHarbours")
+        :
+        INFO_LOG("Successfully populated all harbours");
     return rc;
 }
 
@@ -189,13 +207,8 @@ int GameMap::createHarboursDefault()
         addHarbour(harbourCandidates[index], harbourCandidates[index + 1]);
         index += 2U + gap[mHarbours.size() % 3];
     }
-    bool rc = (mHarbours.size() != mNumHarbour);
-    rc ?
-        WARN_LOG("Failed to create all harbours, created ", mHarbours.size(), " expected ", mNumHarbour)
-        :
-        INFO_LOG("Successfully created all harbours");
 
-    return rc;
+    return (mHarbours.size() != mNumHarbour);
 }
 
 int GameMap::createHarboursRandom()
@@ -550,7 +563,7 @@ void GameMap::logMap(bool aUseId)
     {
         WARN_LOG("Map not initialized, printMap may not function as expected");
     }
-    std::string map = "\n========================\n";
+    std::string map = "\n========================\n|";
     for (size_t jj = 0; jj < mSizeVertical; ++jj)
     {
         const std::deque<Terrain*>& row = mGameMap.at(jj);

@@ -29,6 +29,8 @@ constexpr size_t NUM_LAND_WHEAT  = 4U;
 constexpr size_t NUM_LAND_WOOD   = 4U;
 constexpr size_t NUM_LAND_ORE    = 3U;
 
+constexpr size_t NUM_LANDS_DEFAULT = 19U; // num of lands for default map
+
 constexpr size_t NUM_OF_HARBOUR = 9U;   // total number of harbours
 constexpr size_t NUM_HARBOUR_CLAY  = 1U;
 constexpr size_t NUM_HARBOUR_SHEEP = 1U;
@@ -41,6 +43,12 @@ constexpr size_t NUM_HARBOUR_ANY = NUM_OF_HARBOUR - NUM_HARBOUR_RESOURCE; // num
 constexpr size_t NUM_DICE_3_TO_11 = 2U;
 constexpr size_t NUM_DICE_2_OR_12 = 1U;
 constexpr size_t NUM_DICE_7       = 0U;
+
+#ifdef RELEASE
+constexpr int DEFAULT_DEBUG_LEVEL = 5;
+#else
+constexpr int DEFAULT_DEBUG_LEVEL = 2;
+#endif /* ifdef RELEASE */
 
 } /* namespace constant */
 
