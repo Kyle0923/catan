@@ -41,7 +41,7 @@ CLEAN_THIRD_PARTY := $(addprefix CLEAN.,$(THIRD_PARTY_LIB_DIR))
 # use `RELEASE=1 make` to build release
 ifneq ($(RELEASE),)
 ARTIFACT := $(ARTIFACT:.exe=_release.exe)
-CFLAGS += -DRELEASE -O3
+CFLAGS += -DRELEASE -O2
 else
 CFLAGS += -g
 endif
