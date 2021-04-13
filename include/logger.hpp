@@ -112,7 +112,7 @@ public:
      * set higher level to filter out generic message
      */
     static void setDebugLevel(int aDebugLevel);
-    static void initLogfile(std::string aLogFilename = "log.txt");
+    static void initLogger(std::string aLogFilename = "log.txt");
     template<typename... Targs>
     static std::string formatString(Targs... aArgs)
     {
@@ -151,6 +151,5 @@ public:
 // special handle for non-printable characters
 template<>
 int Logger::print(std::stringstream& ostr, char aArg);
-
 
 #endif /* INCLUDE_LOGGER_HPP */

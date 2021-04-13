@@ -136,7 +136,7 @@ ActionStatus BackdoorHandler::act(std::vector<std::string> aArgs, std::vector<st
     // credit https://www.asciiart.eu/animals/cats
     const std::string cat = \
     "\n"
-    "              __..--''``---....___   _..._    __\n"            \
+    "              __..--''``---....___   _..._    __\n"           \
     "    /// //_.-'    .-/\";  `        ``<._  ``.''_ `. / // /\n" \
     "  (@) _.-' _..--.'_    \\                    `( ) ) // // \n" \
     "   / (_..-' // (< _     ;_..__               ; `' / ///   \n" \

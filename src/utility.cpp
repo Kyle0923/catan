@@ -28,7 +28,7 @@ std::ostream& operator<< (std::ostream& aStream, const Point_t& aPoint)
 
 std::string resourceTypesToStr(const ResourceTypes aResource)
 {
-    static std::string resourceStr[] = {
+    static const std::string resourceStr[] = {
         "NONE",
         "DESERT",
         "CLAY",

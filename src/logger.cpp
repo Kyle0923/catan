@@ -18,7 +18,7 @@ void Logger::setDebugLevel(int aDebugLevel)
     mDebugLevel = aDebugLevel;
 }
 
-void Logger::initLogfile(std::string aLogFilename)
+void Logger::initLogger(std::string aLogFilename)
 {
     static Logger logger;
     if (mLogger != nullptr)
@@ -28,7 +28,7 @@ void Logger::initLogfile(std::string aLogFilename)
     mLogger = &logger;
     logger.mLogFile.open(aLogFilename);
 #ifdef RELEASE
-    log(true, "Copyright (c) 2021, Zonghao Huang <kyle0923@qq.com>\n"   \
+    log("Copyright (c) 2021, Zonghao Huang <kyle0923@qq.com>\n"   \
                 "All rights reserved.\n"    \
                 "cantan.exe - Release version ", VER_MAJOR, '.', VER_MINOR, '.', VER_PATCH,  \
                 ", Built on " __DATE__ " " __TIME__ "\n");

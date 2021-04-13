@@ -297,19 +297,19 @@ int GameMap::checkOverlap() const
 
     for (Vertex* const pVertex : mVertices)
     {
-        lambda(pVertex->getAllPoints(), Logger::formatString(pVertex->getStringId()));
+        lambda(pVertex->getAllPoints(), pVertex->getStringId());
     }
     for (Edge* const pEdge : mEdges)
     {
-        lambda(pEdge->getAllPoints(), Logger::formatString(pEdge->getStringId()));
+        lambda(pEdge->getAllPoints(), pEdge->getStringId());
     }
     for (Land* const pLand : mLands)
     {
-        lambda(pLand->getAllPoints(), Logger::formatString(pLand->getStringId()));
+        lambda(pLand->getAllPoints(), pLand->getStringId());
     }
     for (Harbour* const pHarbour : mHarbours)
     {
-        lambda(pHarbour->getAllPoints(), Logger::formatString(pHarbour->getStringId()));
+        lambda(pHarbour->getAllPoints(), pHarbour->getStringId());
     }
     if (overlapCount)
     {
@@ -532,12 +532,13 @@ bool GameMap::boundaryCheck(const int x, const int y) const
     return (x < static_cast<int>(mSizeHorizontal) && y < static_cast<int>(mSizeVertical));
 }
 
-void GameMap::printMap(bool aUseId)
+void GameMap::logMap(bool aUseId)
 {
     if (!mInitialized)
     {
         WARN_LOG("Map not initialized, printMap may not function as expected");
     }
+    std::string map = "\n========================\n";
     for (size_t jj = 0; jj < mSizeVertical; ++jj)
     {
         const std::deque<Terrain*>& row = mGameMap.at(jj);
@@ -545,28 +546,21 @@ void GameMap::printMap(bool aUseId)
         {
             // easier to debug using an extra char c
             char c = row.at(ii)->getCharRepresentation(ii, jj, aUseId); //print ID
-            std::cout << c;
+            map += c;
         }
-        std::cout << std::endl;
+        map += "|\n|";
     }
+    map += "========================";
+    INFO_LOG("The map is", map);
 }
 
-void GameMap::printMap(WINDOW* const aWindow)
+const std::deque< std::deque<Terrain*> >& GameMap::getTerrainMap() const
 {
     if (!mInitialized)
     {
         ERROR_LOG("Map not initialized, cannot printMap");
     }
-    for (size_t jj = 0; jj < mSizeVertical; ++jj)
-    {
-        const std::deque<Terrain*>& row = mGameMap.at(jj);
-        for (size_t ii = 0; ii < mSizeHorizontal; ++ii)
-        {
-            // easier to debug using an extra char c
-            char c = row.at(ii)->getCharRepresentation(ii, jj);
-            mvwaddch(aWindow, jj, ii, COLOR_PAIR(1) | c);
-        }
-    }
+    return mGameMap;
 }
 
 int GameMap::clearAndResize(const int aSizeHorizontal, const int aSizeVertical)

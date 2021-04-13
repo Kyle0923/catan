@@ -14,6 +14,7 @@
 #include <tuple>
 #include <array>
 #include <cstddef>
+#include "logger.hpp"
 
 /**
  * @usage:

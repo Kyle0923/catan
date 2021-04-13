@@ -89,8 +89,8 @@ public:
     void setNumOfHarbour(const size_t aNum);
 
     int initMap();
-    void printMap(bool aUseId = false);
-    void printMap(WINDOW* const aWindow);
+    void logMap(bool aUseId = false);  // std::cout implementation, convenient in development
+    const std::deque< std::deque<Terrain*> >& getTerrainMap() const;
 
     GameMap(const GameMap &) = delete;
     GameMap& operator=(const GameMap&) = delete;
