@@ -104,6 +104,15 @@ struct SequenceConfig_t
     size_t size() const;
     size_t& operator[](const size_t aIndex);
     size_t& operator[](const ResourceTypes aIndex);
+    size_t sum() const
+    {
+        size_t sum = 0;
+        for (size_t num : mConfig)
+        {
+            sum += num;
+        }
+        return sum;
+    }
 };
 
 #endif /* INCLUDE_GAME_MAP_HPP */

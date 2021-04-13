@@ -28,7 +28,7 @@ int main(int argc, char** argv)
     Logger::setDebugLevel(cliOpt.getOpt<CliOptIndex::DEBUG_LEVEL>());
 
     GameMap gameMap;
-    MapIO mapFile("map.txt");
+    MapIO mapFile(cliOpt.getOpt<CliOptIndex::MAP_FILE_PATH>());
     mapFile.readMap(gameMap);
 
     UserInterface ui(gameMap);

@@ -38,6 +38,7 @@
 enum CliOptIndex
 {
     DEBUG_LEVEL = 0,
+    MAP_FILE_PATH = 1,
     CLI_OPT_INDEX_END,
 };
 
@@ -45,7 +46,7 @@ class CliOpt {
 
 public:
 
-    using CliOptList_t = std::tuple<int>;
+    using CliOptList_t = std::tuple<int, std::string>;
 
     CliOpt() {
         // setup the opt matching string and the default values
@@ -55,6 +56,8 @@ public:
 #else
         std::get<CliOptIndex::DEBUG_LEVEL>(cliOptList) = 3;
 #endif /* RELEASE */
+        cliOptNames.at(CliOptIndex::MAP_FILE_PATH) = "--map";
+        std::get<CliOptIndex::MAP_FILE_PATH>(cliOptList) = "";
     }
 
     int processArg(const int argc, const char* const *argv)
@@ -70,9 +73,13 @@ public:
                         INFO_LOG("Processing arg '" + cliOptNames.at(index) + "' value='" + value + "'");
                         switch (index)
                         {
+                        // add value translation here, e.g. string to int, etc
                         case CliOptIndex::DEBUG_LEVEL:
                             std::get<CliOptIndex::DEBUG_LEVEL>(cliOptList) = \
                                     static_cast<int>(strtol(value, nullptr, 10));
+                            break;
+                        case CliOptIndex::MAP_FILE_PATH:
+                            std::get<CliOptIndex::MAP_FILE_PATH>(cliOptList) = value;
                             break;
                         default:
                             break;
@@ -80,7 +87,7 @@ public:
                     }
                     else
                     {
-                        WARN_LOG("Discarded arg '" + cliOptNames.at(index) + "' , process reached eol, no value was read");
+                        WARN_LOG("Discarded arg '" + cliOptNames.at(index) + "', process reached eol, no value was read");
                     }
                     break;
                 }

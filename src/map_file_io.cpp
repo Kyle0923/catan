@@ -13,22 +13,42 @@
 
 int MapIO::readMap(GameMap& aGameMap)
 {
-    mFile.open(mFilename);
-    if (!mFile.is_open())
+    std::deque<std::string> stringQueue;
+    if (mFilename == "" || mFilename == "default")
     {
-        ERROR_LOG("Cannot open file: ", mFilename);
-        return 1;
+        DEBUG_LOG_L3("Using default map");
+        stringQueue = getDefaultMap();
+    }
+    else
+    {
+        mFile.open(mFilename);
+        if (!mFile.is_open())
+        {
+            WARN_LOG("Cannot open file: " + mFilename + ", fall back to default map");
+            stringQueue = getDefaultMap();
+        }
+        else
+        {
+            std::string line;
+            while (std::getline(mFile, line))
+            {
+                if (line != "")
+                {
+                    stringQueue.push_back(line);
+                }
+            }
+        }
     }
 
-    Point_t mapSize = validateMapBoundary();
+    Point_t mapSize = preprocessStringVector(stringQueue);
     aGameMap.clearAndResize(mapSize.x, mapSize.y);
 
     size_t jj = 0;
 
-    std::string line;
-    while (std::getline(mFile, line))
+    for (std::string line : stringQueue)
     {
-        for(size_t ii = 0; ii < line.length(); ++ii) {
+        for(size_t ii = 0; ii < line.length(); ++ii)
+        {
             char pattern = line.at(ii);
             if (pattern == ' ')
             {
@@ -97,68 +117,85 @@ int MapIO::saveMap(GameMap* const aGameMap)
     return 0;
 }
 
-Point_t MapIO::validateMapBoundary()
+Point_t MapIO::preprocessStringVector(std::deque<std::string>& aStringQueue)
 {
-    constexpr int MIN_TOP_BOTTOM_PADDING = 5;
-    constexpr int MIN_LEFT_RIGHT_PADDING = 8;
+    constexpr size_t VERTICAL_PADDING = 5;
+    constexpr size_t HORIZONTAL_PADDING = 8;
 
     size_t horizontalSize = 0;
-    size_t verticalSize = 0;
+    size_t verticalSize = aStringQueue.size();
 
-    int rc = 0;
+    size_t minX = std::string::npos;
 
-    size_t verticalIndex = 0;
-    std::string line;
-    while (std::getline(mFile, line))
+    // check min X, max X, trim trailing spaces
+    for (std::string& line : aStringQueue)
     {
-        int startingIndex = -1;
-        size_t endingIndex = 0;
-        for (size_t index = 0; index < line.length(); ++index)
+        while (line.length() > 0 && line.back() == ' ')
         {
-            const char character = line.at(index);
-            if (character != ' ')
-            {
-                endingIndex = std::max(endingIndex, index);
-                if (startingIndex == -1)
-                {
-                    startingIndex = static_cast<int>(index);
-                }
-            }
+            line.pop_back();
         }
-        horizontalSize = std::max(horizontalSize, endingIndex);
-
-        if (startingIndex != -1)
-        {
-            // non empty line
-            if (verticalIndex < MIN_TOP_BOTTOM_PADDING)
-            {
-                WARN_LOG("Please have ", MIN_TOP_BOTTOM_PADDING, " empty lines on the top of the map, current line ", (verticalIndex + 1));
-                rc = 1;
-            }
-            if (startingIndex < MIN_LEFT_RIGHT_PADDING)
-            {
-                WARN_LOG("Please have ", MIN_LEFT_RIGHT_PADDING, " empty lines on the left of the map, current line ", (verticalIndex + 1));
-                rc = 1;
-            }
-            verticalSize = verticalIndex;
-        }
-
-        ++verticalIndex;
+        horizontalSize = std::max(horizontalSize, line.length());
+        const size_t firstCharIndex = line.find_first_not_of(" ");
+        minX = std::min(firstCharIndex, minX);
     }
 
-    horizontalSize += MIN_LEFT_RIGHT_PADDING;
-    verticalSize += MIN_TOP_BOTTOM_PADDING;
+    // add horizontal padding
+    const size_t leftPaddingSize = HORIZONTAL_PADDING - minX;
+    const std::string leftPadding(leftPaddingSize, ' ');
+    const std::string rightPadding(HORIZONTAL_PADDING, ' ');
+    for (std::string& line : aStringQueue)
+    {
+        line = leftPadding + line + rightPadding;
+    }
 
-    (rc != 0) ?
-        ERROR_LOG("Map validation failed")
-        :
-        INFO_LOG("Map validation succeeded, map size: [", horizontalSize, ", ", verticalSize, "]");
+    // add vertical padding
+    for (size_t index = 0; index < VERTICAL_PADDING; ++index)
+    {
+        aStringQueue.push_front("");
+        aStringQueue.push_back("");
+    }
 
-    // reset file to the beginning
-    mFile.clear();
-    mFile.seekg(0, std::ios::beg);
+    horizontalSize = horizontalSize + HORIZONTAL_PADDING - minX + HORIZONTAL_PADDING;
+    verticalSize = aStringQueue.size();
 
     return Point_t{horizontalSize, verticalSize};
+}
+
+std::deque<std::string> MapIO::getDefaultMap()
+{
+    return {
+        "                                 +----------+",
+        "                                /............\\",
+        "                               /..............\\",
+        "                   +----------+................+----------+",
+        "                  /............\\............../............\\",
+        "                 /..............\\............/..............\\",
+        "     +----------+................+----------+................+----------+",
+        "    /............\\............../............\\............../............\\",
+        "   /..............\\............/..............\\............/..............\\",
+        "  +................+----------+................+----------+................+",
+        "   \\............../............\\............../............\\............../",
+        "    \\............/..............\\............/..............\\............/",
+        "     +----------+................+----------+................+----------+",
+        "    /............\\............../............\\............../............\\",
+        "   /..............\\............/..............\\............/..............\\",
+        "  +................+----------+................+----------+................+",
+        "   \\............../............\\............../............\\............../",
+        "    \\............/..............\\............/..............\\............/",
+        "     +----------+................+----------+................+----------+",
+        "    /............\\............../............\\............../............\\",
+        "   /..............\\............/..............\\............/..............\\",
+        "  +................+----------+................+----------+................+",
+        "   \\............../............\\............../............\\............../",
+        "    \\............/..............\\............/..............\\............/",
+        "     +----------+................+----------+................+----------+",
+        "                 \\............../............\\............../",
+        "                  \\............/..............\\............/",
+        "                   +----------+................+----------+",
+        "                               \\............../",
+        "                                \\............/",
+        "                                 +----------+"
+    };
 }
 
 MapIO::MapIO(std::string aFilename) : mFilename(aFilename)

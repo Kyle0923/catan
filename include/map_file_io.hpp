@@ -13,6 +13,7 @@
 
 #include <string>
 #include <fstream>
+#include <deque>
 #include "game_map.hpp"
 
 class MapIO
@@ -20,7 +21,8 @@ class MapIO
 private:
     std::string mFilename;
     std::fstream mFile;
-    Point_t validateMapBoundary();
+    Point_t preprocessStringVector(std::deque<std::string>& aStringQueue);
+    static std::deque<std::string> getDefaultMap();
 public:
     MapIO(std::string aFilename);
     int readMap(GameMap& aGameMap);

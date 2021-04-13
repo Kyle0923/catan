@@ -324,7 +324,7 @@ int GameMap::checkOverlap() const
 
 int GameMap::assignResourceAndDice()
 {
-    SequenceConfig_t resourceConfig(static_cast<size_t>(ResourceTypes::ANY) + 1);
+    SequenceConfig_t resourceConfig(static_cast<size_t>(ResourceTypes::ANY));
     // default config
     resourceConfig[ResourceTypes::DESERT] = constant::NUM_LAND_DESERT;
     resourceConfig[ResourceTypes::CLAY]   = constant::NUM_LAND_CLAY;
@@ -348,6 +348,12 @@ int GameMap::assignResourceAndDice()
             }
         }
     }
+    if (resourceConfig.sum() < mLands.size())
+    {
+        // TODO: prompt for user input?
+        WARN_LOG("Non-default map, extra Desert will be added, amount: ", mLands.size() - resourceConfig.sum());
+        resourceConfig[ResourceTypes::DESERT] += mLands.size() - resourceConfig.sum();
+    }
     std::vector<int> resourceSeq = randomizeResource(resourceConfig);
 
     SequenceConfig_t diceConfig(13); // 0 to 12
@@ -358,6 +364,12 @@ int GameMap::assignResourceAndDice()
     diceConfig[2]  = constant::NUM_DICE_2_OR_12;
     diceConfig[7]  = constant::NUM_DICE_7;
     diceConfig[12] = constant::NUM_DICE_2_OR_12;
+    if (diceConfig.sum() < mLands.size())
+    {
+        // TODO: prompt for user input?
+        WARN_LOG("Non-default map, extra 10 will be added, amount: ", mLands.size() - resourceConfig[ResourceTypes::DESERT] - diceConfig.sum());
+        diceConfig[10] += mLands.size() - resourceConfig[ResourceTypes::DESERT] - diceConfig.sum();
+    }
     std::vector<int> diceSeq = randomizeResource(diceConfig);
     size_t resourceIndex = 0;
     size_t diceIndex = 0;
