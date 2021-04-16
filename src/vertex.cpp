@@ -106,12 +106,11 @@ char Vertex::getCharRepresentation(const size_t aPointX, const size_t aPointY, c
     }
     switch (mBuilding)
     {
-    case BuildingType::NONE:
-        return '+';
     case BuildingType::SETTLEMENT:
         return 'S';
     case BuildingType::CITY:
         return 'C';
+    case BuildingType::NONE:
     default:
         return '+';
     }

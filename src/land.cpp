@@ -142,6 +142,11 @@ void Land::setDiceNum(int aDice)
     mDiceNum = aDice;
 }
 
+void Land::rob(bool aIsRob)
+{
+    mIsUnderRob = aIsRob;
+}
+
 char Land::getCharRepresentation(const size_t aPointX, const size_t aPointY, const bool aUseId) const
 {
     if (aUseId)
@@ -152,28 +157,41 @@ char Land::getCharRepresentation(const size_t aPointX, const size_t aPointY, con
     {
         return '.';
     }
+    auto printAtMiddle = [aPointX, this](const int aWidth, const int aOffset, const std::string& aString) {
+        // add 1 before division, effectively round up the 0.5 when odd number is divided by 2, allows left justify
+        const int PADDING = (aWidth - aString.length() + 1) / 2;
+        const int index = (int)aPointX - (int)mTopLeft.x + aOffset - PADDING;
+        if (index >= 0 && index < (int)aString.size())
+        {
+            return aString.at(index);
+        }
+        else
+        {
+            return ' ';
+        }
+    };
     if (aPointY == mTopLeft.y + 2)
     {
         // print label
         const size_t WIDTH = 16;
         const std::string label = resourceTypesToStr(mResourceType);
-        const int PADDING = (WIDTH - label.length()) / 2;
-        const int index = (int)aPointX - (int)mTopLeft.x + 2 - PADDING;
-        if (index >= 0 && index < (int)label.size())
-        {
-            return label.at(index);
-        }
+        return printAtMiddle(WIDTH, 2, label);
     }
-    if (mResourceType != ResourceTypes::DESERT && aPointY == mTopLeft.y + 3)
+    else if (aPointY == mTopLeft.y + 3)
     {
-        // print dice num
         const size_t WIDTH = 14;
-        const std::string label = std::to_string(mDiceNum);
-        const int PADDING = (WIDTH - label.length()) / 2;
-        const int index = (int)aPointX - (int)mTopLeft.x + 1 - PADDING;
-        if (index >= 0 && index < (int)label.size())
+        const size_t offset = 1;
+        if (mResourceType != ResourceTypes::DESERT)
         {
-            return label.at(index);
+            // print dice num
+            const std::string robber = (mIsUnderRob ? "#" : "");
+            const std::string label = robber + std::to_string(mDiceNum) + robber;
+            return printAtMiddle(WIDTH, offset, label);
+        }
+        else if (mIsUnderRob)
+        {
+            // desert under rob
+            return printAtMiddle(WIDTH, offset, "##");
         }
     }
     return ' ';

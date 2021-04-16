@@ -27,6 +27,7 @@ public:
     ResourceTypes getResourceType();
     void setDiceNum(int aDice);
     int getDiceNum();
+    void rob(bool aIsRob);
     char getCharRepresentation(const size_t aPointX, const size_t aPointY, const bool aUseId = false) const override;
     std::string getStringId() const override;
     int populateAdjacencies(GameMap& aMap) override;

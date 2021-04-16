@@ -28,6 +28,7 @@ private:
     size_t mSizeHorizontal;
     size_t mSizeVertical;
     size_t mNumHarbour;
+    int mRobLandId;
     bool mInitialized;
     std::deque< std::deque<Terrain*> > mGameMap;
 

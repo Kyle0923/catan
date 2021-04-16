@@ -377,11 +377,12 @@ int GameMap::assignResourceAndDice()
     diceConfig[2]  = constant::NUM_DICE_2_OR_12;
     diceConfig[7]  = constant::NUM_DICE_7;
     diceConfig[12] = constant::NUM_DICE_2_OR_12;
-    if (diceConfig.sum() < mLands.size())
+    const size_t numOfDesert = resourceConfig[ResourceTypes::DESERT];
+    if (diceConfig.sum() < mLands.size() - numOfDesert)
     {
         // TODO: prompt for user input?
-        WARN_LOG("Non-default map, extra 10 will be added, amount: ", mLands.size() - resourceConfig[ResourceTypes::DESERT] - diceConfig.sum());
-        diceConfig[10] += mLands.size() - resourceConfig[ResourceTypes::DESERT] - diceConfig.sum();
+        WARN_LOG("Non-default map, extra 10 will be added, amount: ", mLands.size() - numOfDesert - diceConfig.sum());
+        diceConfig[10] += mLands.size() - numOfDesert - diceConfig.sum();
     }
     std::vector<int> diceSeq = randomizeResource(diceConfig);
     size_t resourceIndex = 0;
@@ -395,6 +396,12 @@ int GameMap::assignResourceAndDice()
         if (pLand->getResourceType() != ResourceTypes::DESERT)
         {
             pLand->setDiceNum(diceSeq.at(diceIndex++));
+        }
+        else if (mRobLandId == -1)
+        {
+            // robber initially is at desert
+            mRobLandId = pLand->getId();
+            pLand->rob(true);
         }
     }
     return 0;
@@ -593,6 +600,7 @@ int GameMap::clearAndResize(const int aSizeHorizontal, const int aSizeVertical)
     mSizeHorizontal = aSizeHorizontal;
     mSizeVertical = aSizeVertical;
     mNumHarbour = constant::NUM_OF_HARBOUR;
+    mRobLandId = -1;
     mInitialized = false;
     mVertices.clear();
     mEdges.clear();
@@ -617,18 +625,9 @@ int GameMap::getSizeVertical() const
     return mSizeVertical;
 }
 
-GameMap::GameMap(const int aSizeHorizontal, const int aSizeVertical) :
-    mSizeHorizontal(aSizeHorizontal),
-    mSizeVertical(aSizeVertical),
-    mNumHarbour(constant::NUM_OF_HARBOUR),
-    mInitialized(false)
+GameMap::GameMap(const int aSizeHorizontal, const int aSizeVertical)
 {
-    // init a 2D array with (Terrain*)nullptr
-    for (size_t jj = 0; jj < mSizeVertical; ++jj)
-    {
-        std::deque<Terrain*> row(mSizeHorizontal, nullptr);
-        mGameMap.push_back(row);
-    }
+    clearAndResize(aSizeHorizontal, aSizeVertical);
 }
 
 GameMap::~GameMap()
