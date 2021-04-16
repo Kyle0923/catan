@@ -93,7 +93,8 @@ bool UserInterface::checkSize(const GameMap& aMap, const int aVerticalPadding, c
         if (aExitOnFailure)
         {
             endwin();
-            ERROR_LOG("This game requires a window at least ", windowSizeVertical, "x", windowSizeHorizontal, " to run");
+            ERROR_LOG("This game requires a window at least ", windowSizeVertical, 'x', windowSizeHorizontal, " to run, " \
+                        "current window size: ", LINES, 'x', COLS);
         }
         return false;
     }
