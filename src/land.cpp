@@ -80,18 +80,18 @@ int Land::addAdjacency(GameMap& aMap, bool aIsVertex, const int aPointX, const i
     std::string expectedTerrain;
     if (aIsVertex)
     {
-        isCorrectTerrain = static_cast<bool>(dynamic_cast<const Vertex*>(pTerrain));
+        isCorrectTerrain = GameMap::isTerrain<Vertex>(pTerrain);
         expectedTerrain = "Vertex";
     }
     else
     {
-        isCorrectTerrain = static_cast<bool>(dynamic_cast<const Edge*>(pTerrain));
+        isCorrectTerrain = GameMap::isTerrain<Edge>(pTerrain);
         expectedTerrain = "Edge";
     }
     if (!isCorrectTerrain)
     {
         // incorrect terrain
-        if (dynamic_cast<const Blank*>(pTerrain) || pTerrain == nullptr)
+        if (GameMap::isTerrain<Blank>(pTerrain))
         {
             // is blank, add correct terrain
             if (aIsVertex)

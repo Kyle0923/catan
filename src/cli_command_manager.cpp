@@ -1,3 +1,12 @@
+/**
+ * Project: catan
+ * @file cli_command_manager.cpp
+ *
+ * @author Zonghao Huang <kyle0923@qq.com>
+ *
+ * All right reserved.
+ */
+
 #include <sstream>
 #include "cli_command_manager.hpp"
 #include "logger.hpp"

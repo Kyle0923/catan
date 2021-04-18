@@ -10,6 +10,7 @@
 #include "logger.hpp"
 #include "edge.hpp"
 #include "game_map.hpp"
+#include "utility.hpp"
 
 std::vector<Point_t> Edge::getAllPoints() const
 {
@@ -68,7 +69,7 @@ int Edge::populateAdjacencies(GameMap& aMap)
 int Edge::addAdjacency(GameMap& aMap, const size_t aPointX, const size_t aPointY)
 {
     const Terrain* const pTerrain = aMap.getTerrain(aPointX, aPointY);
-    if (!dynamic_cast<const Vertex*>(pTerrain))
+    if (!GameMap::isTerrain<Vertex>(pTerrain))
     {
         // not vertex
         WARN_LOG("At Point [", aPointX, ", ", aPointY, "], Expected Vertex - Actual ", pTerrain->getStringId());
@@ -78,14 +79,27 @@ int Edge::addAdjacency(GameMap& aMap, const size_t aPointX, const size_t aPointY
     return 0;
 }
 
-const Vertex* Edge::getVertex(Vertex* const aVertex) const
+const Vertex* Edge::getOtherVertex(const Vertex* const aVertex) const
 {
+    bool isAdjacent = false;
+    const Vertex* pVertex = nullptr;
     for (const Terrain* const pTerrain : mAdjacencies)
     {
-        if (pTerrain != aVertex)
-            return dynamic_cast<const Vertex*>(pTerrain);
+        if (pTerrain == aVertex)
+        {
+            isAdjacent = true;
+        }
+        else
+        {
+            pVertex = dynamic_cast<const Vertex*>(pTerrain);
+        }
     }
-    return nullptr;
+    if (!isAdjacent)
+    {
+        WARN_LOG("Unknown adjacent vertex: " + aVertex->getStringId());
+        return nullptr;
+    }
+    return pVertex;
 }
 
 Edge::Edge(const int aId, const Point_t aTopLeft, const char aDirection) :

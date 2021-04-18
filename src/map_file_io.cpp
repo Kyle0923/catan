@@ -8,6 +8,7 @@
  */
 
 #include "map_file_io.hpp"
+#include "blank.hpp"
 #include "logger.hpp"
 #include "utility.hpp"
 
@@ -55,7 +56,7 @@ int MapIO::readMap(GameMap& aGameMap)
                 continue;
             }
             const Terrain* const pTerrain = aGameMap.getTerrain(ii, jj);
-            if (pTerrain)
+            if (pTerrain != Blank::getBlank())
             {
                 // occupied
                 continue;

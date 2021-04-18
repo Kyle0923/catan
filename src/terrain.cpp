@@ -10,7 +10,7 @@
 #include "terrain.hpp"
 #include "game_map.hpp"
 
-Point_t Terrain::getTopLeft()
+Point_t Terrain::getTopLeft() const
 {
     return mTopLeft;
 }

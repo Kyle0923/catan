@@ -298,8 +298,8 @@ int GameMap::checkOverlap() const
                 int count = points.count(point);
                 if (count) {
                     overlapCount += count;
-                    WARN_LOG("Overlap detected at Point [", point, \
-                         "] Collision IDs: ", aId, ", ", points.at(point));
+                    WARN_LOG("Overlap detected at ", point, \
+                         " Collision IDs: ", aId, ", ", points.at(point));
                 }
                 else
                 {
@@ -541,7 +541,6 @@ void GameMap::setNumOfHarbour(const size_t aNum)
 int GameMap::initMap()
 {
     int rc = 0;
-    fillInBlank();
     rc |= populateMap();
     rc |= populateHarbours(true, true); // (bool aUseDefaultPosition, bool aUseDefaultResourceType)
     rc |= checkOverlap();
@@ -610,7 +609,7 @@ int GameMap::clearAndResize(const int aSizeHorizontal, const int aSizeVertical)
     // init a 2D array with (Terrain*)nullptr
     for (size_t jj = 0; jj < mSizeVertical; ++jj)
     {
-        std::deque<Terrain*> row(mSizeHorizontal, nullptr);
+        std::deque<Terrain*> row(mSizeHorizontal, Blank::getBlank());
         mGameMap.push_back(row);
     }
     return 0;

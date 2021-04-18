@@ -24,12 +24,20 @@ int Vertex::populateAdjacencies(GameMap& aMap)
     mAdjacencies.clear();
 
     int rc = 0;
+
+    // no need to add {x, y+1} & {x,y-1}, because we don't have vertical edge
     rc |= addAdjacency(aMap, mTopLeft.x - 1, mTopLeft.y);
     rc |= addAdjacency(aMap, mTopLeft.x - 1, mTopLeft.y - 1);
     rc |= addAdjacency(aMap, mTopLeft.x + 1, mTopLeft.y - 1);
     rc |= addAdjacency(aMap, mTopLeft.x + 1, mTopLeft.y);
     rc |= addAdjacency(aMap, mTopLeft.x + 1, mTopLeft.y + 1);
     rc |= addAdjacency(aMap, mTopLeft.x - 1, mTopLeft.y + 1);
+
+    if (mAdjacencies.size() == 0 || mAdjacentVertices.size() == 0)
+    {
+        WARN_LOG("Dangling vertex found: " + getStringId());
+        rc = 1;
+    }
 
     (rc != 0) ?
         WARN_LOG("Failed to populate adjacencies of ", getStringId())
@@ -45,11 +53,17 @@ int Vertex::addAdjacency(GameMap& aMap, const size_t aPointX, const size_t aPoin
     {
         // is edge
         mAdjacencies.push_back(pTerrain);
-        const Vertex* const pAdjacentVertex = pEdge->getVertex(this);
+        const Vertex* const pAdjacentVertex = pEdge->getOtherVertex(this);
+        if (!pAdjacentVertex)
+        {
+            WARN_LOG("Error when adding adjacent vertex for " + getStringId() \
+                        + " from " + pEdge->getStringId());
+            return 1;
+        }
         mAdjacentVertices.push_back(pAdjacentVertex);
         DEBUG_LOG_L0("Added adjacent " + pAdjacentVertex->getStringId() + " for " + getStringId());
     }
-    else if (dynamic_cast<const Blank*>(pTerrain))
+    else if (pTerrain == Blank::getBlank())
     {
         mIsCoastal = true;
     }

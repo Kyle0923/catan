@@ -31,7 +31,7 @@ protected:
     std::vector<const Terrain*> mAdjacencies;
 public:
     // return the top-left point (top first)
-    Point_t getTopLeft();
+    Point_t getTopLeft() const;
     int getId() const;
     Terrain(const int aId, const Point_t aTopLeft);
 

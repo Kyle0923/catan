@@ -1,3 +1,12 @@
+/**
+ * Project: catan
+ * @file user_interface.cpp
+ *
+ * @author Zonghao Huang <kyle0923@qq.com>
+ *
+ * All right reserved.
+ */
+
 #include "user_interface.hpp"
 #include "logger.hpp"
 #include "utility.hpp"

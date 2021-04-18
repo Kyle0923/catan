@@ -40,10 +40,10 @@ private:
     Harbour* addHarbour(const int aId1, const int aId2);
 
     inline bool boundaryCheck(const int x, const int y) const;
-    void fillInBlank();
     int populateMap();
     int assignResourceAndDice(); // assign resources and dice number to lands
     int checkOverlap() const;
+    [[deprecated]] void fillInBlank();  // no longer needed, kept here for reference
 
     /*
      * aUseDefaultPosition - randomize the position of the harbours, though the harbours tend to not evenly distributed
@@ -70,6 +70,12 @@ public:
 
     const Terrain* getTerrain(const int x, const int y);
     const Terrain* getTerrain(const Point_t& aPoint);
+
+    template<typename T>
+    static inline bool isTerrain(const Terrain* const aTerrain)
+    {
+        return dynamic_cast<const T* const>(aTerrain);
+    };
 
     const Vertex* addVertex(const size_t aTopLeftX, const size_t aTopLeftY);
     const Edge* addEdge(const size_t aTopLeftX, const size_t aTopLeftY, const char aPattern);

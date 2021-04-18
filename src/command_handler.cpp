@@ -1,3 +1,12 @@
+/**
+ * Project: catan
+ * @file command_handler.cpp
+ *
+ * @author Zonghao Huang <kyle0923@qq.com>
+ *
+ * All right reserved.
+ */
+
 #include "cli_command_manager.hpp"
 #include "command_handler.hpp"
 #include "logger.hpp"
