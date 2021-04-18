@@ -60,7 +60,7 @@ int Edge::populateAdjacencies(GameMap& aMap)
         break;
     }
     (rc != 0) ?
-        WARN_LOG("Failed to populate adjacencies of ", getStringId())
+        WARN_LOG("Failed to populate adjacencies of ", getStringId(), " at ", mTopLeft)
         :
         DEBUG_LOG_L1("Successfully populated adjacencies of ", getStringId());
     return rc;
@@ -96,7 +96,7 @@ const Vertex* Edge::getOtherVertex(const Vertex* const aVertex) const
     }
     if (!isAdjacent)
     {
-        WARN_LOG("Unknown adjacent vertex: " + aVertex->getStringId());
+        WARN_LOG("Unknown adjacent vertex: " + aVertex->getStringId() + " at ", aVertex->getTopLeft());
         return nullptr;
     }
     return pVertex;

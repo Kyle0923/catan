@@ -12,6 +12,7 @@
 #include "vertex.hpp"
 #include "edge.hpp"
 #include "blank.hpp"
+#include "utility.hpp"
 
 int Vertex::populateAdjacencies(GameMap& aMap)
 {
@@ -35,12 +36,12 @@ int Vertex::populateAdjacencies(GameMap& aMap)
 
     if (mAdjacencies.size() == 0 || mAdjacentVertices.size() == 0)
     {
-        WARN_LOG("Dangling vertex found: " + getStringId());
+        WARN_LOG("Dangling vertex found at ", mTopLeft);
         rc = 1;
     }
 
     (rc != 0) ?
-        WARN_LOG("Failed to populate adjacencies of ", getStringId())
+        WARN_LOG("Failed to populate adjacencies of ", getStringId(), " at ", mTopLeft)
         :
         DEBUG_LOG_L1("Successfully populated adjacencies of ", getStringId());
     return rc;

@@ -67,7 +67,7 @@ int Land::populateAdjacencies(GameMap& aMap)
     rc |= addAdjacency(aMap, false, mTopLeft.x - 1, mTopLeft.y, '/');
 
     (rc != 0) ?
-        WARN_LOG("Failed to populate adjacencies of ", getStringId())
+        WARN_LOG("Failed to populate adjacencies of ", getStringId(), " at ", mTopLeft)
         :
         DEBUG_LOG_L1("Successfully populated adjacencies of ", getStringId());
     return rc;
