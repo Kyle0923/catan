@@ -1,5 +1,6 @@
 #include "user_interface.hpp"
 #include "logger.hpp"
+#include "utility.hpp"
 
 int UserInterface::init(const GameMap& aMap)
 {
@@ -28,6 +29,9 @@ int UserInterface::init(const GameMap& aMap)
     raw();      //capture ctrl-C etc...
     noecho();
     wtimeout(mInputWindow, 200);  //read input timeout 0.2sec
+
+    //setup mouse
+    mousemask(BUTTON1_CLICKED, nullptr);
 
     if (!has_colors())
     {
@@ -158,11 +162,7 @@ int UserInterface::readStringFromWindow(WINDOW* const aWindow, int aStartingY, i
         }
     }
     aString = std::string(buffer);
-    // trim trailing space
-    while (aString.back() == ' ')
-    {
-        aString.pop_back();
-    }
+    trimTrailingSpace(aString);
 
     wmove(aWindow, curY, curX);
     return aStartingX + aString.size();
@@ -211,6 +211,11 @@ void UserInterface::printToConsole(const std::vector<std::string>& aMsg, bool aI
     doupdate();
 }
 
+void UserInterface::printToConsole(const std::string& aMsg)
+{
+    printToConsole({aMsg}, false, 0);
+}
+
 UserInterface::UserInterface(const GameMap& aMap)
 {
     init(aMap);
@@ -245,6 +250,23 @@ int UserInterface::loop(GameMap& aMap, CliCommandManager& aCmdHandler)
             case 27: // esc
             {
                 return 0;
+            }
+            case KEY_MOUSE:
+            {
+                MEVENT mouseEvent{0};
+                if (ERR == nc_getmouse(&mouseEvent))
+                {
+                    WARN_LOG("Encountered error when reading mouse event");
+                }
+                INFO_LOG("Mouse clicked, coord: [", mouseEvent.x, ", ", mouseEvent.y, "], key: ", mouseEvent.bstate);
+                if (!wenclose(mGameWindow, mouseEvent.y, mouseEvent.x))
+                {
+                    DEBUG_LOG_L1("Mouse event not in GameWindow, discard");
+                    continue;
+                }
+                const std::string id = aMap.getTerrain(mouseEvent.x, mouseEvent.y)->getStringId();
+                printToConsole("Clicked " + id);
+                continue;
             }
             case KEY_RESIZE:
             case KEY_F(5): // F5 function key

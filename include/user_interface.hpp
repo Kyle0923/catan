@@ -62,6 +62,7 @@ private:
      * @param aNormalSize: print up to aNormalSize in normal style, the rest are printed and grey out
      */
     void printToConsole(const std::vector<std::string>& aMsg, bool aIsList, size_t aNormalSize);
+    void printToConsole(const std::string& aMsg);
 
 public:
     bool checkSize(const GameMap& aMap, const int aVerticalPadding, \

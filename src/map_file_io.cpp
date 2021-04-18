@@ -130,10 +130,7 @@ Point_t MapIO::preprocessStringVector(std::deque<std::string>& aStringQueue)
     // check min X, max X, trim trailing spaces
     for (std::string& line : aStringQueue)
     {
-        while (line.length() > 0 && line.back() == ' ')
-        {
-            line.pop_back();
-        }
+        trimTrailingSpace(line);
         horizontalSize = std::max(horizontalSize, line.length());
         const size_t firstCharIndex = line.find_first_not_of(" ");
         minX = std::min(firstCharIndex, minX);

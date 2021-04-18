@@ -41,15 +41,21 @@ int Logger::print(std::stringstream& ostr, char aArg)
     if (isprint(aArg))
     {
         ostr << aArg;
+        return 0;
     }
-    else if (aArg == 13)
+    else if (aArg == '\n' || aArg == '\r')
     {
         ostr << "\\n"; // print out "\n" instead of newline
     }
+    else if (aArg == ' ')
+    {
+        ostr << "'whitespace'"; // print out "\n" instead of newline
+    }
     else
     {
-        ostr << aArg << " ASCII[" << (int)aArg << ']';
+        ostr << aArg;
     }
+    ostr << " ASCII[" << (int)aArg << ']';
     return 0;
 }
 

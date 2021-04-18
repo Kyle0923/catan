@@ -40,3 +40,18 @@ std::string resourceTypesToStr(const ResourceTypes aResource)
     };
     return resourceStr[static_cast<int>(aResource) + 1];
 }
+
+void trimTrailingSpace(std::string& aString)
+{
+    static const std::string whitespaces (" \t\f\v\n\r");
+    const std::size_t found = aString.find_last_not_of(whitespaces);
+    if (found!=std::string::npos)
+    {
+        aString.erase(found+1);
+    }
+    else
+    {
+        // str is all whitespace
+        aString.clear();
+    }
+}
