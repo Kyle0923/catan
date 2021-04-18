@@ -8,8 +8,23 @@
  */
 
 #include "user_interface.hpp"
+#include "game_map.hpp"
 #include "logger.hpp"
 #include "utility.hpp"
+
+int UserInterface::initColors()
+{
+    int rc = 0;
+    rc |= init_color(COLOR_GREY, 700, 700, 700);
+
+    rc |= init_pair(ColorPairIndex::GAME_WIN, COLOR_BLACK, COLOR_CYAN);
+    rc |= init_pair(ColorPairIndex::USER_WIN, COLOR_BLACK, COLOR_WHITE);
+    rc |= init_pair(ColorPairIndex::PRINTOUT_WIN, COLOR_BLACK, COLOR_GREY);
+    rc |= init_pair(ColorPairIndex::GAME_WIN_BORDER, COLOR_WHITE, COLOR_BLUE);
+    rc |= init_pair(ColorPairIndex::USER_WIN_BORDER, COLOR_WHITE, COLOR_YELLOW);
+    rc |= init_pair(ColorPairIndex::TEMP, COLOR_GREEN, COLOR_YELLOW);
+    return rc;
+}
 
 int UserInterface::init(const GameMap& aMap)
 {
@@ -48,14 +63,7 @@ int UserInterface::init(const GameMap& aMap)
     }
 
     start_color();
-
-    init_color(COLOR_GREY, 700, 700, 700);
-
-    init_pair(ColorPairIndex::GAME_WIN, COLOR_BLACK, COLOR_CYAN);
-    init_pair(ColorPairIndex::USER_WIN, COLOR_BLACK, COLOR_WHITE);
-    init_pair(ColorPairIndex::PRINTOUT_WIN, COLOR_BLACK, COLOR_GREY);
-    init_pair(ColorPairIndex::GAME_WIN_BORDER, COLOR_WHITE, COLOR_BLUE);
-    init_pair(ColorPairIndex::USER_WIN_BORDER, COLOR_WHITE, COLOR_YELLOW);
+    initColors();
 
     wbkgd(mGameWindow, COLOR_PAIR(ColorPairIndex::GAME_WIN));
     wbkgd(mInputWindow, COLOR_PAIR(ColorPairIndex::USER_WIN));
@@ -81,14 +89,26 @@ int UserInterface::printMapToWindow(const GameMap& aMap)
         for (size_t ii = 0; ii < row.size(); ++ii)
         {
             // easier to debug using an extra char c
-            char c = row.at(ii)->getCharRepresentation(ii, jj);
-            mvwaddch(mGameWindow, jj, ii, COLOR_PAIR(GAME_WIN) | c);
+            chtype colorChar = row.at(ii)->getColorCharRepresentation(ii, jj);
+            mvwaddch(mGameWindow, jj, ii, colorChar);
         }
     }
     printBorder(mGameWindow, GAME_WIN_BORDER);
     update_panels();
     doupdate();
     return 0;
+}
+
+chtype UserInterface::getColorText(ColorPairIndex aColorIndex, char aCharacter)
+{
+    if (aColorIndex == ColorPairIndex::COLOR_PAIR_INDEX_RESERVED)
+    {
+        return aCharacter;
+    }
+    else
+    {
+        return COLOR_PAIR(aColorIndex) | aCharacter;
+    }
 }
 
 int UserInterface::printBorder(WINDOW* const aWindow, const ColorPairIndex aIndex)
@@ -274,6 +294,7 @@ int UserInterface::loop(GameMap& aMap, CliCommandManager& aCmdHandler)
                     continue;
                 }
                 const std::string id = aMap.getTerrain(mouseEvent.x, mouseEvent.y)->getStringId();
+                aMap.setTerrainColor(mouseEvent.x, mouseEvent.y, ColorPairIndex::TEMP);
                 printToConsole("Clicked " + id);
                 continue;
             }

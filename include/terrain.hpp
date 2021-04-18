@@ -14,6 +14,7 @@
 #include <vector>
 #include "common.hpp"
 #include "curses.h"
+#include "user_interface.hpp"
 
 class GameMap;
 
@@ -22,6 +23,7 @@ class Terrain
 protected:
     const int mId;
     Point_t mTopLeft;
+    ColorPairIndex mColorIndex;
 
     /* mAdjacencies stores the adjacencies of insterest (not all adjacencies)
      * for lands    => vertices
@@ -35,6 +37,8 @@ public:
     int getId() const;
     Terrain(const int aId, const Point_t aTopLeft);
 
+    void setColor(ColorPairIndex aColorIndex);
+
     // Register all points of current terrain to map
     void registerToMap(GameMap& aMap);
 
@@ -43,6 +47,7 @@ public:
     virtual int populateAdjacencies(GameMap& aMap);
 
     virtual char getCharRepresentation(const size_t aPointX, const size_t aPointY, const bool aUseId = false) const = 0;
+    chtype getColorCharRepresentation(const size_t aPointX, const size_t aPointY, const bool aUseId = false) const;
     virtual std::string getStringId() const = 0;
 
     virtual ~Terrain();

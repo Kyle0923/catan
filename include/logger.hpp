@@ -17,6 +17,11 @@
 #include <vector>
 #include <stdexcept>
 
+#ifndef RELEASE
+#define TEMP_LOG(...) \
+    Logger::info(__FILE__ ":", __LINE__, ": ", __VA_ARGS__)
+#endif
+
 #define INFO_LOG(...) \
     Logger::info(__FILE__ ":", __LINE__, ": ", __VA_ARGS__)
 #define WARN_LOG(...) \

@@ -19,6 +19,7 @@
 #include "edge.hpp"
 #include "land.hpp"
 #include "harbour.hpp"
+#include "user_interface.hpp"
 
 struct SequenceConfig_t;
 
@@ -80,6 +81,8 @@ public:
     const Vertex* addVertex(const size_t aTopLeftX, const size_t aTopLeftY);
     const Edge* addEdge(const size_t aTopLeftX, const size_t aTopLeftY, const char aPattern);
     const Land* addLand(const size_t aTopLeftX, const size_t aTopLeftY, const ResourceTypes aResource);
+
+    int setTerrainColor(const int x, const int y, ColorPairIndex aColorIndex);
 
     // /* add a vertex to be a condidate of harbour
     //  * a condidate must be coastal

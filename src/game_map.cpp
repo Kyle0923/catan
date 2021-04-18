@@ -339,12 +339,12 @@ int GameMap::assignResourceAndDice()
 {
     SequenceConfig_t resourceConfig(static_cast<size_t>(ResourceTypes::ANY));
     // default config
-    resourceConfig[ResourceTypes::DESERT] = constant::NUM_LAND_DESERT;
     resourceConfig[ResourceTypes::CLAY]   = constant::NUM_LAND_CLAY;
     resourceConfig[ResourceTypes::SHEEP]  = constant::NUM_LAND_SHEEP;
     resourceConfig[ResourceTypes::WHEAT]  = constant::NUM_LAND_WHEAT;
     resourceConfig[ResourceTypes::WOOD]   = constant::NUM_LAND_WOOD;
     resourceConfig[ResourceTypes::ORE]    = constant::NUM_LAND_ORE;
+    resourceConfig[ResourceTypes::DESERT] = constant::NUM_LAND_DESERT;
     for (Land* const pLand : mLands)
     {
         const ResourceTypes resource = pLand->getResourceType();
@@ -486,6 +486,19 @@ Harbour* GameMap::addHarbour(const int aId1, const int aId2)
 //     return 0;
 // }
 
+int GameMap::setTerrainColor(const int x, const int y, ColorPairIndex aColorIndex)
+{
+    if (!boundaryCheck(x, y))
+    {
+        WARN_LOG("SetColor called for an out-of-bound Point{", x, ", ", y, '}');
+        return 1;
+    }
+    DEBUG_LOG_L3("setting color#", (int)aColorIndex, " for Point{", x, ", ", y, '}');
+    mGameMap.at(y).at(x)->setColor(aColorIndex);
+    return 0;
+
+}
+
 int GameMap::registerTerrain(const std::vector<Point_t>& aPoints, Terrain* const aTerrain)
 {
     if (mInitialized)
@@ -576,8 +589,8 @@ void GameMap::logMap(bool aUseId)
         for (size_t ii = 0; ii < mSizeHorizontal; ++ii)
         {
             // easier to debug using an extra char c
-            char c = row.at(ii)->getCharRepresentation(ii, jj, aUseId); //print ID
-            map += c;
+            char character = row.at(ii)->getCharRepresentation(ii, jj, aUseId); //print ID
+            map += character;
         }
         map += "|\n|";
     }

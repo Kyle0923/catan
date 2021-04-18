@@ -13,8 +13,9 @@
 
 #include <curses.h>
 #include <panel.h>
-#include "game_map.hpp"
 #include "cli_command_manager.hpp"
+
+class GameMap;
 
 enum ColorPairIndex
 {
@@ -23,7 +24,10 @@ enum ColorPairIndex
     USER_WIN,
     PRINTOUT_WIN,
     GAME_WIN_BORDER,
-    USER_WIN_BORDER
+    USER_WIN_BORDER,
+#ifndef RELEASE
+    TEMP    // for experiment purpose
+#endif
 };
 
 enum ColorIndex
@@ -50,6 +54,7 @@ private:
     const int inputStartY = 1;
 
     int init(const GameMap& aMap);
+    int initColors();
     int printBorder(WINDOW* const aWindow, const ColorPairIndex aIndex);
     void restoreBorder(WINDOW* const aWindow, const chtype aColor);
     void resizeAll(const GameMap& aMap);
@@ -65,6 +70,8 @@ private:
     void printToConsole(const std::string& aMsg);
 
 public:
+    static chtype getColorText(ColorPairIndex aColorIndex, char aCharacter);
+
     bool checkSize(const GameMap& aMap, const int aVerticalPadding, \
                     const int aHorizontalPadding, const bool aExitOnFailure = false) const;
 

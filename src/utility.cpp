@@ -33,17 +33,24 @@ std::ostream& operator<< (std::ostream& aStream, const Point_t& aPoint)
 
 std::string resourceTypesToStr(const ResourceTypes aResource)
 {
-    static const std::string resourceStr[] = {
-        "NONE",
-        "DESERT",
-        "CLAY",
-        "SHEEP",
-        "WHEAT",
-        "WOOD",
-        "ORE",
-        "ANY"
-    };
-    return resourceStr[static_cast<int>(aResource) + 1];
+#define CASE_PRINT(resource) \
+    case ResourceTypes::resource: \
+        return #resource
+
+    switch (aResource)
+    {
+        CASE_PRINT(NONE);
+        CASE_PRINT(CLAY);
+        CASE_PRINT(SHEEP);
+        CASE_PRINT(WHEAT);
+        CASE_PRINT(WOOD);
+        CASE_PRINT(ORE);
+        CASE_PRINT(DESERT);
+        CASE_PRINT(ANY);
+    }
+    return "";
+
+#undef CASE_PRINT
 }
 
 void trimTrailingSpace(std::string& aString)
