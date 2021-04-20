@@ -34,7 +34,6 @@ int Terrain::populateAdjacencies(GameMap& aMap)
 {
     // empty
     // override by derive classes
-    // populate vector<Terrain*> mAdjacencies
     return 0;
 }
 

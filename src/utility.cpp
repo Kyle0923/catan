@@ -9,6 +9,8 @@
 
 #include "iostream"
 #include "utility.hpp"
+#include "vertex.hpp"
+#include "edge.hpp"
 
 size_t PointHash::operator()(const Point_t& aPoint) const
 {
@@ -29,6 +31,16 @@ bool operator!=(const Point_t& aPointA, const Point_t& aPointB)
 std::ostream& operator<< (std::ostream& aStream, const Point_t& aPoint)
 {
     return aStream << "Point{" << aPoint.x << ',' << aPoint.y << '}';
+}
+
+std::ostream& operator<< (std::ostream& aStream, const Edge* const & aEdge)
+{
+    return aStream << aEdge->getStringId();
+}
+
+std::ostream& operator<< (std::ostream& aStream, const Vertex* const & aVertex)
+{
+    return aStream << aVertex->getStringId();
 }
 
 std::string resourceTypesToStr(const ResourceTypes aResource)

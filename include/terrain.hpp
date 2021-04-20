@@ -25,12 +25,6 @@ protected:
     Point_t mTopLeft;
     ColorPairIndex mColorIndex;
 
-    /* mAdjacencies stores the adjacencies of insterest (not all adjacencies)
-     * for lands    => vertices
-     * for vertices => edges
-     * for edges    => vertices
-     */
-    std::vector<const Terrain*> mAdjacencies;
 public:
     // return the top-left point (top first)
     Point_t getTopLeft() const;

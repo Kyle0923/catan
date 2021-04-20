@@ -78,6 +78,8 @@ int Land::addAdjacency(GameMap& aMap, bool aIsVertex, const int aPointX, const i
     const Terrain* pTerrain = aMap.getTerrain(aPointX, aPointY);
     bool isCorrectTerrain;
     std::string expectedTerrain;
+
+    // sanity check
     if (aIsVertex)
     {
         isCorrectTerrain = GameMap::isTerrain<Vertex>(pTerrain);
@@ -111,9 +113,11 @@ int Land::addAdjacency(GameMap& aMap, bool aIsVertex, const int aPointX, const i
             return 1;
         }
     }
-    if (aIsVertex)
+    // add adjcentVertices need to be after adding terrain
+    const Vertex* pVertex = dynamic_cast<const Vertex*>(pTerrain);
+    if (aIsVertex && pVertex)
     {
-        mAdjacencies.push_back(pTerrain);
+        mAdjacentVertices.push_back(pVertex);
     }
     return 0;
 }

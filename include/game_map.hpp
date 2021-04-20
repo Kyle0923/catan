@@ -69,8 +69,8 @@ public:
     int getSizeHorizontal() const;
     int getSizeVertical() const;
 
-    const Terrain* getTerrain(const int x, const int y);
-    const Terrain* getTerrain(const Point_t& aPoint);
+    const Terrain* getTerrain(const int x, const int y) const;
+    const Terrain* getTerrain(const Point_t& aPoint) const;
 
     template<typename T>
     static inline bool isTerrain(const Terrain* const aTerrain)

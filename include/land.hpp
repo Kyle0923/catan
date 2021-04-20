@@ -19,6 +19,8 @@ private:
     ResourceTypes mResourceType;
     int mDiceNum;
     bool mIsUnderRob;
+    std::vector<const Vertex*> mAdjacentVertices;
+
     int addAdjacency(GameMap& aMap, bool aIsVertex, const int aPointX, const int aPointY, const char aPattern = '.');
 public:
     std::vector<Point_t> getAllPoints() const override;

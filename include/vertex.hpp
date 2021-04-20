@@ -12,6 +12,7 @@
 #define INCLUDE_VERTEX_HPP
 
 #include <string>
+#include <set>
 #include "terrain.hpp"
 #include "harbour.hpp"
 
@@ -22,6 +23,8 @@ enum BuildingType
     CITY = 2
 };
 
+class Edge;
+
 class Vertex : public Terrain
 {
 private:
@@ -29,10 +32,14 @@ private:
     Harbour* mHarbour;
     std::string mOwner;
     BuildingType mBuilding;
-    std::vector<const Vertex*> mAdjacentVertices;  //mAdjacencies only store edges, adjacent vertices are store here
+
+    std::set<const Vertex*> mAdjacentVertices;
+    std::set<const Edge*> mAdjacentEdges;
+
     int addAdjacency(GameMap& aMap, const size_t aPointX, const size_t aPointY);
 public:
-    const std::vector<const Vertex*>& getAdjacentVertices() const;
+    const std::set<const Vertex*>& getAdjacentVertices() const;
+    std::set<const Edge*> getOtherEdges(const Edge& aEdge) const; //get connected edges that is not the input
     void setOwner(std::string aOwner, BuildingType aBuilding = BuildingType::SETTLEMENT);
     std::string getOwner();
     bool isCoastal() const;

@@ -9,6 +9,7 @@
 
 #include "logger.hpp"
 #include "edge.hpp"
+#include "vertex.hpp"
 #include "game_map.hpp"
 #include "utility.hpp"
 
@@ -41,24 +42,13 @@ int Edge::populateAdjacencies(GameMap& aMap)
 {
     mOwner = ""; // reset edge
     int rc = 0;
-    switch (mDirection)
-    {
-    case '-':
-        rc |= addAdjacency(aMap, mTopLeft.x - 1, mTopLeft.y);
-        rc |= addAdjacency(aMap, mOtherEnd.x + 1, mOtherEnd.y);
-        break;
-    case '/':
-        rc |= addAdjacency(aMap, mTopLeft.x + 1, mTopLeft.y - 1);
-        rc |= addAdjacency(aMap, mOtherEnd.x - 1, mOtherEnd.y + 1);
-        break;
-    case '\\':
-        rc |= addAdjacency(aMap, mTopLeft.x - 1, mTopLeft.y - 1);
-        rc |= addAdjacency(aMap, mOtherEnd.x + 1, mOtherEnd.y + 1);
-        break;
-    default:
-        ERROR_LOG("Unknow Edge direction [", mDirection, "]");
-        break;
-    }
+    std::pair<Point_t, Point_t> vertexPoints = getAdjacentVertexPoints();
+    rc |= addAdjacency(aMap, vertexPoints.first);
+    rc |= addAdjacency(aMap, vertexPoints.second);
+
+    DEBUG_LOG_L0("Populated Adjacent Vertices for " + getStringId() + " ", mAdjacentVertices);
+    DEBUG_LOG_L0("Populated Adjacent Edges for " + getStringId() + " ", mAdjacentEdges);
+
     (rc != 0) ?
         WARN_LOG("Failed to populate adjacencies of ", getStringId(), " at ", mTopLeft)
         :
@@ -66,40 +56,60 @@ int Edge::populateAdjacencies(GameMap& aMap)
     return rc;
 }
 
-int Edge::addAdjacency(GameMap& aMap, const size_t aPointX, const size_t aPointY)
+int Edge::addAdjacency(GameMap& aMap, const Point_t aPoint)
 {
-    const Terrain* const pTerrain = aMap.getTerrain(aPointX, aPointY);
-    if (!GameMap::isTerrain<Vertex>(pTerrain))
+    const Vertex* const pVertex = dynamic_cast<const Vertex*>(aMap.getTerrain(aPoint));
+    if (!pVertex)
     {
         // not vertex
-        WARN_LOG("At Point [", aPointX, ", ", aPointY, "], Expected Vertex - Actual ", pTerrain->getStringId());
+        WARN_LOG("At ", aPoint, ", Expected Vertex - Actual ", pVertex->getStringId());
         return 1;
     }
-    mAdjacencies.push_back(pTerrain);
+    mAdjacentVertices.emplace(pVertex);
+    std::set<const Edge*> edges = pVertex->getOtherEdges(*this);
+    mAdjacentEdges.insert(edges.begin(), edges.end());
     return 0;
 }
 
-const Vertex* Edge::getOtherVertex(const Vertex* const aVertex) const
+const Vertex* Edge::getOtherVertex(const GameMap& aMap, const Vertex& aVertex) const
 {
-    bool isAdjacent = false;
-    const Vertex* pVertex = nullptr;
-    for (const Terrain* const pTerrain : mAdjacencies)
+    std::pair<Point_t, Point_t> vertexPoints = getAdjacentVertexPoints();
+    if (vertexPoints.first == aVertex.getTopLeft())
     {
-        if (pTerrain == aVertex)
-        {
-            isAdjacent = true;
-        }
-        else
-        {
-            pVertex = dynamic_cast<const Vertex*>(pTerrain);
-        }
+        return dynamic_cast<const Vertex*>(aMap.getTerrain(vertexPoints.second));
     }
-    if (!isAdjacent)
+    else if (vertexPoints.second == aVertex.getTopLeft())
     {
-        WARN_LOG("Unknown adjacent vertex: " + aVertex->getStringId() + " at ", aVertex->getTopLeft());
-        return nullptr;
+        return dynamic_cast<const Vertex*>(aMap.getTerrain(vertexPoints.first));
     }
-    return pVertex;
+
+    WARN_LOG("Unknown adjacent vertex: " + aVertex.getStringId() + " at ", aVertex.getTopLeft());
+    return nullptr;
+}
+
+std::pair<Point_t, Point_t> Edge::getAdjacentVertexPoints() const
+{
+    switch (mDirection)
+    {
+    case '-':
+        return std::make_pair<Point_t, Point_t>(
+            Point_t{mTopLeft.x - 1, mTopLeft.y},
+            Point_t{mOtherEnd.x + 1, mOtherEnd.y}
+        );
+    case '/':
+        return std::make_pair<Point_t, Point_t>(
+            Point_t{mTopLeft.x + 1, mTopLeft.y - 1},
+            Point_t{mOtherEnd.x - 1, mOtherEnd.y + 1}
+        );
+    case '\\':
+        return std::make_pair<Point_t, Point_t>(
+            Point_t{mTopLeft.x - 1, mTopLeft.y - 1},
+            Point_t{mOtherEnd.x + 1, mOtherEnd.y + 1}
+        );
+    default:
+        ERROR_LOG("Unknow Edge direction [", mDirection, "]");
+        return std::make_pair<Point_t, Point_t>(Point_t{0, 0}, Point_t{0, 0});
+    }
 }
 
 Edge::Edge(const int aId, const Point_t aTopLeft, const char aDirection) :

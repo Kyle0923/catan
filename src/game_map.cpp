@@ -40,8 +40,8 @@ int GameMap::populateMap()
     /* populate terrains
      * order matters!!
      * Land::populateAdjacencies adds necessary edges and vertices and records adjacent vertices
-     * Edge::populateAdjacencies records vertices on both end
      * Vertex::populateAdjacencies records connected edges and adjcent vertices
+     * Edge::populateAdjacencies require Vertex to know connected edges first
      */
 
     // return codes
@@ -58,15 +58,6 @@ int GameMap::populateMap()
         :
         INFO_LOG("Successfully populated adjacencies of Lands");
 
-    for (Edge* const pEdge : mEdges)
-    {
-        rcEdge |= pEdge->populateAdjacencies(*this);
-    }
-    rcEdge ?
-        ERROR_LOG("Failed to populate adjacencies for Edges")
-        :
-        INFO_LOG("Successfully populated adjacencies of Edges");
-
     for (Vertex* const pVertex : mVertices)
     {
         rcVertex |= pVertex->populateAdjacencies(*this);
@@ -75,6 +66,15 @@ int GameMap::populateMap()
         ERROR_LOG("Failed to populate adjacencies for Vertices")
         :
         INFO_LOG("Successfully populated adjacencies of Vertices");
+
+    for (Edge* const pEdge : mEdges)
+    {
+        rcEdge |= pEdge->populateAdjacencies(*this);
+    }
+    rcEdge ?
+        ERROR_LOG("Failed to populate adjacencies for Edges")
+        :
+        INFO_LOG("Successfully populated adjacencies of Edges");
 
     return (rcLand | rcEdge | rcVertex);
 }
@@ -183,8 +183,7 @@ int GameMap::createHarboursDefault()
     const Vertex* pPreviousVertex = pVertex;
     do
     {
-        const std::vector<const Vertex*>& adjacentVertices = pVertex->getAdjacentVertices();
-        for (const Vertex* const pNextVertex : adjacentVertices)
+        for (const Vertex* const pNextVertex : pVertex->getAdjacentVertices())
         {
             if (pNextVertex == pPreviousVertex)
             {
@@ -244,9 +243,8 @@ int GameMap::createHarboursRandom()
         {
             continue;
         }
-        const std::vector<const Vertex*>& adjacentVertices = mVertices[idVertex]->getAdjacentVertices();
         int idOtherVertex = -1;
-        for (const Vertex* const pVertex : adjacentVertices)
+        for (const Vertex* const pVertex : mVertices[idVertex]->getAdjacentVertices())
         {
             if (pVertex->isCoastal() && !pVertex->hasHarbour())
             {
@@ -407,7 +405,7 @@ int GameMap::assignResourceAndDice()
     return 0;
 }
 
-const Terrain* GameMap::getTerrain(const int x, const int y)
+const Terrain* GameMap::getTerrain(const int x, const int y) const
 {
     if (boundaryCheck(x,y))
     {
@@ -420,7 +418,7 @@ const Terrain* GameMap::getTerrain(const int x, const int y)
     }
 }
 
-const Terrain* GameMap::getTerrain(const Point_t& aPoint)
+const Terrain* GameMap::getTerrain(const Point_t& aPoint) const
 {
     return getTerrain(aPoint.x, aPoint.y);
 }

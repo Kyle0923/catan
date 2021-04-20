@@ -22,7 +22,7 @@ int Vertex::populateAdjacencies(GameMap& aMap)
     mIsCoastal = false;
     mHarbour = nullptr;
     mAdjacentVertices.clear();
-    mAdjacencies.clear();
+    mAdjacentEdges.clear();
 
     int rc = 0;
 
@@ -34,11 +34,14 @@ int Vertex::populateAdjacencies(GameMap& aMap)
     rc |= addAdjacency(aMap, mTopLeft.x + 1, mTopLeft.y + 1);
     rc |= addAdjacency(aMap, mTopLeft.x - 1, mTopLeft.y + 1);
 
-    if (mAdjacencies.size() == 0 || mAdjacentVertices.size() == 0)
+    if (mAdjacentVertices.size() == 0 || mAdjacentVertices.size() == 0)
     {
         WARN_LOG("Dangling vertex found at ", mTopLeft);
         rc = 1;
     }
+
+    DEBUG_LOG_L0("Populated Adjacent Vertices for " + getStringId() + " ", mAdjacentVertices);
+    DEBUG_LOG_L0("Populated Adjacent Edges for " + getStringId() + " ", mAdjacentEdges);
 
     (rc != 0) ?
         WARN_LOG("Failed to populate adjacencies of ", getStringId(), " at ", mTopLeft)
@@ -53,16 +56,15 @@ int Vertex::addAdjacency(GameMap& aMap, const size_t aPointX, const size_t aPoin
     if (const Edge* const pEdge = dynamic_cast<const Edge*>(pTerrain))
     {
         // is edge
-        mAdjacencies.push_back(pTerrain);
-        const Vertex* const pAdjacentVertex = pEdge->getOtherVertex(this);
+        mAdjacentEdges.emplace(pEdge);
+        const Vertex* const pAdjacentVertex = pEdge->getOtherVertex(aMap, *this);
         if (!pAdjacentVertex)
         {
             WARN_LOG("Error when adding adjacent vertex for " + getStringId() \
                         + " from " + pEdge->getStringId());
             return 1;
         }
-        mAdjacentVertices.push_back(pAdjacentVertex);
-        DEBUG_LOG_L0("Added adjacent " + pAdjacentVertex->getStringId() + " for " + getStringId());
+        mAdjacentVertices.emplace(pAdjacentVertex);
     }
     else if (pTerrain == Blank::getBlank())
     {
@@ -71,9 +73,21 @@ int Vertex::addAdjacency(GameMap& aMap, const size_t aPointX, const size_t aPoin
     return 0;
 }
 
-const std::vector<const Vertex*>& Vertex::getAdjacentVertices() const
+const std::set<const Vertex*>& Vertex::getAdjacentVertices() const
 {
     return mAdjacentVertices;
+}
+
+std::set<const Edge*> Vertex::getOtherEdges(const Edge& aEdge) const
+{
+    if (mAdjacentEdges.count(&aEdge) != 1)
+    {
+        WARN_LOG("Unknown adjacent edge: " + aEdge.getStringId() + " at ", aEdge.getTopLeft());
+        return std::set<const Edge*>{};
+    }
+    std::set<const Edge*> otherEdges = mAdjacentEdges;
+    otherEdges.erase(&aEdge);
+    return otherEdges;
 }
 
 void Vertex::setOwner(std::string aOwner, BuildingType aBuilding)

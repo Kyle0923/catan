@@ -15,6 +15,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <set>
 #include <stdexcept>
 
 #ifndef RELEASE
@@ -39,22 +40,34 @@
     Logger::debug(3, __FILE__ ":", __LINE__, ": ", __VA_ARGS__)
 
 template<typename T>
-extern std::ostream& operator<< (std::ostream& aStream, const std::vector<T>& aVec)
+extern std::ostream& printIterable(std::ostream& aStream, const std::string aDescription, const T aBegin, const T aEnd)
 {
-    if (aVec.size() == 0)
+    if (aBegin == aEnd)
     {
-        return aStream << "Vec[]";
+        return aStream << aDescription << "[]";
     }
     else
     {
-        auto iter = aVec.begin();
-        aStream << "Vec[" << *iter++;
-        for (; iter != aVec.end(); ++iter)
+        auto iter = aBegin;
+        aStream << aDescription << "[" << *iter++;
+        for (; iter != aEnd; ++iter)
         {
             aStream << ", " << *iter;
         }
         return aStream << ']';
     }
+};
+
+template<typename T>
+extern std::ostream& operator<< (std::ostream& aStream, const std::vector<T>& aVec)
+{
+    return printIterable(aStream, "Vec", aVec.begin(), aVec.end());
+};
+
+template<typename T>
+extern std::ostream& operator<< (std::ostream& aStream, const std::set<T>& aSet)
+{
+    return printIterable(aStream, "Set", aSet.begin(), aSet.end());
 };
 
 class Logger
