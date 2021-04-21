@@ -35,9 +35,9 @@ void Player::addResources(ResourceTypes aResource, size_t aAmount)
     mResourcesOnHand.at(static_cast<size_t>(aResource)) += aAmount;
 }
 
-void Player::addBuilding(const Vertex& aVertex)
+void Player::addColony(const Vertex& aVertex)
 {
-    mBuilding.emplace(&aVertex);
+    mColony.emplace(&aVertex);
 }
 
 void Player::addRoad(const Edge& aEdge)
@@ -66,9 +66,9 @@ size_t Player::getVictoryPoint(bool aPublic)
     size_t vicPoint = (mLargestArmy ? 2 : 0) + \
         (mLongestRoad ? 2 : 0) + \
         (aPublic ? 0 : mDevCard.at(DevelopmentCardTypes::VICTORY_POINT));
-    for (const Vertex* const pVertex : mBuilding)
+    for (const Vertex* const pVertex : mColony)
     {
-        vicPoint += pVertex->getBuildingType();
+        vicPoint += pVertex->getColonyType();
     }
     return vicPoint;
 }

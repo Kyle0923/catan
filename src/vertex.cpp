@@ -18,7 +18,7 @@ int Vertex::populateAdjacencies(GameMap& aMap)
 {
     // reset vertex
     mOwner = "";
-    mBuilding = BuildingType::NONE;
+    mColony = ColonyType::NONE;
     mIsCoastal = false;
     mHarbour = nullptr;
     mAdjacentVertices.clear();
@@ -90,10 +90,10 @@ std::set<const Edge*> Vertex::getOtherEdges(const Edge& aEdge) const
     return otherEdges;
 }
 
-void Vertex::setOwner(std::string aOwner, BuildingType aBuilding)
+void Vertex::setOwner(std::string aOwner, ColonyType aColony)
 {
     mOwner = aOwner;
-    mBuilding = aBuilding;
+    mColony = aColony;
 }
 
 std::string Vertex::getOwner() const
@@ -101,9 +101,9 @@ std::string Vertex::getOwner() const
     return mOwner;
 }
 
-BuildingType Vertex::getBuildingType() const
+ColonyType Vertex::getColonyType() const
 {
-    return mBuilding;
+    return mColony;
 }
 
 bool Vertex::isCoastal() const
@@ -138,13 +138,13 @@ char Vertex::getCharRepresentation(const size_t aPointX, const size_t aPointY, c
     {
         return static_cast<char>(mId % 10) + '0';
     }
-    switch (mBuilding)
+    switch (mColony)
     {
-    case BuildingType::SETTLEMENT:
+    case ColonyType::SETTLEMENT:
         return 'S';
-    case BuildingType::CITY:
+    case ColonyType::CITY:
         return 'C';
-    case BuildingType::NONE:
+    case ColonyType::NONE:
     default:
         return '+';
     }
@@ -161,7 +161,7 @@ Vertex::Vertex(const int aId, const Point_t aTopLeft) :
     mHarbour(nullptr)
 {
     mOwner = "None";
-    mBuilding = BuildingType::NONE;
+    mColony = ColonyType::NONE;
 }
 
 Vertex::~Vertex()

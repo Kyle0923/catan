@@ -9,7 +9,6 @@
 
 #include <unordered_map>
 #include <algorithm>
-#include <random>
 #include <chrono>
 #include <set>
 #include <cstdlib>
@@ -225,9 +224,6 @@ int GameMap::createHarboursRandom()
             harbourCandidates.push_back(pVertex->getId());
         }
     }
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-    DEBUG_LOG_L3("createHarboursRandom seed: ", seed);
-    std::default_random_engine generator(seed);
     while (mHarbours.size() < mNumHarbour)
     {
         if (harbourCandidates.size() == 0U)
@@ -237,7 +233,7 @@ int GameMap::createHarboursRandom()
         }
         // get a vertex from candidates
         std::uniform_int_distribution<size_t> distribution(0U, harbourCandidates.size() - 1U);
-        size_t index = distribution(generator);
+        size_t index = distribution(mEngine);
         int idVertex = harbourCandidates[index];
         if (mVertices[idVertex]->hasHarbour())
         {
@@ -269,9 +265,6 @@ int GameMap::createHarboursRandom()
 
 std::vector<int> GameMap::randomizeResource(SequenceConfig_t aConfig)
 {
-    static const unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-    static std::default_random_engine engine(seed);
-    DEBUG_LOG_L3("randomizeResource seed: ", seed);
 
     std::vector<int> resourceSequence;
     for (int index = 0; index < (int)aConfig.size(); ++index)
@@ -281,7 +274,7 @@ std::vector<int> GameMap::randomizeResource(SequenceConfig_t aConfig)
             resourceSequence.push_back(index);
         }
     }
-    std::shuffle(resourceSequence.begin(), resourceSequence.end(), engine);
+    std::shuffle(resourceSequence.begin(), resourceSequence.end(), mEngine);
     return resourceSequence;
 }
 
@@ -635,8 +628,11 @@ int GameMap::getSizeVertical() const
     return mSizeVertical;
 }
 
-GameMap::GameMap(const int aSizeHorizontal, const int aSizeVertical)
+GameMap::GameMap(const int aSizeHorizontal, const int aSizeVertical) :
+    mSeed(std::chrono::system_clock::now().time_since_epoch().count()),
+    mEngine(mSeed)
 {
+    INFO_LOG("random engine seed: ", mSeed);
     clearAndResize(aSizeHorizontal, aSizeVertical);
 }
 
@@ -654,24 +650,4 @@ GameMap::~GameMap()
     {
         delete pLand;
     }
-}
-
-SequenceConfig_t::SequenceConfig_t(const size_t aSize) : mConfig(aSize, 0)
-{
-    //empty
-}
-
-size_t SequenceConfig_t::size() const
-{
-    return mConfig.size();
-}
-
-size_t& SequenceConfig_t::operator[](const size_t aIndex)
-{
-    return mConfig.at(aIndex);
-}
-
-size_t& SequenceConfig_t::operator[](const ResourceTypes aIndex)
-{
-    return mConfig.at(static_cast<size_t>(aIndex));
 }

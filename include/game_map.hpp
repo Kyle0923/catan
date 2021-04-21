@@ -13,12 +13,15 @@
 
 #include <vector>
 #include <deque>
+#include <random>
 #include "common.hpp"
+#include "sequence_config.hpp"
 #include "terrain.hpp"
 #include "vertex.hpp"
 #include "edge.hpp"
 #include "land.hpp"
 #include "harbour.hpp"
+#include "player.hpp"
 #include "user_interface.hpp"
 
 struct SequenceConfig_t;
@@ -31,12 +34,18 @@ private:
     size_t mNumHarbour;
     int mRobLandId;
     bool mInitialized;
+
+    // random generator related
+    const unsigned mSeed;
+    std::default_random_engine mEngine;
+
     std::deque< std::deque<Terrain*> > mGameMap;
 
     std::vector<Vertex*> mVertices;
     std::vector<Edge*> mEdges;
     std::vector<Land*> mLands;
     std::vector<Harbour*> mHarbours;
+    std::vector<Player*> mPlayers;
 
     Harbour* addHarbour(const int aId1, const int aId2);
 
@@ -102,27 +111,12 @@ public:
     void logMap(bool aUseId = false);  // std::cout implementation, convenient in development
     const std::deque< std::deque<Terrain*> >& getTerrainMap() const;
 
+    // Player related
+    int buildColony(int aPlayerId, int vertexId, ColonyType aColony);
+
     GameMap(const GameMap &) = delete;
     GameMap& operator=(const GameMap&) = delete;
     ~GameMap();
-};
-
-struct SequenceConfig_t
-{
-    std::vector<size_t> mConfig;
-    SequenceConfig_t(const size_t aSize);
-    size_t size() const;
-    size_t& operator[](const size_t aIndex);
-    size_t& operator[](const ResourceTypes aIndex);
-    size_t sum() const
-    {
-        size_t sum = 0;
-        for (size_t num : mConfig)
-        {
-            sum += num;
-        }
-        return sum;
-    }
 };
 
 #endif /* INCLUDE_GAME_MAP_HPP */

@@ -26,14 +26,14 @@ private:
     std::array<size_t, CONSUMABLE_RESOURCE_SIZE> mResourcesOnHand;
     std::array<size_t, DEVELOPMENT_CARD_TYPE_SIZE> mDevCard;
     std::array<size_t, DEVELOPMENT_CARD_TYPE_SIZE> mDevCardUsed;
-    std::set<const Vertex*> mBuilding;
+    std::set<const Vertex*> mColony;
     std::set<const Edge*> mRoad;
 
 public:
     void drawDevelopmentCard(DevelopmentCardTypes aCard, size_t aAmount = 1);
     int useDevelopmentCard(DevelopmentCardTypes aCard);
     void addResources(ResourceTypes aResource, size_t aAmount);
-    void addBuilding(const Vertex& aVertex);
+    void addColony(const Vertex& aVertex);
     void addRoad(const Edge& aEdge);
     void setLargestArmy(const bool aLargestArmy);
     void setLongestRoad(const bool aLongestRoad);
