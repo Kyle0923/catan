@@ -96,9 +96,14 @@ void Vertex::setOwner(std::string aOwner, BuildingType aBuilding)
     mBuilding = aBuilding;
 }
 
-std::string Vertex::getOwner()
+std::string Vertex::getOwner() const
 {
     return mOwner;
+}
+
+BuildingType Vertex::getBuildingType() const
+{
+    return mBuilding;
 }
 
 bool Vertex::isCoastal() const

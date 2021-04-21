@@ -65,6 +65,25 @@ std::string resourceTypesToStr(const ResourceTypes aResource)
 #undef CASE_PRINT
 }
 
+std::string developmentCardTypesToStr(const DevelopmentCardTypes aCard)
+{
+#define CASE_PRINT(devCard) \
+    case DevelopmentCardTypes::devCard: \
+        return #devCard
+
+    switch (aCard)
+    {
+        CASE_PRINT(KNIGHT);
+        CASE_PRINT(ROAD_BUILDING);
+        CASE_PRINT(YEAR_OF_PLENTY);
+        CASE_PRINT(MONOPOLY);
+        CASE_PRINT(VICTORY_POINT);
+    }
+    return "";
+
+#undef CASE_PRINT
+}
+
 void trimTrailingSpace(std::string& aString)
 {
     static const std::string whitespaces (" \t\f\v\n\r");

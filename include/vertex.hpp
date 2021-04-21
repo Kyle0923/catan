@@ -41,7 +41,8 @@ public:
     const std::set<const Vertex*>& getAdjacentVertices() const;
     std::set<const Edge*> getOtherEdges(const Edge& aEdge) const; //get connected edges that is not the input
     void setOwner(std::string aOwner, BuildingType aBuilding = BuildingType::SETTLEMENT);
-    std::string getOwner();
+    std::string getOwner() const;
+    BuildingType getBuildingType() const;
     bool isCoastal() const;
     bool hasHarbour() const;
     int setHarbour(Harbour* const aHarbour);
