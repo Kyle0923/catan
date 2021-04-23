@@ -23,8 +23,8 @@ class Edge : public Terrain
 {
 private:
     Point_t mOtherEnd; // the end other than mTopLeft
+    int mOwner;
     char mDirection;
-    std::string mOwner;
 
     std::set<const Vertex*> mAdjacentVertices;
     std::set<const Edge*> mAdjacentEdges;
@@ -38,6 +38,11 @@ public:
     int populateAdjacencies(GameMap& aMap) override;
     char getCharRepresentation(const size_t aPointX, const size_t aPointY, const bool aUseId = false) const override;
     std::string getStringId() const override;
+
+    /**
+     * return -1: edge occupied, cannot set for new PlayerID
+    */
+    int setOwner(int aPlayerId);
 
     Edge(const int aId, const Point_t aTopLeft, const char aDirection);
     virtual ~Edge();

@@ -650,4 +650,49 @@ GameMap::~GameMap()
     {
         delete pLand;
     }
+    for (Player* pPlayer : mPlayers)
+    {
+        delete pPlayer;
+    }
+}
+
+int GameMap::addPlayer(size_t aNumOfPlayer)
+{
+    for (size_t ii = 0; ii < aNumOfPlayer; ++ii)
+    {
+        mPlayers.push_back(new Player(ii));
+    }
+    return mPlayers.size();
+}
+
+int GameMap::buildColony(const int aPlayerId, const int aVertexX, const int aVertexY, const ColonyType aColony)
+{
+    if (!boundaryCheck(aVertexX, aVertexY))
+    {
+        WARN_LOG("buildColony called for an out-of-bound Point{", aVertexX, ", ", aVertexY, '}');
+        return 1;
+    }
+    Vertex* const pVertex = dynamic_cast<Vertex*>(mGameMap.at(aVertexY).at(aVertexX));
+    if (!pVertex)
+    {
+        WARN_LOG("Expected vertex at Point{", aVertexX, ", ", aVertexY, "}, actual: " + mGameMap.at(aVertexY).at(aVertexX)->getStringId());
+        return 1;
+    }
+    return pVertex->setOwner(aPlayerId, aColony);
+}
+
+int GameMap::buildRoad(const int aPlayerId, const int aEdgeX, const int aEdgeY)
+{
+    if (!boundaryCheck(aEdgeX, aEdgeY))
+    {
+        WARN_LOG("buildRoad called for an out-of-bound Point{", aEdgeX, ", ", aEdgeY, '}');
+        return 1;
+    }
+    Edge* const pEdge = dynamic_cast<Edge*>(mGameMap.at(aEdgeY).at(aEdgeX));
+    if (!pEdge)
+    {
+        WARN_LOG("Expected vertex at Point{", aEdgeX, ", ", aEdgeY, "}, actual: " + mGameMap.at(aEdgeY).at(aEdgeX)->getStringId());
+        return 1;
+    }
+    return pEdge->setOwner(aPlayerId);
 }

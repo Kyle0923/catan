@@ -43,4 +43,11 @@ enum DevelopmentCardTypes
 };
 constexpr size_t DEVELOPMENT_CARD_TYPE_SIZE = static_cast<size_t>(DevelopmentCardTypes::VICTORY_POINT) + 1U;
 
+enum ColonyType
+{
+    NONE = 0,
+    SETTLEMENT = 1,
+    CITY = 2
+};
+
 #endif /* INCLUDE_COMMON_HPP */

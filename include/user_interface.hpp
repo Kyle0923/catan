@@ -25,6 +25,8 @@ enum ColorPairIndex
     PRINTOUT_WIN,
     GAME_WIN_BORDER,
     USER_WIN_BORDER,
+    PLAYER_START,
+    PLAYER_END = PLAYER_START + 6,
 #ifndef RELEASE
     TEMP    // for experiment purpose
 #endif

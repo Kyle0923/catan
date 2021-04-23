@@ -40,7 +40,11 @@ std::vector<Point_t> Edge::getAllPoints() const
 
 int Edge::populateAdjacencies(GameMap& aMap)
 {
-    mOwner = ""; // reset edge
+    // reset edge
+    mOwner = -1;
+    mAdjacentVertices.clear();
+    mAdjacentEdges.clear();
+
     int rc = 0;
     std::pair<Point_t, Point_t> vertexPoints = getAdjacentVertexPoints();
     rc |= addAdjacency(aMap, vertexPoints.first);
@@ -112,10 +116,21 @@ std::pair<Point_t, Point_t> Edge::getAdjacentVertexPoints() const
     }
 }
 
-Edge::Edge(const int aId, const Point_t aTopLeft, const char aDirection) :
-    Terrain(aId, aTopLeft)
+int Edge::setOwner(int aPlayerId)
 {
-    mOwner = "None";
+    if (mOwner != -1)
+    {
+        WARN_LOG(getStringId() + " is owned by Player#", mOwner, " already, cannot reset for Player#", aPlayerId);
+        return -1;
+    }
+    mOwner = aPlayerId;
+    return 0;
+}
+
+Edge::Edge(const int aId, const Point_t aTopLeft, const char aDirection) :
+    Terrain(aId, aTopLeft),
+    mOwner(-1)
+{
     if (aDirection == '-' || aDirection == '/' || aDirection == '\\' )
     {
         mDirection = aDirection;

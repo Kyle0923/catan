@@ -29,6 +29,7 @@ extern std::ostream& operator<< (std::ostream& aStream, const Edge* const & aEdg
 extern std::ostream& operator<< (std::ostream& aStream, const Vertex* const & aVertex);
 extern std::string resourceTypesToStr(const ResourceTypes aResource);
 extern std::string developmentCardTypesToStr(const DevelopmentCardTypes aCard);
+extern std::string colonyTypesToStr(const ColonyType aColony);
 extern void trimTrailingSpace(std::string& aString);
 
 #endif /* INCLUDE_UTILITY_HPP */

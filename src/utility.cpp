@@ -84,6 +84,23 @@ std::string developmentCardTypesToStr(const DevelopmentCardTypes aCard)
 #undef CASE_PRINT
 }
 
+std::string colonyTypesToStr(const ColonyType aColony)
+{
+#define CASE_PRINT(colony) \
+    case ColonyType::colony: \
+        return #colony
+
+    switch (aColony)
+    {
+        CASE_PRINT(NONE);
+        CASE_PRINT(SETTLEMENT);
+        CASE_PRINT(CITY);
+    }
+    return "";
+
+#undef CASE_PRINT
+}
+
 void trimTrailingSpace(std::string& aString)
 {
     static const std::string whitespaces (" \t\f\v\n\r");

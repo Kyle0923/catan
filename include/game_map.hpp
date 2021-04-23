@@ -53,7 +53,7 @@ private:
     int populateMap();
     int assignResourceAndDice(); // assign resources and dice number to lands
     int checkOverlap() const;
-    [[deprecated]] void fillInBlank();  // no longer needed, kept here for reference
+    [[deprecated]] void fillInBlank();  // no longer used, kept here for reference
 
     /*
      * aUseDefaultPosition - randomize the position of the harbours, though the harbours tend to not evenly distributed
@@ -112,7 +112,15 @@ public:
     const std::deque< std::deque<Terrain*> >& getTerrainMap() const;
 
     // Player related
-    int buildColony(int aPlayerId, int vertexId, ColonyType aColony);
+    int addPlayer(size_t aNumOfPlayer);
+
+    /**
+     * return 0: ok
+     * return > 0 : incorrect coordinate
+     * return < 0 : error with Vertex/Edge internal handling
+     */
+    int buildColony(const int aPlayerId, const int aVertexX, const int aVertexY, const ColonyType aColony);
+    int buildRoad(const int aPlayerId, const int aEdgeX, const int aEdgeY);
 
     GameMap(const GameMap &) = delete;
     GameMap& operator=(const GameMap&) = delete;

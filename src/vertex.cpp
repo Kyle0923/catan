@@ -17,7 +17,7 @@
 int Vertex::populateAdjacencies(GameMap& aMap)
 {
     // reset vertex
-    mOwner = "";
+    mOwner = -1;
     mColony = ColonyType::NONE;
     mIsCoastal = false;
     mHarbour = nullptr;
@@ -90,13 +90,44 @@ std::set<const Edge*> Vertex::getOtherEdges(const Edge& aEdge) const
     return otherEdges;
 }
 
-void Vertex::setOwner(std::string aOwner, ColonyType aColony)
+int Vertex::setOwner(int aPlayerId, ColonyType aColony)
 {
-    mOwner = aOwner;
-    mColony = aColony;
+    switch(aColony)
+    {
+        case ColonyType::NONE:
+        {
+            WARN_LOG("setOwner called with ColonyType == NONE");
+            return -1;
+        }
+        case ColonyType::SETTLEMENT:
+        {
+            if (aPlayerId != -1)
+            {
+                WARN_LOG(getStringId() + " is owned by Player#", mOwner, " already, cannot reset for Player#", aPlayerId);
+                return -2;
+            }
+            mOwner = aPlayerId;
+            mColony = aColony;
+            INFO_LOG("Successfully set " + colonyTypesToStr(aColony) + " for Player#", mOwner, " for " + getStringId());
+            return 0;
+        }
+        case ColonyType::CITY:
+        {
+            if (aPlayerId != mOwner)
+            {
+                WARN_LOG(getStringId() + " is owned by Player#", mOwner, " already, cannot reset for Player#", aPlayerId);
+                return -2;
+            }
+            mColony = aColony;
+            INFO_LOG("Successfully set " + colonyTypesToStr(aColony) + " for Player#", mOwner, " for " + getStringId());
+            return 0;
+        }
+    }
+    WARN_LOG("Unkown aColony Type: ", (int)aColony);
+    return -3;
 }
 
-std::string Vertex::getOwner() const
+size_t Vertex::getOwner() const
 {
     return mOwner;
 }
@@ -158,10 +189,11 @@ std::string Vertex::getStringId() const
 Vertex::Vertex(const int aId, const Point_t aTopLeft) :
     Terrain(aId, aTopLeft),
     mIsCoastal(false),
-    mHarbour(nullptr)
+    mHarbour(nullptr),
+    mOwner(-1),
+    mColony(ColonyType::NONE)
 {
-    mOwner = "None";
-    mColony = ColonyType::NONE;
+    // empty
 }
 
 Vertex::~Vertex()

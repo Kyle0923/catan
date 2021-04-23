@@ -16,13 +16,6 @@
 #include "terrain.hpp"
 #include "harbour.hpp"
 
-enum ColonyType
-{
-    NONE = 0,
-    SETTLEMENT = 1,
-    CITY = 2
-};
-
 class Edge;
 
 class Vertex : public Terrain
@@ -30,7 +23,7 @@ class Vertex : public Terrain
 private:
     bool mIsCoastal;
     Harbour* mHarbour;
-    std::string mOwner;
+    int mOwner;
     ColonyType mColony;
 
     std::set<const Vertex*> mAdjacentVertices;
@@ -40,8 +33,15 @@ private:
 public:
     const std::set<const Vertex*>& getAdjacentVertices() const;
     std::set<const Edge*> getOtherEdges(const Edge& aEdge) const; //get connected edges that is not the input
-    void setOwner(std::string aOwner, ColonyType aColony = ColonyType::SETTLEMENT);
-    std::string getOwner() const;
+
+    /**
+     * return -1: ColonyType == NONE
+     * return -2: incorrect owner
+     * return -3: unkown ColonyType
+     */
+    int setOwner(int aPlayerId, ColonyType aColony);
+
+    size_t getOwner() const;
     ColonyType getColonyType() const;
     bool isCoastal() const;
     bool hasHarbour() const;
