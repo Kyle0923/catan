@@ -14,17 +14,13 @@
 #include <vector>
 #include "common.hpp"
 
+class GameMap;
+class UserInterface;
+
 /**
  *  @usage:
- * every command handler need to add to int CliCommandManager::init()
+ * command handlers except "help", "exit" & "quit" need to add to int CliCommandManager constructor
  */
-
-enum class ActionStatus
-{
-    SUCCESS = 0,
-    INCOMPLETE,  // incomplete command, do not remove current cli
-    FAILED,      // internal error, write to log
-};
 
 class CliCommandManager; // forward declare CliCommandManager
 
@@ -32,7 +28,7 @@ class BackdoorHandler
 {
 public:
     std::string command() const;
-    ActionStatus act(std::vector<std::string> aArgs, std::vector<std::string>& aInfo);
+    ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg);
 };
 
 class CommandHandler
@@ -40,7 +36,7 @@ class CommandHandler
 public:
     virtual std::string command() const = 0;
     virtual std::string description() const;
-    virtual ActionStatus act(std::vector<std::string> aArgs, std::vector<std::string>& aInfo) = 0;
+    virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) = 0;
     CommandHandler() = default;
     virtual ~CommandHandler() = default;
 };
@@ -48,13 +44,14 @@ public:
 class ExitHandler: public CommandHandler
 {
     virtual std::string command() const override final;
-    virtual ActionStatus act(std::vector<std::string> aArgs, std::vector<std::string>& aInfo) override final;
+    virtual std::string description() const override final;
+    virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
 };
 
 class QuitHandler: public CommandHandler
 {
     virtual std::string command() const override final;
-    virtual ActionStatus act(std::vector<std::string> aArgs, std::vector<std::string>& aInfo) override final;
+    virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
 };
 
 class HelpHandler: public CommandHandler
@@ -63,8 +60,18 @@ private:
     CliCommandManager* const mManager;
 public:
     virtual std::string command() const override final;
-    virtual ActionStatus act(std::vector<std::string> aArgs, std::vector<std::string>& aInfo) override final;
+    virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
     HelpHandler(CliCommandManager* const aManager);
 };
+
+#ifndef RELEASE
+
+class SubCmdHandler: public CommandHandler
+{
+    virtual std::string command() const override final;
+    virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
+};
+
+#endif
 
 #endif /* INCLUDE_COMMAND_HANDLER_HPP */

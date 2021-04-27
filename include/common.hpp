@@ -50,4 +50,12 @@ enum ColonyType
     CITY = 2
 };
 
+enum class ActionStatus
+{
+    SUCCESS = 0,
+    PARTIAL_COMMAND,  // partial command, e.g, "he" is a partial command of "help", do not remove current cli
+    EXIT,             // only "exit" & "quit" should return this, child command finished, back to parent command, effectively pop cmd_manager stack
+    FAILED,           // internal error, write to log
+};
+
 #endif /* INCLUDE_COMMON_HPP */

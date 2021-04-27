@@ -11,6 +11,8 @@
 #ifndef INCLUDE_USER_INTERFACE_HPP
 #define INCLUDE_USER_INTERFACE_HPP
 
+#include <memory>
+#include <vector>
 #include <curses.h>
 #include <panel.h>
 #include "cli_command_manager.hpp"
@@ -51,15 +53,20 @@ private:
     WINDOW* mOutputWindow;
     PANEL* mOutputPanel;
 
-    // coord of '>' in the input window
-    const int inputStartX = 1;
-    const int inputStartY = 1;
+    std::vector< std::unique_ptr<CliCommandManager> > mCommandManagerStack;
 
-    int init(const GameMap& aMap);
+    // coord of '>' in the input window
+    int mInputStartX;
+    int mInputStartY;
+
+    int init(const GameMap& aMap, std::unique_ptr<CliCommandManager>& aCmdManager);
     int initColors();
     int printBorder(WINDOW* const aWindow, const ColorPairIndex aIndex);
     void restoreBorder(WINDOW* const aWindow, const chtype aColor);
     void resizeAll(const GameMap& aMap);
+    void resizeOutputWindow();
+
+    std::unique_ptr<CliCommandManager>& currentCommandManager();
 
     // aUntilEol: true - read until end-of-line; false - read up to cursor
     int readStringFromWindow(WINDOW* const aWindow, int aStartingY, int aStartingX, bool aUntilEol, std::string& aString);
@@ -68,7 +75,7 @@ private:
      * @param aIsList: print the vector using list format
      * @param aNormalSize: print up to aNormalSize in normal style, the rest are printed and grey out
      */
-    void printToConsole(const std::vector<std::string>& aMsg, bool aIsList, size_t aNormalSize);
+    void printToConsole(const std::vector<std::string>& aMsg, const std::string& aHeading, bool aIsList, size_t aNormalSize);
     void printToConsole(const std::string& aMsg);
 
 public:
@@ -77,9 +84,10 @@ public:
     bool checkSize(const GameMap& aMap, const int aVerticalPadding, \
                     const int aHorizontalPadding, const bool aExitOnFailure = false) const;
 
-    int loop(GameMap& aMap, CliCommandManager& aCmdHandler);
+    int pushCmdManager(std::unique_ptr<CliCommandManager> aCmdManager);
+    int loop(GameMap& aMap);
     int printMapToWindow(const GameMap& aMap);
-    UserInterface(const GameMap& aMap);
+    UserInterface(const GameMap& aMap, std::unique_ptr<CliCommandManager> aCmdManager);
     ~UserInterface();
 };
 

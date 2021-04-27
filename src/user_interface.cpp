@@ -26,8 +26,11 @@ int UserInterface::initColors()
     return rc;
 }
 
-int UserInterface::init(const GameMap& aMap)
+int UserInterface::init(const GameMap& aMap, std::unique_ptr<CliCommandManager>& aCmdManager)
 {
+    mCommandManagerStack.clear();
+    mCommandManagerStack.emplace_back(std::move(aCmdManager));
+
     initscr();
     resize_term(0, 0);
 
@@ -72,7 +75,7 @@ int UserInterface::init(const GameMap& aMap)
     printBorder(mGameWindow, ColorPairIndex::GAME_WIN_BORDER);
     printBorder(mInputWindow, ColorPairIndex::USER_WIN_BORDER);
 
-    mvwaddch(mInputWindow, inputStartY, inputStartX, '>');
+    mvwaddch(mInputWindow, mInputStartY, mInputStartX, '>');
 
     update_panels();
     doupdate();
@@ -155,18 +158,28 @@ void UserInterface::resizeAll(const GameMap& aMap)
     }
     resize_window(mInputWindow, LINES - aMap.getSizeVertical() - 1, COLS);
     resize_window(mGameWindow, aMap.getSizeVertical(), aMap.getSizeHorizontal());
-    resize_window(mOutputWindow, LINES - aMap.getSizeVertical() - 4, COLS - 2);
+    resizeOutputWindow();
 
     wbkgd(mGameWindow, COLOR_PAIR(ColorPairIndex::GAME_WIN));
     wbkgd(mInputWindow, COLOR_PAIR(ColorPairIndex::USER_WIN));
     wbkgd(mOutputWindow, COLOR_PAIR(ColorPairIndex::PRINTOUT_WIN));
 
     wclear(mInputWindow);
-    mvwaddch(mInputWindow, 1, 1, '>');
+    mvwaddch(mInputWindow, mInputStartY, mInputStartX, '>');
     printBorder(mGameWindow, ColorPairIndex::GAME_WIN_BORDER);
     printBorder(mInputWindow, ColorPairIndex::USER_WIN_BORDER);
     update_panels();
     doupdate();
+}
+
+void UserInterface::resizeOutputWindow()
+{
+    int inputWindowSizeX, inputWindowSizeY;
+    getmaxyx(mInputWindow, inputWindowSizeY, inputWindowSizeX);
+    resize_window(mOutputWindow, inputWindowSizeY - 2 - mInputStartY, inputWindowSizeX - 2);
+    int inputWindowStartX, inputWindowStartY;
+    getbegyx(mInputWindow, inputWindowStartY, inputWindowStartX);
+    move_panel(mOutputPanel, inputWindowStartY + mInputStartY + 1, inputWindowStartX + 1);
 }
 
 int UserInterface::readStringFromWindow(WINDOW* const aWindow, int aStartingY, int aStartingX, bool aUntilEol, std::string& aString)
@@ -197,21 +210,31 @@ int UserInterface::readStringFromWindow(WINDOW* const aWindow, int aStartingY, i
     return aStartingX + aString.size();
 }
 
-void UserInterface::printToConsole(const std::vector<std::string>& aMsg, bool aIsList, size_t aNormalSize)
+void UserInterface::printToConsole(const std::vector<std::string>& aMsg, const std::string& aHeading, bool aIsList, size_t aNormalSize)
 {
     wclear(mOutputWindow);
+    resizeOutputWindow();
+
     int curY = 0;
+    if (aHeading != "")
+    {
+        wattrset(mOutputWindow, A_BOLD);
+        mvwaddstr(mOutputWindow, curY, 0, aHeading.c_str());
+        ++curY;
+    }
+
     for (const std::string& msg : aMsg)
     {
         wattrset(mOutputWindow, A_NORMAL);
         if (aIsList)
         {
             mvwaddch(mOutputWindow, curY, 0, '|');
-            mvwaddnstr(mOutputWindow, curY + 1, 0, "|-", 2);
+            mvwaddstr(mOutputWindow, curY + 1, 0, "|-");
         }
         else
         {
-            mvwaddnstr(mOutputWindow, curY, 0, ">>", 2);
+            // mvwaddstr(mOutputWindow, curY, 0, "[system] ");
+            wmove(mOutputWindow, curY, mInputStartX);
         }
         if (aNormalSize == 0)
         {
@@ -226,9 +249,9 @@ void UserInterface::printToConsole(const std::vector<std::string>& aMsg, bool aI
         }
         curY = getcury(mOutputWindow) + (aIsList ? 2 : 1);
     }
-    if (aMsg.size())
+    if (aMsg.size() || aHeading != "")
     {
-        DEBUG_LOG_L0("Printing msg to panel: ", aMsg);
+        DEBUG_LOG_L0("Printing heading '" + aHeading + "' and msg to panel: ", aMsg);
         top_panel(mOutputPanel);
     }
     else
@@ -242,12 +265,31 @@ void UserInterface::printToConsole(const std::vector<std::string>& aMsg, bool aI
 
 void UserInterface::printToConsole(const std::string& aMsg)
 {
-    printToConsole({aMsg}, false, 0);
+    printToConsole({aMsg}, "", false, 0);
 }
 
-UserInterface::UserInterface(const GameMap& aMap)
+int UserInterface::pushCmdManager(std::unique_ptr<CliCommandManager> aCmdManager)
 {
-    init(aMap);
+    mCommandManagerStack.emplace_back(std::move(aCmdManager));
+    ++mInputStartY;
+    ++mInputStartX;
+    return 0;
+}
+
+std::unique_ptr<CliCommandManager>& UserInterface::currentCommandManager()
+{
+    if (mCommandManagerStack.size() == 0)
+    {
+        ERROR_LOG("No command manager available");
+    }
+    return mCommandManagerStack.back();
+}
+
+UserInterface::UserInterface(const GameMap& aMap, std::unique_ptr<CliCommandManager> aCmdManager) :
+    mInputStartX(1),
+    mInputStartY(1)
+{
+    init(aMap, aCmdManager);
 }
 
 UserInterface::~UserInterface()
@@ -255,7 +297,7 @@ UserInterface::~UserInterface()
     endwin();
 }
 
-int UserInterface::loop(GameMap& aMap, CliCommandManager& aCmdHandler)
+int UserInterface::loop(GameMap& aMap)
 {
     // infinite loop preperation
     int spinCtr = 0;
@@ -313,7 +355,7 @@ int UserInterface::loop(GameMap& aMap, CliCommandManager& aCmdHandler)
             case 3:  // ASCII 3 ctrl-C
             case 4:  // ASCII 4 ctrl-D
             {
-                wmove(mInputWindow, inputStartY, inputStartX + 1);
+                wmove(mInputWindow, mInputStartY, mInputStartX + 1);
                 wclrtoeol(mInputWindow);
                 restoreBorder(mInputWindow, COLOR_PAIR(USER_WIN_BORDER));
                 break;
@@ -323,7 +365,7 @@ int UserInterface::loop(GameMap& aMap, CliCommandManager& aCmdHandler)
             {
                 int curX, curY;
                 getyx(mInputWindow, curY, curX);
-                if (curX > 2)
+                if (curX > mInputStartX + 1)
                 {
                     wmove(mInputWindow, curY, curX - 1);
                     wdelch(mInputWindow);
@@ -342,7 +384,7 @@ int UserInterface::loop(GameMap& aMap, CliCommandManager& aCmdHandler)
             {
                 int curX, curY;
                 getyx(mInputWindow, curY, curX);
-                wmove(mInputWindow, curY, std::max(inputStartX + 1, curX - 1));
+                wmove(mInputWindow, curY, std::max(mInputStartX + 1, curX - 1));
                 break;
             }
             case KEY_RIGHT:
@@ -362,23 +404,23 @@ int UserInterface::loop(GameMap& aMap, CliCommandManager& aCmdHandler)
             case KEY_HOME:
             case KEY_PPAGE:
             {
-                wmove(mInputWindow, inputStartY, inputStartX + 1);
+                wmove(mInputWindow, mInputStartY, mInputStartX + 1);
                 break;
             }
             case KEY_END:
             case KEY_NPAGE:
             {
                 std::string str;
-                int lastX = readStringFromWindow(mInputWindow, inputStartY, inputStartX + 1, true, str);
+                int lastX = readStringFromWindow(mInputWindow, mInputStartY, mInputStartX + 1, true, str);
                 wmove(mInputWindow, 1, lastX);
                 break;
             }
             case '\t':
             {
                 // auto fill
-                readStringFromWindow(mInputWindow, inputStartY, inputStartX + 1, false, input);
+                readStringFromWindow(mInputWindow, mInputStartY, mInputStartX + 1, false, input);
                 std::string autoFillString;
-                std::vector<std::string> matched = aCmdHandler.commandMatcher(input, &autoFillString);
+                std::vector<std::string> matched = currentCommandManager()->commandMatcher(input, &autoFillString);
                 if (matched.size() == 1)
                 {
                     // overwrite the longestCommonStr to the matched string
@@ -386,8 +428,8 @@ int UserInterface::loop(GameMap& aMap, CliCommandManager& aCmdHandler)
                 }
                 if (autoFillString.length() > input.size())
                 {
-                    mvwaddnstr(mInputWindow, inputStartY, inputStartX + 1, autoFillString.c_str(), autoFillString.length());
-                    wmove(mInputWindow, inputStartY, 2 + autoFillString.length());
+                    mvwaddnstr(mInputWindow, mInputStartY, mInputStartX + 1, autoFillString.c_str(), autoFillString.length());
+                    wmove(mInputWindow, mInputStartY, mInputStartX + 1 + autoFillString.length());
                 }
                 break;
             }
@@ -402,9 +444,9 @@ int UserInterface::loop(GameMap& aMap, CliCommandManager& aCmdHandler)
             getyx(mInputWindow, curY, curX);
             wmove(mInputWindow, curY, curX + 1);
         }
-        readStringFromWindow(mInputWindow, inputStartY, inputStartX + 1, false, input);
-        std::vector<std::string> matchedCmd = aCmdHandler.commandMatcher(input);
-        printToConsole(matchedCmd, true, input.length());
+        readStringFromWindow(mInputWindow, mInputStartY, mInputStartX + 1, false, input);
+        std::vector<std::string> matchedCmd = currentCommandManager()->commandMatcher(input);
+        printToConsole(matchedCmd, "", true, input.length());
 
         if (!(keystroke == KEY_ENTER || keystroke == PADENTER || (char)keystroke == '\n' || (char)keystroke == '\r'))
         {
@@ -412,22 +454,34 @@ int UserInterface::loop(GameMap& aMap, CliCommandManager& aCmdHandler)
         }
 
         // user hit 'enter'
-        readStringFromWindow(mInputWindow, inputStartY, inputStartX + 1, true, input);
 
+        readStringFromWindow(mInputWindow, mInputStartY, mInputStartX + 1, true, input);
         INFO_LOG("USER input cmd: ", input);
-        if (!input.compare("quit") || !input.compare("exit"))
+
+        std::vector<std::string> returnMsg;
+        ActionStatus rc = currentCommandManager()->act(aMap, *this, input, returnMsg);
+        if (rc == ActionStatus::EXIT)
         {
+            mCommandManagerStack.pop_back();
+            --mInputStartY;
+            --mInputStartX;
+        }
+        if (mCommandManagerStack.size() == 0)
+        {
+            // no more handler, exit
             break;
         }
-        std::vector<std::string> info;
-        ActionStatus rc = aCmdHandler.act(input, info);
-        if (rc != ActionStatus::INCOMPLETE)
+        else if (rc != ActionStatus::PARTIAL_COMMAND)
         {
             // clear user window, reset cursor position
-            wclear(mInputWindow);
-            mvwaddch(mInputWindow, inputStartY, inputStartX, '>');
+            wmove(mInputWindow, mInputStartY, 1);
+            wclrtobot(mInputWindow);
+            const std::string symbol(mInputStartX, '>');
+            mvwaddstr(mInputWindow, mInputStartY, 1, symbol.c_str());
+            wmove(mInputWindow, mInputStartY, mInputStartX + 1);
         }
-        printToConsole(info, false, 0);
+        const std::string inputPrefix((rc == ActionStatus::EXIT ? mInputStartX + 1 : mInputStartX), '>');
+        printToConsole(returnMsg, inputPrefix + input, false, 0);
 
         printMapToWindow(aMap);
         printBorder(mGameWindow, ColorPairIndex::GAME_WIN_BORDER);

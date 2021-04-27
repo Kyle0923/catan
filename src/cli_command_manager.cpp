@@ -11,6 +11,8 @@
 #include "cli_command_manager.hpp"
 #include "logger.hpp"
 
+BackdoorHandler CliCommandManager::mBackdoorHandler;  // handles backdoor commands
+
 std::vector<std::string> CliCommandManager::stringMatcher(std::string aInput, const std::vector<std::string>& aMatchPool, std::string* const aLongestCommonStr = nullptr)
 {
     if (aInput.length() == 0)
@@ -98,23 +100,15 @@ std::vector<std::string> CliCommandManager::stringMatcher(std::string aInput, co
 
 std::vector<std::string> CliCommandManager::commandMatcher(std::string aInput, std::string* const aLongestCommonStr) const
 {
-    if (!mInitialized)
-    {
-        ERROR_LOG("CliCommandManager not initialized");
-    }
     return stringMatcher(aInput, mCommand, aLongestCommonStr);
 }
 
-ActionStatus CliCommandManager::act(std::string aInput, std::vector<std::string>& aInfoMsg)
+ActionStatus CliCommandManager::act(GameMap& aMap, UserInterface& aUi, std::string aInput, std::vector<std::string>& aReturnMsg)
 {
-    if (!mInitialized)
-    {
-        ERROR_LOG("CliCommandManager not initialized");
-    }
     std::string command;
-    if (aInput.find(mBackdoorHandler->command() + " ") != std::string::npos)
+    if (aInput.find(mBackdoorHandler.command() + " ") == 0)
     {
-        command = mBackdoorHandler->command();
+        command = mBackdoorHandler.command();
     }
     else
     {
@@ -122,7 +116,7 @@ ActionStatus CliCommandManager::act(std::string aInput, std::vector<std::string>
         if (matchingCommand.size() != 1)
         {
             INFO_LOG("Unknown command: \'" + aInput + '\'');
-            aInfoMsg.push_back("Unknown command: \'" + aInput + '\'');
+            aReturnMsg.push_back("Unknown command: \'" + aInput + '\'');
             return ActionStatus::SUCCESS;
         }
         command = matchingCommand.front();
@@ -132,9 +126,9 @@ ActionStatus CliCommandManager::act(std::string aInput, std::vector<std::string>
     {
         // incomplete command
         INFO_LOG("Possible incomplete command: \'" + aInput + "\', maybe: " + command);
-        aInfoMsg.push_back("Unknown command: \'" + aInput + '\'');
-        aInfoMsg.push_back("maybe: \'" + command + "\'?");
-        return ActionStatus::INCOMPLETE;
+        aReturnMsg.push_back("Unknown command: \'" + aInput + '\'');
+        aReturnMsg.push_back("maybe: \'" + command + "\'?");
+        return ActionStatus::PARTIAL_COMMAND;
     }
     // parse aInput, extra word are split by whitespace and pass to command_handler as parameter
     std::vector<std::string> commandParam;
@@ -152,32 +146,14 @@ ActionStatus CliCommandManager::act(std::string aInput, std::vector<std::string>
         }
     }
     INFO_LOG("calling handler for cmd \'" + command + "\', arg: ", commandParam);
-    if (command == mBackdoorHandler->command())
+    if (command == mBackdoorHandler.command())
     {
-        return mBackdoorHandler->act(commandParam, aInfoMsg);
+        return mBackdoorHandler.act(aMap, aUi, commandParam, aReturnMsg);
     }
     else
     {
-        return mCommandHandler.at(command)->act(commandParam, aInfoMsg);
+        return mCommandHandler.at(command)->act(aMap, aUi, commandParam, aReturnMsg);
     }
-}
-
-int CliCommandManager::init()
-{
-    addCommandHandler(new ExitHandler());
-    addCommandHandler(new QuitHandler());
-    addCommandHandler(new HelpHandler(this));
-
-    if (mCommandHandler.size() != mCommand.size())
-    {
-        ERROR_LOG("CliCommandManager::init failed, size of mCommand and mCommandHandler do not match");
-    }
-    else
-    {
-        INFO_LOG("Successfully initialized CliCommandManager");
-    }
-    mInitialized = true;
-    return 0;
 }
 
 int CliCommandManager::addCommandHandler(CommandHandler* const aHandler)
@@ -205,10 +181,25 @@ const std::map<std::string, CommandHandler*>& CliCommandManager::getHandlers() c
     return mCommandHandler;
 }
 
-CliCommandManager::CliCommandManager(/* args */) :
-    mInitialized(false),
-    mBackdoorHandler(new BackdoorHandler())
+CliCommandManager::CliCommandManager(std::vector<CommandHandler*> aCmdHandler)
 {
+    addCommandHandler(new ExitHandler());
+    addCommandHandler(new QuitHandler());
+    addCommandHandler(new HelpHandler(this));
+
+    for (auto& handler: aCmdHandler)
+    {
+        addCommandHandler(handler);
+    }
+
+    if (mCommandHandler.size() != mCommand.size())
+    {
+        ERROR_LOG("CliCommandManager::init failed, size of mCommand and mCommandHandler do not match");
+    }
+    else
+    {
+        INFO_LOG("Successfully initialized CliCommandManager");
+    }
 }
 
 CliCommandManager::~CliCommandManager()
@@ -217,5 +208,4 @@ CliCommandManager::~CliCommandManager()
     {
         delete iter.second;
     }
-    delete mBackdoorHandler;
 }

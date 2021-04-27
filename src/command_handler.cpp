@@ -9,6 +9,8 @@
 
 #include "cli_command_manager.hpp"
 #include "command_handler.hpp"
+#include "game_map.hpp"
+#include "user_interface.hpp"
 #include "logger.hpp"
 
 std::string CommandHandler::description() const
@@ -21,9 +23,14 @@ std::string ExitHandler::command() const
     return "exit";
 }
 
-ActionStatus ExitHandler::act(std::vector<std::string> aArgs, std::vector<std::string>& aInfo)
+std::string ExitHandler::description() const
 {
-    return ActionStatus::SUCCESS;
+    return "Exit current command";
+}
+
+ActionStatus ExitHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
+{
+    return ActionStatus::EXIT;
 }
 
 std::string QuitHandler::command() const
@@ -31,9 +38,9 @@ std::string QuitHandler::command() const
     return "quit";
 }
 
-ActionStatus QuitHandler::act(std::vector<std::string> aArgs, std::vector<std::string>& aInfo)
+ActionStatus QuitHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
 {
-    return ActionStatus::SUCCESS;
+    return ActionStatus::EXIT;
 }
 
 std::string HelpHandler::command() const
@@ -41,7 +48,7 @@ std::string HelpHandler::command() const
     return "help";
 }
 
-ActionStatus HelpHandler::act(std::vector<std::string> aArgs, std::vector<std::string>& aInfo)
+ActionStatus HelpHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
 {
     const std::map<std::string, CommandHandler*>& handlers = mManager->getHandlers();
     for (auto iter : handlers)
@@ -49,9 +56,9 @@ ActionStatus HelpHandler::act(std::vector<std::string> aArgs, std::vector<std::s
         std::string cmd = iter.first;
         if (iter.second->description() != "")
         {
-            cmd += ": " + iter.second->description();
+            cmd += " - " + iter.second->description();
         }
-        aInfo.push_back(cmd);
+        aReturnMsg.push_back(cmd);
     }
     return ActionStatus::SUCCESS;
 }
@@ -65,7 +72,7 @@ std::string BackdoorHandler::command() const
     return "__";
 }
 
-ActionStatus BackdoorHandler::act(std::vector<std::string> aArgs, std::vector<std::string>& aInfo)
+ActionStatus BackdoorHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
 {
     // credit http://www.ascii-art.de/ascii/s/sharks.txt
     const std::string shark = \
@@ -146,10 +153,10 @@ ActionStatus BackdoorHandler::act(std::vector<std::string> aArgs, std::vector<st
     const std::string cat = \
     "\n"
     "              __..--''``---....___   _..._    __\n"           \
-    "    /// //_.-'    .-/\";  `        ``<._  ``.''_ `. / // /\n" \
-    "  (@) _.-' _..--.'_    \\                    `( ) ) // // \n" \
-    "   / (_..-' // (< _     ;_..__               ; `' / ///   \n" \
-    "    / // // //  `-._,_)' // / ``--...____..-' /// / //    \n" \
+    "          _.-'    .-/\";  `        ``<._  ``.''_ `.\n"        \
+    "  (@) _.-' _..--.'_    \\                    `( ) )\n"        \
+    "     (_..-'    (< _     ;_..__               ; `'\n"          \
+    "                `-._,_)'      ``--...____..-'\n"              \
     ;
 
     // credit https://www.asciiart.eu/animals/dogs
@@ -168,16 +175,27 @@ ActionStatus BackdoorHandler::act(std::vector<std::string> aArgs, std::vector<st
     if (aArgs.size() > 0)
     {
         if (aArgs.front() == "shark") {
-            aInfo.push_back(shark);
+            aReturnMsg.push_back(shark);
         } else if (aArgs.front() == "dolphin") {
-            aInfo.push_back(dolphin);
+            aReturnMsg.push_back(dolphin);
         } else if (aArgs.front() == "seal") {
-            aInfo.push_back(seal);
+            aReturnMsg.push_back(seal);
         } else if (aArgs.front() == "cat") {
-            aInfo.push_back(cat);
+            aReturnMsg.push_back(cat);
         } else if (aArgs.front() == "dog") {
-            aInfo.push_back(dog);
+            aReturnMsg.push_back(dog);
         }
     }
+    return ActionStatus::SUCCESS;
+}
+
+std::string SubCmdHandler::command() const
+{
+    return "subcmd";
+}
+
+ActionStatus SubCmdHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
+{
+    aUi.pushCmdManager(std::make_unique<CliCommandManager>(std::vector<CommandHandler*>({new SubCmdHandler()})));
     return ActionStatus::SUCCESS;
 }

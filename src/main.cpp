@@ -31,17 +31,16 @@ int main(int argc, char** argv)
     MapIO mapFile(cliOpt.getOpt<CliOptIndex::MAP_FILE_PATH>());
     mapFile.readMap(gameMap);
 
-    UserInterface ui(gameMap);
+    UserInterface ui(gameMap, std::make_unique<CliCommandManager>(  \
+        std::vector<CommandHandler*>({new SubCmdHandler()})         \
+    ));
 
     gameMap.initMap();
     gameMap.logMap();
 
     ui.printMapToWindow(gameMap);
 
-    CliCommandManager cmdHandler;
-    cmdHandler.init();
-
-    ui.loop(gameMap, cmdHandler);
+    ui.loop(gameMap);
 
     INFO_LOG("Exiting Catan.exe...\nGoodbye");
     return 0;
