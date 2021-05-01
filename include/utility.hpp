@@ -11,6 +11,8 @@
 #ifndef INCLUDE_UTILITY_HPP
 #define INCLUDE_UTILITY_HPP
 
+#include <vector>
+#include <algorithm>
 #include "common.hpp"
 
 class Vertex;
@@ -21,6 +23,21 @@ class PointHash
 public:
     size_t operator()(const Point_t& aPoint) const;
 };
+
+template<typename T>
+int isInVector(const T& aTofind, const std::vector<T>& aVector)
+{
+    auto pos = std::find(aVector.begin(), aVector.end(), aTofind);
+    if (pos != aVector.end())
+    {
+        // found
+        return pos - aVector.begin();
+    }
+    else
+    {
+        return -1;
+    }
+}
 
 extern bool operator==(const Point_t& aPointA, const Point_t& aPointB);
 extern bool operator!=(const Point_t& aPointA, const Point_t& aPointB);

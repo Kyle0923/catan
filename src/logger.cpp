@@ -47,6 +47,10 @@ int Logger::print(std::stringstream& ostr, char aArg)
     {
         ostr << "\\n"; // print out "\n" instead of newline
     }
+    else if (aArg == '\t')
+    {
+        ostr << "\\t"; // print out "\t" instead of tab
+    }
     else if (aArg == ' ')
     {
         ostr << "'whitespace'"; // print out "\n" instead of newline

@@ -12,9 +12,12 @@
 CC := g++
 ARTIFACT := catan.exe
 SRC_DIR := src
+CMD_SRC_DIR := $(SRC_DIR)/commands
 SRC := $(wildcard $(SRC_DIR)/*.cpp)
+SRC += $(wildcard $(CMD_SRC_DIR)/*.cpp)
 OBJ_DIR := bin
-OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
+# OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
+OBJ := $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(notdir $(SRC)))
 INC := -Iinclude
 LIB :=
 
@@ -56,6 +59,9 @@ ifneq ($(RELEASE),)
 endif
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR) $(THIRD_PARTY_LIB_DIR)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -MF $(patsubst %.o,%.d,$@) -c $< -o $@
+
+$(OBJ_DIR)/%.o: $(CMD_SRC_DIR)/%.cpp | $(OBJ_DIR) $(THIRD_PARTY_LIB_DIR)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -MF $(patsubst %.o,%.d,$@) -c $< -o $@
 
 $(THIRD_PARTY_LIB): $(THIRD_PARTY_LIB_DIR)

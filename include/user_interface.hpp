@@ -15,7 +15,7 @@
 #include <vector>
 #include <curses.h>
 #include <panel.h>
-#include "cli_command_manager.hpp"
+#include "command_dispatcher.hpp"
 
 class GameMap;
 
@@ -53,20 +53,20 @@ private:
     WINDOW* mOutputWindow;
     PANEL* mOutputPanel;
 
-    std::vector< std::unique_ptr<CliCommandManager> > mCommandManagerStack;
+    std::vector< std::unique_ptr<CommandDispatcher> > mCommandDispatcherStack;
 
     // coord of '>' in the input window
     int mInputStartX;
     int mInputStartY;
 
-    int init(const GameMap& aMap, std::unique_ptr<CliCommandManager>& aCmdManager);
+    int init(const GameMap& aMap, std::unique_ptr<CommandDispatcher>& aCmdDispatcher);
     int initColors();
     int printBorder(WINDOW* const aWindow, const ColorPairIndex aIndex);
     void restoreBorder(WINDOW* const aWindow, const chtype aColor);
     void resizeAll(const GameMap& aMap);
     void resizeOutputWindow();
 
-    std::unique_ptr<CliCommandManager>& currentCommandManager();
+    std::unique_ptr<CommandDispatcher>& currentCommandDispatcher();
 
     // aUntilEol: true - read until end-of-line; false - read up to cursor
     int readStringFromWindow(WINDOW* const aWindow, int aStartingY, int aStartingX, bool aUntilEol, std::string& aString);
@@ -84,10 +84,10 @@ public:
     bool checkSize(const GameMap& aMap, const int aVerticalPadding, \
                     const int aHorizontalPadding, const bool aExitOnFailure = false) const;
 
-    int pushCmdManager(std::unique_ptr<CliCommandManager> aCmdManager);
+    int pushCmdDispatcher(std::unique_ptr<CommandDispatcher> aCmdDispatcher);
     int loop(GameMap& aMap);
     int printMapToWindow(const GameMap& aMap);
-    UserInterface(const GameMap& aMap, std::unique_ptr<CliCommandManager> aCmdManager);
+    UserInterface(const GameMap& aMap, std::unique_ptr<CommandDispatcher> aCmdDispatcher);
     ~UserInterface();
 };
 

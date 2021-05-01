@@ -1,6 +1,6 @@
 /**
  * Project: catan
- * @file cli_command_manager.hpp
+ * @file command_dispatcher.hpp
  * @brief process CLI user commands, and calls the corresponding command_handler function
  *
  * @author Zonghao Huang <kyle0923@qq.com>
@@ -8,8 +8,8 @@
  * All right reserved.
  */
 
-#ifndef INCLUDE_CLI_COMMAND_MANAGER_HPP
-#define INCLUDE_CLI_COMMAND_MANAGER_HPP
+#ifndef INCLUDE_COMMAND_DISPATCHER_HPP
+#define INCLUDE_COMMAND_DISPATCHER_HPP
 
 #include <vector>
 #include <map>
@@ -19,7 +19,7 @@
 class GameMap;
 class UserInterface;
 
-class CliCommandManager
+class CommandDispatcher
 {
 private:
     static BackdoorHandler mBackdoorHandler;  // handles backdoor commands
@@ -34,11 +34,11 @@ public:
     const std::map<std::string, CommandHandler*>& getHandlers() const;
 
     /**
-     * the memory handling of CommandHandler* should be handled by Manager
+     * the memory handling of CommandHandler* should be handled by Dispatcher
      * help, quit, exit handlers will be added automatically
      */
-    CliCommandManager(std::vector<CommandHandler*> aCmdHandler);
-    ~CliCommandManager();
+    CommandDispatcher(std::vector<CommandHandler*> aCmdHandler);
+    ~CommandDispatcher();
 };
 
-#endif /* INCLUDE_CLI_COMMAND_MANAGER_HPP */
+#endif /* INCLUDE_COMMAND_DISPATCHER_HPP */

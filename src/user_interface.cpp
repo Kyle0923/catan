@@ -26,10 +26,10 @@ int UserInterface::initColors()
     return rc;
 }
 
-int UserInterface::init(const GameMap& aMap, std::unique_ptr<CliCommandManager>& aCmdManager)
+int UserInterface::init(const GameMap& aMap, std::unique_ptr<CommandDispatcher>& aCmdDispatcher)
 {
-    mCommandManagerStack.clear();
-    mCommandManagerStack.emplace_back(std::move(aCmdManager));
+    mCommandDispatcherStack.clear();
+    mCommandDispatcherStack.emplace_back(std::move(aCmdDispatcher));
 
     initscr();
     resize_term(0, 0);
@@ -268,28 +268,28 @@ void UserInterface::printToConsole(const std::string& aMsg)
     printToConsole({aMsg}, "", false, 0);
 }
 
-int UserInterface::pushCmdManager(std::unique_ptr<CliCommandManager> aCmdManager)
+int UserInterface::pushCmdDispatcher(std::unique_ptr<CommandDispatcher> aCmdDispatcher)
 {
-    mCommandManagerStack.emplace_back(std::move(aCmdManager));
+    mCommandDispatcherStack.emplace_back(std::move(aCmdDispatcher));
     ++mInputStartY;
     ++mInputStartX;
     return 0;
 }
 
-std::unique_ptr<CliCommandManager>& UserInterface::currentCommandManager()
+std::unique_ptr<CommandDispatcher>& UserInterface::currentCommandDispatcher()
 {
-    if (mCommandManagerStack.size() == 0)
+    if (mCommandDispatcherStack.size() == 0)
     {
-        ERROR_LOG("No command manager available");
+        ERROR_LOG("No command dispatcher available");
     }
-    return mCommandManagerStack.back();
+    return mCommandDispatcherStack.back();
 }
 
-UserInterface::UserInterface(const GameMap& aMap, std::unique_ptr<CliCommandManager> aCmdManager) :
+UserInterface::UserInterface(const GameMap& aMap, std::unique_ptr<CommandDispatcher> aCmdDispatcher) :
     mInputStartX(1),
     mInputStartY(1)
 {
-    init(aMap, aCmdManager);
+    init(aMap, aCmdDispatcher);
 }
 
 UserInterface::~UserInterface()
@@ -420,7 +420,7 @@ int UserInterface::loop(GameMap& aMap)
                 // auto fill
                 readStringFromWindow(mInputWindow, mInputStartY, mInputStartX + 1, false, input);
                 std::string autoFillString;
-                std::vector<std::string> matched = currentCommandManager()->commandMatcher(input, &autoFillString);
+                std::vector<std::string> matched = currentCommandDispatcher()->commandMatcher(input, &autoFillString);
                 if (matched.size() == 1)
                 {
                     // overwrite the longestCommonStr to the matched string
@@ -445,7 +445,7 @@ int UserInterface::loop(GameMap& aMap)
             wmove(mInputWindow, curY, curX + 1);
         }
         readStringFromWindow(mInputWindow, mInputStartY, mInputStartX + 1, false, input);
-        std::vector<std::string> matchedCmd = currentCommandManager()->commandMatcher(input);
+        std::vector<std::string> matchedCmd = currentCommandDispatcher()->commandMatcher(input);
         printToConsole(matchedCmd, "", true, input.length());
 
         if (!(keystroke == KEY_ENTER || keystroke == PADENTER || (char)keystroke == '\n' || (char)keystroke == '\r'))
@@ -459,14 +459,14 @@ int UserInterface::loop(GameMap& aMap)
         INFO_LOG("USER input cmd: ", input);
 
         std::vector<std::string> returnMsg;
-        ActionStatus rc = currentCommandManager()->act(aMap, *this, input, returnMsg);
+        ActionStatus rc = currentCommandDispatcher()->act(aMap, *this, input, returnMsg);
         if (rc == ActionStatus::EXIT)
         {
-            mCommandManagerStack.pop_back();
+            mCommandDispatcherStack.pop_back();
             --mInputStartY;
             --mInputStartX;
         }
-        if (mCommandManagerStack.size() == 0)
+        if (mCommandDispatcherStack.size() == 0)
         {
             // no more handler, exit
             break;

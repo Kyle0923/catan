@@ -1,6 +1,6 @@
 /**
  * Project: catan
- * @file cli_command_manager.cpp
+ * @file command_dispatcher.cpp
  *
  * @author Zonghao Huang <kyle0923@qq.com>
  *
@@ -8,12 +8,12 @@
  */
 
 #include <sstream>
-#include "cli_command_manager.hpp"
+#include "command_dispatcher.hpp"
 #include "logger.hpp"
 
-BackdoorHandler CliCommandManager::mBackdoorHandler;  // handles backdoor commands
+BackdoorHandler CommandDispatcher::mBackdoorHandler;  // handles backdoor commands
 
-std::vector<std::string> CliCommandManager::stringMatcher(std::string aInput, const std::vector<std::string>& aMatchPool, std::string* const aLongestCommonStr = nullptr)
+std::vector<std::string> CommandDispatcher::stringMatcher(std::string aInput, const std::vector<std::string>& aMatchPool, std::string* const aLongestCommonStr = nullptr)
 {
     if (aInput.length() == 0)
     {
@@ -98,12 +98,12 @@ std::vector<std::string> CliCommandManager::stringMatcher(std::string aInput, co
     return matched;
 }
 
-std::vector<std::string> CliCommandManager::commandMatcher(std::string aInput, std::string* const aLongestCommonStr) const
+std::vector<std::string> CommandDispatcher::commandMatcher(std::string aInput, std::string* const aLongestCommonStr) const
 {
     return stringMatcher(aInput, mCommand, aLongestCommonStr);
 }
 
-ActionStatus CliCommandManager::act(GameMap& aMap, UserInterface& aUi, std::string aInput, std::vector<std::string>& aReturnMsg)
+ActionStatus CommandDispatcher::act(GameMap& aMap, UserInterface& aUi, std::string aInput, std::vector<std::string>& aReturnMsg)
 {
     std::string command;
     if (aInput.find(mBackdoorHandler.command() + " ") == 0)
@@ -156,7 +156,7 @@ ActionStatus CliCommandManager::act(GameMap& aMap, UserInterface& aUi, std::stri
     }
 }
 
-int CliCommandManager::addCommandHandler(CommandHandler* const aHandler)
+int CommandDispatcher::addCommandHandler(CommandHandler* const aHandler)
 {
     if (!aHandler)
     {
@@ -171,17 +171,17 @@ int CliCommandManager::addCommandHandler(CommandHandler* const aHandler)
     }
 }
 
-const std::vector<std::string>& CliCommandManager::getCommands() const
+const std::vector<std::string>& CommandDispatcher::getCommands() const
 {
     return mCommand;
 }
 
-const std::map<std::string, CommandHandler*>& CliCommandManager::getHandlers() const
+const std::map<std::string, CommandHandler*>& CommandDispatcher::getHandlers() const
 {
     return mCommandHandler;
 }
 
-CliCommandManager::CliCommandManager(std::vector<CommandHandler*> aCmdHandler)
+CommandDispatcher::CommandDispatcher(std::vector<CommandHandler*> aCmdHandler)
 {
     addCommandHandler(new ExitHandler());
     addCommandHandler(new QuitHandler());
@@ -194,15 +194,15 @@ CliCommandManager::CliCommandManager(std::vector<CommandHandler*> aCmdHandler)
 
     if (mCommandHandler.size() != mCommand.size())
     {
-        ERROR_LOG("CliCommandManager::init failed, size of mCommand and mCommandHandler do not match");
+        ERROR_LOG("CommandDispatcher::init failed, size of mCommand and mCommandHandler do not match");
     }
     else
     {
-        INFO_LOG("Successfully initialized CliCommandManager");
+        INFO_LOG("Successfully initialized CommandDispatcher");
     }
 }
 
-CliCommandManager::~CliCommandManager()
+CommandDispatcher::~CommandDispatcher()
 {
     for (auto& iter : mCommandHandler)
     {

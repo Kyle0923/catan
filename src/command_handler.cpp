@@ -7,10 +7,11 @@
  * All right reserved.
  */
 
-#include "cli_command_manager.hpp"
+#include "command_dispatcher.hpp"
 #include "command_handler.hpp"
 #include "game_map.hpp"
 #include "user_interface.hpp"
+#include "utility.hpp"
 #include "logger.hpp"
 
 std::string CommandHandler::description() const
@@ -50,7 +51,7 @@ std::string HelpHandler::command() const
 
 ActionStatus HelpHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
 {
-    const std::map<std::string, CommandHandler*>& handlers = mManager->getHandlers();
+    const std::map<std::string, CommandHandler*>& handlers = mDispatcher->getHandlers();
     for (auto iter : handlers)
     {
         std::string cmd = iter.first;
@@ -58,12 +59,16 @@ ActionStatus HelpHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std
         {
             cmd += " - " + iter.second->description();
         }
-        aReturnMsg.push_back(cmd);
+        if ( (aArgs.size() > 0 && isInVector(iter.first, aArgs) >= 0)
+             || (aArgs.size() == 0) )
+        {
+            aReturnMsg.push_back(cmd);
+        }
     }
     return ActionStatus::SUCCESS;
 }
 
-HelpHandler::HelpHandler(CliCommandManager* const aManager): mManager(aManager)
+HelpHandler::HelpHandler(CommandDispatcher* const aDispatcher): mDispatcher(aDispatcher)
 {
 }
 
@@ -186,16 +191,5 @@ ActionStatus BackdoorHandler::act(GameMap& aMap, UserInterface& aUi, std::vector
             aReturnMsg.push_back(dog);
         }
     }
-    return ActionStatus::SUCCESS;
-}
-
-std::string SubCmdHandler::command() const
-{
-    return "subcmd";
-}
-
-ActionStatus SubCmdHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
-{
-    aUi.pushCmdManager(std::make_unique<CliCommandManager>(std::vector<CommandHandler*>({new SubCmdHandler()})));
     return ActionStatus::SUCCESS;
 }

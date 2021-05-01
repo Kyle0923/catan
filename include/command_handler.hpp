@@ -19,10 +19,10 @@ class UserInterface;
 
 /**
  *  @usage:
- * command handlers except "help", "exit" & "quit" need to add to int CliCommandManager constructor
+ * command handlers except "help", "exit" & "quit" need to add to int CommandDispatcher constructor
  */
 
-class CliCommandManager; // forward declare CliCommandManager
+class CommandDispatcher; // forward declare CommandDispatcher
 
 class BackdoorHandler
 {
@@ -57,11 +57,11 @@ class QuitHandler: public CommandHandler
 class HelpHandler: public CommandHandler
 {
 private:
-    CliCommandManager* const mManager;
+    CommandDispatcher* const mDispatcher;
 public:
     virtual std::string command() const override final;
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
-    HelpHandler(CliCommandManager* const aManager);
+    HelpHandler(CommandDispatcher* const aDispatcher);
 };
 
 #ifndef RELEASE
