@@ -1,8 +1,13 @@
-#include "command_dispatcher.hpp"
-#include "command_handler.hpp"
-#include "game_map.hpp"
-#include "user_interface.hpp"
-#include "logger.hpp"
+/**
+ * Project: catan
+ * @file subcommand.cpp
+ *
+ * @author Zonghao Huang <kyle0923@qq.com>
+ *
+ * All right reserved.
+ */
+
+#include "command_common.hpp"
 
 std::string SubCmdHandler::command() const
 {
@@ -11,6 +16,6 @@ std::string SubCmdHandler::command() const
 
 ActionStatus SubCmdHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
 {
-    aUi.pushCmdDispatcher(std::make_unique<CommandDispatcher>(std::vector<CommandHandler*>({new SubCmdHandler()})));
+    aUi.pushCommandHelper(std::make_unique<CommandDispatcher>(std::vector<CommandHandler*>({new SubCmdHandler()})));
     return ActionStatus::SUCCESS;
 }

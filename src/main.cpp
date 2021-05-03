@@ -15,6 +15,7 @@
 #include "map_file_io.hpp"
 #include "cli_opt.hpp"
 #include "command_dispatcher.hpp"
+#include "command_common.hpp"
 #include "utility.hpp"
 #include "logger.hpp"
 
@@ -32,7 +33,9 @@ int main(int argc, char** argv)
     mapFile.readMap(gameMap);
 
     UserInterface ui(gameMap, std::make_unique<CommandDispatcher>(  \
-        std::vector<CommandHandler*>({new SubCmdHandler()})         \
+        std::vector<CommandHandler*>({                              \
+            new SubCmdHandler(),                                    \
+            new ParameterExampleCommandHandler()})                  \
     ));
 
     gameMap.initMap();

@@ -9,102 +9,24 @@
 
 #include <sstream>
 #include "command_dispatcher.hpp"
+#include "command_common.hpp"
 #include "logger.hpp"
+#include "command_parameter_reader.hpp"
 
 BackdoorHandler CommandDispatcher::mBackdoorHandler;  // handles backdoor commands
 
-std::vector<std::string> CommandDispatcher::stringMatcher(std::string aInput, const std::vector<std::string>& aMatchPool, std::string* const aLongestCommonStr = nullptr)
-{
-    if (aInput.length() == 0)
-    {
-        return {}; //return empty
-    }
-    std::vector<std::string> matched;
-    std::string shortestStr;
-    for (const std::string& matchingString : aMatchPool)
-    {
-        bool found = false;
-        if (matchingString.length() > aInput.size())
-        {
-            if (matchingString.find(aInput) == 0)
-            {
-                // cmd starts with aInput, partial match
-                found = true;
-            }
-        }
-        else
-        {
-            if (aInput.find(matchingString) == 0) // aInput includes matchingString
-            {
-                if (aInput.size() == matchingString.size() || aInput.at(matchingString.size()) == ' ')
-                {
-                    // either aInput is extra the same as matchingString or aInput has a whitespace terminating the command
-                    // to prevent "helpX" matching "help"
-                    found = true;
-                }
-            }
-        }
-
-        if (found)
-        {
-            matched.push_back(matchingString);
-            if (matchingString.size() < shortestStr.size() || shortestStr.size() == 0)
-            {
-                shortestStr = matchingString;
-            }
-        }
-    }
-    DEBUG_LOG_L0("stringMatcher matched: ", matched);
-
-    // if aLongestCommonStr is provided, return the longest common string back via aLongestCommonStr
-    if (aLongestCommonStr)
-    {
-        *aLongestCommonStr = aInput;
-        if (matched.size() == 1 && matched.at(0).length() > aInput.size())
-        {
-            *aLongestCommonStr = matched.at(0);
-        }
-        else if (matched.size() > 1)
-        {
-            std::string longestCommonSubstring;
-            // find the longest common string
-            for (size_t ii = aInput.length() - 1; ii < shortestStr.size(); ++ii)
-            {
-                char c = matched.at(0).at(ii); // the ii-th char of the first matched string
-                bool notmatch = false;
-                for (size_t jj = 1; jj < matched.size(); ++jj)
-                {
-                    const std::string& str = matched.at(jj);
-                    DEBUG_LOG_L0("cmp: ", str.at(ii), " & ", c);
-                    if (str.at(ii) != c)
-                    {
-                        notmatch = true;
-                        break;
-                    }
-                    if (jj == matched.size() - 1)
-                    {
-                        // all matched
-                        longestCommonSubstring = matched.at(0).substr(0, ii + 1);
-                    }
-                }
-                if (notmatch)
-                {
-                    break;
-                }
-            }
-            *aLongestCommonStr = longestCommonSubstring;
-        }
-    }
-    return matched;
-}
-
-std::vector<std::string> CommandDispatcher::commandMatcher(std::string aInput, std::string* const aLongestCommonStr) const
+std::vector<std::string> CommandDispatcher::inputMatcher(std::string aInput, std::string* const aLongestCommonStr) const
 {
     return stringMatcher(aInput, mCommand, aLongestCommonStr);
 }
 
-ActionStatus CommandDispatcher::act(GameMap& aMap, UserInterface& aUi, std::string aInput, std::vector<std::string>& aReturnMsg)
+ActionStatus CommandDispatcher::act(GameMap& aMap, UserInterface& aUi, std::string aInput, Point_t aPoint, std::vector<std::string>& aReturnMsg)
 {
+    if (aInput == "")
+    {
+        return ActionStatus::SUCCESS;
+    }
+
     std::string command;
     if (aInput.find(mBackdoorHandler.command() + " ") == 0)
     {
@@ -112,7 +34,7 @@ ActionStatus CommandDispatcher::act(GameMap& aMap, UserInterface& aUi, std::stri
     }
     else
     {
-        std::vector<std::string> matchingCommand = commandMatcher(aInput);
+        std::vector<std::string> matchingCommand = inputMatcher(aInput);
         if (matchingCommand.size() != 1)
         {
             INFO_LOG("Unknown command: \'" + aInput + '\'');
@@ -152,7 +74,14 @@ ActionStatus CommandDispatcher::act(GameMap& aMap, UserInterface& aUi, std::stri
     }
     else
     {
-        return mCommandHandler.at(command)->act(aMap, aUi, commandParam, aReturnMsg);
+        ActionStatus rc = mCommandHandler.at(command)->act(aMap, aUi, commandParam, aReturnMsg);
+        if (rc == ActionStatus::PARAM_REQUIRED)
+        {
+            ParameterizedCommand* pParamCmd = dynamic_cast<ParameterizedCommand*>(mCommandHandler.at(command));
+            aUi.pushCommandHelper(std::make_unique<CommandParameterReader>(pParamCmd));
+            pParamCmd->instruction(aReturnMsg);
+        }
+        return rc;
     }
 }
 

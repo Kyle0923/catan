@@ -26,10 +26,10 @@ int UserInterface::initColors()
     return rc;
 }
 
-int UserInterface::init(const GameMap& aMap, std::unique_ptr<CommandDispatcher>& aCmdDispatcher)
+int UserInterface::init(const GameMap& aMap, std::unique_ptr<CommandHelper>& aCmdDispatcher)
 {
-    mCommandDispatcherStack.clear();
-    mCommandDispatcherStack.emplace_back(std::move(aCmdDispatcher));
+    mCommandHelperStack.clear();
+    mCommandHelperStack.emplace_back(std::move(aCmdDispatcher));
 
     initscr();
     resize_term(0, 0);
@@ -268,24 +268,24 @@ void UserInterface::printToConsole(const std::string& aMsg)
     printToConsole({aMsg}, "", false, 0);
 }
 
-int UserInterface::pushCmdDispatcher(std::unique_ptr<CommandDispatcher> aCmdDispatcher)
+int UserInterface::pushCommandHelper(std::unique_ptr<CommandHelper> aCmdDispatcher)
 {
-    mCommandDispatcherStack.emplace_back(std::move(aCmdDispatcher));
+    mCommandHelperStack.emplace_back(std::move(aCmdDispatcher));
     ++mInputStartY;
     ++mInputStartX;
     return 0;
 }
 
-std::unique_ptr<CommandDispatcher>& UserInterface::currentCommandDispatcher()
+std::unique_ptr<CommandHelper>& UserInterface::currentCommandHelper()
 {
-    if (mCommandDispatcherStack.size() == 0)
+    if (mCommandHelperStack.size() == 0)
     {
         ERROR_LOG("No command dispatcher available");
     }
-    return mCommandDispatcherStack.back();
+    return mCommandHelperStack.back();
 }
 
-UserInterface::UserInterface(const GameMap& aMap, std::unique_ptr<CommandDispatcher> aCmdDispatcher) :
+UserInterface::UserInterface(const GameMap& aMap, std::unique_ptr<CommandHelper> aCmdDispatcher) :
     mInputStartX(1),
     mInputStartY(1)
 {
@@ -303,6 +303,7 @@ int UserInterface::loop(GameMap& aMap)
     int spinCtr = 0;
     constexpr auto spinner = "/-\\|";
     std::string input = "";
+    Point_t mouseClicked{0, 0};
     int keystroke;
 
     while (1)
@@ -335,10 +336,12 @@ int UserInterface::loop(GameMap& aMap)
                     DEBUG_LOG_L1("Mouse event not in GameWindow, discard");
                     continue;
                 }
-                const std::string id = aMap.getTerrain(mouseEvent.x, mouseEvent.y)->getStringId();
-                aMap.setTerrainColor(mouseEvent.x, mouseEvent.y, ColorPairIndex::TEMP);
-                printToConsole("Clicked " + id);
-                continue;
+                mouseClicked = Point_t{static_cast<size_t>(mouseEvent.x), static_cast<size_t>(mouseEvent.y)};
+                break;
+                // const std::string id = aMap.getTerrain(mouseEvent.x, mouseEvent.y)->getStringId();
+                // aMap.setTerrainColor(mouseEvent.x, mouseEvent.y, ColorPairIndex::TEMP);
+                // printToConsole("Clicked " + id);
+                // continue;
             }
             case KEY_RESIZE:
             case KEY_F(5): // F5 function key
@@ -420,7 +423,7 @@ int UserInterface::loop(GameMap& aMap)
                 // auto fill
                 readStringFromWindow(mInputWindow, mInputStartY, mInputStartX + 1, false, input);
                 std::string autoFillString;
-                std::vector<std::string> matched = currentCommandDispatcher()->commandMatcher(input, &autoFillString);
+                std::vector<std::string> matched = currentCommandHelper()->inputMatcher(input, &autoFillString);
                 if (matched.size() == 1)
                 {
                     // overwrite the longestCommonStr to the matched string
@@ -445,28 +448,38 @@ int UserInterface::loop(GameMap& aMap)
             wmove(mInputWindow, curY, curX + 1);
         }
         readStringFromWindow(mInputWindow, mInputStartY, mInputStartX + 1, false, input);
-        std::vector<std::string> matchedCmd = currentCommandDispatcher()->commandMatcher(input);
+        // print matched commands to output window
+        std::vector<std::string> matchedCmd = currentCommandHelper()->inputMatcher(input);
         printToConsole(matchedCmd, "", true, input.length());
 
-        if (!(keystroke == KEY_ENTER || keystroke == PADENTER || (char)keystroke == '\n' || (char)keystroke == '\r'))
+        if (!(keystroke == KEY_ENTER || keystroke == PADENTER || keystroke == KEY_MOUSE \
+            || (char)keystroke == '\n' || (char)keystroke == '\r'))
         {
             continue;
         }
 
-        // user hit 'enter'
-
-        readStringFromWindow(mInputWindow, mInputStartY, mInputStartX + 1, true, input);
-        INFO_LOG("USER input cmd: ", input);
+        // user hit 'enter' || mouse event
+        if (keystroke != KEY_MOUSE)
+        {
+            readStringFromWindow(mInputWindow, mInputStartY, mInputStartX + 1, true, input);
+            INFO_LOG("USER input cmd: ", input);
+        }
+        else
+        {
+            input = "";
+            INFO_LOG("USER input: mouse event");
+        }
 
         std::vector<std::string> returnMsg;
-        ActionStatus rc = currentCommandDispatcher()->act(aMap, *this, input, returnMsg);
+        ActionStatus rc = currentCommandHelper()->act(aMap, *this, input, mouseClicked, returnMsg);
         if (rc == ActionStatus::EXIT)
         {
-            mCommandDispatcherStack.pop_back();
+            mCommandHelperStack.pop_back();
             --mInputStartY;
             --mInputStartX;
         }
-        if (mCommandDispatcherStack.size() == 0)
+
+        if (mCommandHelperStack.size() == 0)
         {
             // no more handler, exit
             break;
@@ -483,6 +496,7 @@ int UserInterface::loop(GameMap& aMap)
         const std::string inputPrefix((rc == ActionStatus::EXIT ? mInputStartX + 1 : mInputStartX), '>');
         printToConsole(returnMsg, inputPrefix + input, false, 0);
 
+        mouseClicked = Point_t{0, 0};
         printMapToWindow(aMap);
         printBorder(mGameWindow, ColorPairIndex::GAME_WIN_BORDER);
         printBorder(mInputWindow, ColorPairIndex::USER_WIN_BORDER);

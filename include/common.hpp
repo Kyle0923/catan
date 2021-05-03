@@ -54,7 +54,8 @@ enum class ActionStatus
 {
     SUCCESS = 0,
     PARTIAL_COMMAND,  // partial command, e.g, "he" is a partial command of "help", do not remove current cli
-    EXIT,             // only "exit" & "quit" should return this, child command finished, back to parent command, effectively pop cmd_dispatcher stack
+    PARAM_REQUIRED,   // parameter required, will push cmdHelper stack with CommandParameterReader by commandDispatcher
+    EXIT,             // only "exit" & "quit" should return this, child command finished, back to parent command, effectively pop cmdHelper stack
     FAILED,           // internal error, write to log
 };
 

@@ -13,23 +13,22 @@
 
 #include <vector>
 #include <map>
-#include "common.hpp"
+#include "command_helper.hpp"
 #include "command_handler.hpp"
 
-class GameMap;
-class UserInterface;
-
-class CommandDispatcher
+class CommandDispatcher : public CommandHelper
 {
 private:
     static BackdoorHandler mBackdoorHandler;  // handles backdoor commands
     std::map<std::string, CommandHandler*> mCommandHandler;
     std::vector<std::string> mCommand;
-    static std::vector<std::string> stringMatcher(std::string aInput, const std::vector<std::string>& aMatchPool, std::string* const aLongestCommonStr);
     int addCommandHandler(CommandHandler* const aHandler);
 public:
-    std::vector<std::string> commandMatcher(std::string aInput, std::string* const aLongestCommonStr = nullptr) const;
-    ActionStatus act(GameMap& aMap, UserInterface& aUi, std::string aInput, std::vector<std::string>& aReturnMsg);
+    virtual std::vector<std::string> inputMatcher(std::string aInput, std::string* const aLongestCommonStr = nullptr) const override;
+
+    virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::string aInput, \
+                              Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+
     const std::vector<std::string>& getCommands() const;
     const std::map<std::string, CommandHandler*>& getHandlers() const;
 
@@ -38,7 +37,7 @@ public:
      * help, quit, exit handlers will be added automatically
      */
     CommandDispatcher(std::vector<CommandHandler*> aCmdHandler);
-    ~CommandDispatcher();
+    virtual ~CommandDispatcher();
 };
 
 #endif /* INCLUDE_COMMAND_DISPATCHER_HPP */

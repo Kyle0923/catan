@@ -1,18 +1,13 @@
 /**
  * Project: catan
- * @file command_handler.cpp
+ * @file command_common.cpp
  *
  * @author Zonghao Huang <kyle0923@qq.com>
  *
  * All right reserved.
  */
 
-#include "command_dispatcher.hpp"
-#include "command_handler.hpp"
-#include "game_map.hpp"
-#include "user_interface.hpp"
-#include "utility.hpp"
-#include "logger.hpp"
+#include "command_common.hpp"
 
 std::string CommandHandler::description() const
 {
