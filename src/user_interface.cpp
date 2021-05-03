@@ -247,7 +247,7 @@ void UserInterface::printToConsole(const std::vector<std::string>& aMsg, const s
             wattrset(mOutputWindow, A_BOLD);
             waddnstr(mOutputWindow, msg.c_str() + normalSize, msg.length() - normalSize);
         }
-        curY = getcury(mOutputWindow) + (aIsList ? 2 : 1);
+        curY = getcury(mOutputWindow) + 1;
     }
     if (aMsg.size() || aHeading != "")
     {
