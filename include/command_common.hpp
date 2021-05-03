@@ -61,6 +61,7 @@ public:
 
     virtual ActionStatus processParameter(std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
     virtual bool parameterComplete() const override final;
+    virtual void resetParameters() override final;
     virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;
 
     ParameterExampleCommandHandler();

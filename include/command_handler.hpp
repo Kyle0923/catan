@@ -66,6 +66,11 @@ public:
     virtual bool parameterComplete() const = 0;
 
     /**
+     * reset all internal parameters
+     */
+    virtual void resetParameters() = 0;
+
+    /**
      * provide instructions to user
      */
     virtual void instruction(std::vector<std::string>& aReturnMsg) const = 0;

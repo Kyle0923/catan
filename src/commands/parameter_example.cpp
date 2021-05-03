@@ -63,6 +63,12 @@ bool ParameterExampleCommandHandler::parameterComplete() const
     return (mPoint != Point_t{0, 0} && mParam != "");
 }
 
+void ParameterExampleCommandHandler::resetParameters()
+{
+    mPoint = Point_t{0, 0};
+    mParam = "";
+}
+
 void ParameterExampleCommandHandler::instruction(std::vector<std::string>& aReturnMsg) const
 {
     aReturnMsg.push_back("Please first click a terrain on the map");

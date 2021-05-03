@@ -34,6 +34,7 @@ ActionStatus CommandParameterReader::act(GameMap& aMap, UserInterface& aUi, std:
             }
             aReturnMsg.clear();
             pCmdHandler->act(aMap, aUi, {}, aReturnMsg);
+            mParamCmd->resetParameters();
             return ActionStatus::EXIT;
     }
     DEBUG_LOG_L3("read param continue... ", dynamic_cast<CommandHandler*>(mParamCmd)->command());
