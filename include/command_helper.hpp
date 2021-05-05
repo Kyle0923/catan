@@ -27,12 +27,12 @@ public:
      * if aLongestCommonStr is provided, return the longest common part of the matched strings
      */
     static std::vector<std::string> \
-        stringMatcher(std::string aInput, const std::vector<std::string>& aMatchPool, std::string* const aLongestCommonStr);
+        stringMatcher(const std::string& aInput, const std::vector<std::string>& aMatchPool, std::string* const aLongestCommonStr);
 
     /**
      * used for autoFill and print possible options to outputWindow
      */
-    virtual std::vector<std::string> inputMatcher(std::string aInput, std::string* const aLongestCommonStr = nullptr) const = 0;
+    virtual std::vector<std::string> getPossibleInputs(const std::string& aInput, std::string* const aLongestCommonStr = nullptr) const = 0;
 
     virtual ActionStatus \
         act(GameMap& aMap, UserInterface& aUi, std::string aInput, Point_t aPoint, std::vector<std::string>& aReturnMsg) = 0;

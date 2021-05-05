@@ -69,7 +69,7 @@ private:
     std::unique_ptr<CommandHelper>& currentCommandHelper();
 
     // aUntilEol: true - read until end-of-line; false - read up to cursor
-    int readStringFromWindow(WINDOW* const aWindow, int aStartingY, int aStartingX, bool aUntilEol, std::string& aString);
+    int readStringFromWindow(WINDOW* const aWindow, int aStartingY, int aStartingX, bool aUntilEol, bool aTrimLeadingSpace, std::string& aString);
 
     /**
      * @param aIsList: print the vector using list format

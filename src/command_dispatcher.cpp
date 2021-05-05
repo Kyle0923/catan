@@ -15,7 +15,7 @@
 
 BackdoorHandler CommandDispatcher::mBackdoorHandler;  // handles backdoor commands
 
-std::vector<std::string> CommandDispatcher::inputMatcher(std::string aInput, std::string* const aLongestCommonStr) const
+std::vector<std::string> CommandDispatcher::getPossibleInputs(const std::string& aInput, std::string* const aLongestCommonStr) const
 {
     return stringMatcher(aInput, mCommand, aLongestCommonStr);
 }
@@ -33,7 +33,7 @@ ActionStatus CommandDispatcher::act(GameMap& aMap, UserInterface& aUi, std::stri
     {
         // unknown command, possible partial command
 
-        std::vector<std::string> matchingCommand = inputMatcher(aInput);
+        std::vector<std::string> matchingCommand = getPossibleInputs(aInput);
         if (matchingCommand.size() != 1)
         {
             INFO_LOG("Unknown command: \'" + aInput + '\'');

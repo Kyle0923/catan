@@ -10,12 +10,15 @@
 #include "command_helper.hpp"
 #include "logger.hpp"
 
-std::vector<std::string> CommandHelper::stringMatcher(std::string aInput, const std::vector<std::string>& aMatchPool, std::string* const aLongestCommonStr = nullptr)
+std::vector<std::string> CommandHelper::stringMatcher(const std::string& aInput, const std::vector<std::string>& aMatchPool, std::string* const aLongestCommonStr = nullptr)
 {
-    // if (aInput.length() == 0)
-    // {
-    //     return {}; //return empty
-    // }
+    if (aInput.length() == 0)
+    {
+        // no input, return empty
+        // prevent return everything in aMatchPool
+        return {};
+    }
+
     std::vector<std::string> matched;
     std::string shortestStr;
     for (const std::string& matchingString : aMatchPool)

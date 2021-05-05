@@ -182,7 +182,7 @@ void UserInterface::resizeOutputWindow()
     move_panel(mOutputPanel, inputWindowStartY + mInputStartY + 1, inputWindowStartX + 1);
 }
 
-int UserInterface::readStringFromWindow(WINDOW* const aWindow, int aStartingY, int aStartingX, bool aUntilEol, std::string& aString)
+int UserInterface::readStringFromWindow(WINDOW* const aWindow, int aStartingY, int aStartingX, bool aUntilEol, bool aTrimLeadingSpace, std::string& aString)
 {
     int curX, curY; // save cursor position, restore it later
     getyx(aWindow, curY, curX);
@@ -205,7 +205,10 @@ int UserInterface::readStringFromWindow(WINDOW* const aWindow, int aStartingY, i
     }
     aString = std::string(buffer);
     trimTrailingSpace(aString);
-
+    if (aTrimLeadingSpace)
+    {
+        trimLeadingSpace(aString);
+    }
     wmove(aWindow, curY, curX);
     return aStartingX + aString.size();
 }
@@ -414,24 +417,21 @@ int UserInterface::loop(GameMap& aMap)
             case KEY_NPAGE:
             {
                 std::string str;
-                int lastX = readStringFromWindow(mInputWindow, mInputStartY, mInputStartX + 1, true, str);
+                int lastX = readStringFromWindow(mInputWindow, mInputStartY, mInputStartX + 1, true, false, str);
                 wmove(mInputWindow, 1, lastX);
                 break;
             }
             case '\t':
             {
                 // auto fill
-                readStringFromWindow(mInputWindow, mInputStartY, mInputStartX + 1, false, input);
+                readStringFromWindow(mInputWindow, mInputStartY, mInputStartX + 1, false, true, input);
                 std::string autoFillString;
-                std::vector<std::string> matched = currentCommandHelper()->inputMatcher(input, &autoFillString);
-                if (matched.size() == 1)
-                {
-                    // overwrite the longestCommonStr to the matched string
-                    autoFillString = matched.at(0);
-                }
+                std::vector<std::string> matched = currentCommandHelper()->getPossibleInputs(input, &autoFillString);
                 if (autoFillString.length() > input.size())
                 {
-                    mvwaddnstr(mInputWindow, mInputStartY, mInputStartX + 1, autoFillString.c_str(), autoFillString.length());
+                    mvwaddstr(mInputWindow, mInputStartY, mInputStartX + 1, autoFillString.c_str());
+                    wclrtoeol(mInputWindow);
+                    restoreBorder(mInputWindow, COLOR_PAIR(ColorPairIndex::USER_WIN_BORDER));
                     wmove(mInputWindow, mInputStartY, mInputStartX + 1 + autoFillString.length());
                 }
                 break;
@@ -447,9 +447,9 @@ int UserInterface::loop(GameMap& aMap)
             getyx(mInputWindow, curY, curX);
             wmove(mInputWindow, curY, curX + 1);
         }
-        readStringFromWindow(mInputWindow, mInputStartY, mInputStartX + 1, false, input);
+        readStringFromWindow(mInputWindow, mInputStartY, mInputStartX + 1, false, true, input);
         // print matched commands to output window
-        std::vector<std::string> matchedCmd = currentCommandHelper()->inputMatcher(input);
+        std::vector<std::string> matchedCmd = currentCommandHelper()->getPossibleInputs(input);
         printToConsole(matchedCmd, "", true, input.length());
 
         if (!(keystroke == KEY_ENTER || keystroke == PADENTER || keystroke == KEY_MOUSE \
@@ -461,7 +461,7 @@ int UserInterface::loop(GameMap& aMap)
         // user hit 'enter' || mouse event
         if (keystroke != KEY_MOUSE)
         {
-            readStringFromWindow(mInputWindow, mInputStartY, mInputStartX + 1, true, input);
+            readStringFromWindow(mInputWindow, mInputStartY, mInputStartX + 1, true, true, input);
             INFO_LOG("USER input cmd: ", input);
         }
         else

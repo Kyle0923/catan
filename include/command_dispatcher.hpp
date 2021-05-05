@@ -26,7 +26,7 @@ private:
     std::vector<std::string> mCommand;
     int addCommandHandler(CommandHandler* const aHandler);
 public:
-    virtual std::vector<std::string> inputMatcher(std::string aInput, std::string* const aLongestCommonStr = nullptr) const override;
+    virtual std::vector<std::string> getPossibleInputs(const std::string& aInput, std::string* const aLongestCommonStr = nullptr) const override;
 
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::string aInput, \
                               Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;

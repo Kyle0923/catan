@@ -55,7 +55,7 @@ ActionStatus CommandParameterReader::act(GameMap& aMap, UserInterface& aUi, std:
     return ActionStatus::SUCCESS;
 }
 
-std::vector<std::string> CommandParameterReader::inputMatcher(std::string aInput, std::string* const aLongestCommonStr) const
+std::vector<std::string> CommandParameterReader::getPossibleInputs(const std::string&, std::string* const aLongestCommonStr) const
 {
     // TODO: to be implemented, (get a ptr *matchPool from cmdHandler?)
     // return stringMatcher(aInput, *matchPool, aLongestCommonStr);

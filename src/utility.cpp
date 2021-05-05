@@ -136,17 +136,34 @@ std::string actionStatusToStr(const ActionStatus aStatus)
 #undef CASE_PRINT
 }
 
-void trimTrailingSpace(std::string& aString)
+std::string& trimLeadingSpace(std::string& aString)
 {
     static const std::string whitespaces (" \t\f\v\n\r");
-    const std::size_t found = aString.find_last_not_of(whitespaces);
-    if (found!=std::string::npos)
+    const std::size_t found = aString.find_first_not_of(whitespaces);
+    if (found != std::string::npos)
     {
-        aString.erase(found+1);
+        aString.erase(0, found);
     }
     else
     {
         // str is all whitespace
         aString.clear();
     }
+    return aString;
+}
+
+std::string& trimTrailingSpace(std::string& aString)
+{
+    static const std::string whitespaces (" \t\f\v\n\r");
+    const std::size_t found = aString.find_last_not_of(whitespaces);
+    if (found != std::string::npos)
+    {
+        aString.erase(found + 1);
+    }
+    else
+    {
+        // str is all whitespace
+        aString.clear();
+    }
+    return aString;
 }
