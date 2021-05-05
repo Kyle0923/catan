@@ -10,6 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}\\catan.exe",
             "args": [],
+            // "args": ["--debug", "0", "--map", "map.txt"],
             "stopAtEntry": true,
             "cwd": "${workspaceFolder}",
             "environment": [],
