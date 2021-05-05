@@ -27,13 +27,12 @@ ActionStatus CommandDispatcher::act(GameMap& aMap, UserInterface& aUi, std::stri
         return ActionStatus::SUCCESS;
     }
 
-    std::string command;
-    if (aInput.find(mBackdoorHandler.command() + " ") == 0)
+    std::string command = aInput.substr(0, aInput.find(' '));
+
+    if (command != mBackdoorHandler.command() && mCommandHandler.count(command) != 1)
     {
-        command = mBackdoorHandler.command();
-    }
-    else
-    {
+        // unknown command, possible partial command
+
         std::vector<std::string> matchingCommand = inputMatcher(aInput);
         if (matchingCommand.size() != 1)
         {
@@ -42,47 +41,45 @@ ActionStatus CommandDispatcher::act(GameMap& aMap, UserInterface& aUi, std::stri
             return ActionStatus::SUCCESS;
         }
         command = matchingCommand.front();
-    }
 
-    if (command.length() > aInput.length())
-    {
         // incomplete command
         INFO_LOG("Possible incomplete command: \'" + aInput + "\', maybe: " + command);
         aReturnMsg.push_back("Unknown command: \'" + aInput + '\'');
         aReturnMsg.push_back("maybe: \'" + command + "\'?");
         return ActionStatus::PARTIAL_COMMAND;
     }
+
     // parse aInput, extra word are split by whitespace and pass to command_handler as parameter
     std::vector<std::string> commandParam;
     if (aInput.size() > command.size())
     {
         std::string params = aInput.substr(command.size());
-        std::string temp;
-        std::istringstream paramStream(params);
-        while (getline(paramStream, temp, ' '))
-        {
-            if (temp != "")
-            {
-                commandParam.push_back(temp);
-            }
-        }
+        commandParam = splitString(params);
     }
     INFO_LOG("calling handler for cmd \'" + command + "\', arg: ", commandParam);
+
+    CommandHandler* pCmdHandler;
     if (command == mBackdoorHandler.command())
     {
-        return mBackdoorHandler.act(aMap, aUi, commandParam, aReturnMsg);
+        pCmdHandler = &mBackdoorHandler;
     }
     else
     {
-        ActionStatus rc = mCommandHandler.at(command)->act(aMap, aUi, commandParam, aReturnMsg);
-        if (rc == ActionStatus::PARAM_REQUIRED)
+        pCmdHandler = mCommandHandler.at(command);
+    }
+    ActionStatus rc = pCmdHandler->act(aMap, aUi, commandParam, aReturnMsg);
+    if (rc == ActionStatus::PARAM_REQUIRED)
+    {
+        aUi.pushCommandHelper(std::make_unique<CommandParameterReader>(pCmdHandler));
+        ParameterizedCommand* pParamCmd = dynamic_cast<ParameterizedCommand*>(pCmdHandler);
+        if (pParamCmd)
         {
-            ParameterizedCommand* pParamCmd = dynamic_cast<ParameterizedCommand*>(mCommandHandler.at(command));
-            aUi.pushCommandHelper(std::make_unique<CommandParameterReader>(pParamCmd));
+            aReturnMsg.clear();
             pParamCmd->instruction(aReturnMsg);
         }
-        return rc;
     }
+    INFO_LOG(pCmdHandler->command() + "::act() returned " + actionStatusToStr(rc));
+    return rc;
 }
 
 int CommandDispatcher::addCommandHandler(CommandHandler* const aHandler)
@@ -92,12 +89,22 @@ int CommandDispatcher::addCommandHandler(CommandHandler* const aHandler)
         WARN_LOG("aHandler == nullptr");
         return 1;
     }
-    else
+
+    if (aHandler->command().find(' ') != std::string::npos)
     {
-        mCommandHandler.emplace(aHandler->command(), aHandler);
-        mCommand.push_back(aHandler->command());
-        return 0;
+        ERROR_LOG("Command cannot contain whitespace");
+        return 1;
     }
+
+    if (mCommandHandler.count(aHandler->command()) != 0)
+    {
+        ERROR_LOG("Handler for " + aHandler->command() + " exists");
+        return 1;
+    }
+
+    mCommandHandler.emplace(aHandler->command(), aHandler);
+    mCommand.push_back(aHandler->command());
+    return 0;
 }
 
 const std::vector<std::string>& CommandDispatcher::getCommands() const
@@ -113,7 +120,6 @@ const std::map<std::string, CommandHandler*>& CommandDispatcher::getHandlers() c
 CommandDispatcher::CommandDispatcher(std::vector<CommandHandler*> aCmdHandler)
 {
     addCommandHandler(new ExitHandler());
-    addCommandHandler(new QuitHandler());
     addCommandHandler(new HelpHandler(this));
 
     for (auto& handler: aCmdHandler)

@@ -7,10 +7,26 @@
  * All right reserved.
  */
 
-#include "iostream"
+#include <iostream>
+#include <sstream>
 #include "utility.hpp"
 #include "vertex.hpp"
 #include "edge.hpp"
+
+std::vector<std::string> splitString(const std::string& aString, char aDelim)
+{
+    std::vector<std::string> result;
+    std::string temp;
+    std::istringstream paramStream(aString);
+    while (getline(paramStream, temp, aDelim))
+    {
+        if (temp != "")
+        {
+            result.push_back(temp);
+        }
+    }
+    return result;
+}
 
 size_t PointHash::operator()(const Point_t& aPoint) const
 {
@@ -95,6 +111,25 @@ std::string colonyTypesToStr(const ColonyType aColony)
         CASE_PRINT(NONE);
         CASE_PRINT(SETTLEMENT);
         CASE_PRINT(CITY);
+    }
+    return "";
+
+#undef CASE_PRINT
+}
+
+std::string actionStatusToStr(const ActionStatus aStatus)
+{
+#define CASE_PRINT(status) \
+    case ActionStatus::status: \
+        return #status
+
+    switch (aStatus)
+    {
+        CASE_PRINT(SUCCESS);
+        CASE_PRINT(PARTIAL_COMMAND);
+        CASE_PRINT(PARAM_REQUIRED);
+        CASE_PRINT(EXIT);
+        CASE_PRINT(FAILED);
     }
     return "";
 

@@ -39,6 +39,8 @@ int isInVector(const T& aTofind, const std::vector<T>& aVector)
     }
 }
 
+extern std::vector<std::string> splitString(const std::string& aString, char aDelim = ' ');
+
 extern bool operator==(const Point_t& aPointA, const Point_t& aPointB);
 extern bool operator!=(const Point_t& aPointA, const Point_t& aPointB);
 extern std::ostream& operator<< (std::ostream& aStream, const Point_t& aPoint);
@@ -47,6 +49,7 @@ extern std::ostream& operator<< (std::ostream& aStream, const Vertex* const & aV
 extern std::string resourceTypesToStr(const ResourceTypes aResource);
 extern std::string developmentCardTypesToStr(const DevelopmentCardTypes aCard);
 extern std::string colonyTypesToStr(const ColonyType aColony);
+extern std::string actionStatusToStr(const ActionStatus aStatus);
 extern void trimTrailingSpace(std::string& aString);
 
 #endif /* INCLUDE_UTILITY_HPP */

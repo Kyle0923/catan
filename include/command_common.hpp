@@ -19,16 +19,17 @@
 #include "utility.hpp"
 #include "logger.hpp"
 
+class BackdoorHandler: public CommandHandler
+{
+public:
+    std::string command() const override final;
+    ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
+};
+
 class ExitHandler: public CommandHandler
 {
     virtual std::string command() const override final;
     virtual std::string description() const override final;
-    virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
-};
-
-class QuitHandler: public CommandHandler
-{
-    virtual std::string command() const override final;
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
 };
 

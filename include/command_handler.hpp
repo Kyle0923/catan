@@ -21,32 +21,46 @@ class GameMap;
 class UserInterface;
 
 /**
- *  @usage:
+ * @usage:
  * command handlers except "help", "exit" & "quit" need to add to CommandDispatcher constructor
  */
-
-class CommandDispatcher; // forward declare CommandDispatcher
-
-class BackdoorHandler
-{
-public:
-    std::string command() const;
-    ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg);
-};
 
 class CommandHandler
 {
 public:
+
+    /**
+     * returns an unique string identifier for matching
+     */
     virtual std::string command() const = 0;
+
+    /**
+     * description for 'help' command
+     */
     virtual std::string description() const;
+
+    /**
+     * handling of the command.
+     * @param aReturnMsg stores the messages that need to return
+     *
+     * If parameter(s) expected and not provided in aArgs, return ActionStatus::PARAM_REQUIRED
+     *
+     * If simple string parameter(s) is required, no additional effort is required
+     * CommandParameterReader will split the next cli input and pass to act() through aArgs.
+     *
+     * If special handling for parameter(s) is required, the cmdHandler need to also
+     * inherit ParameterizedCommand and implement processParameter()
+     * CommandParameterReader will then call processParameter instead.
+     */
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) = 0;
+
     CommandHandler() = default;
     virtual ~CommandHandler() = default;
 };
 
 /**
  * ParameterizedCommand base class (interface)
- * commands that requires parameter should inherit this class
+ * commands that requires *special* handling for parameters should inherit this class
  * and implement readParameter() method
  */
 class ParameterizedCommand

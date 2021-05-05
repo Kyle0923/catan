@@ -16,6 +16,8 @@
 #include "command_helper.hpp"
 #include "command_handler.hpp"
 
+class BackdoorHandler; // forward declaration of BackdoorHandler
+
 class CommandDispatcher : public CommandHelper
 {
 private:

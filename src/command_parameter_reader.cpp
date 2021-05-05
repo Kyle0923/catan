@@ -7,37 +7,50 @@
  * All right reserved.
  */
 
+#include "utility.hpp"
 #include "command_parameter_reader.hpp"
 
-CommandParameterReader::CommandParameterReader(ParameterizedCommand* const aParamCmd):
-    mParamCmd(aParamCmd)
+CommandParameterReader::CommandParameterReader(CommandHandler* const aCmd):
+    mCmd(aCmd)
 {
     // empty
 }
 
 ActionStatus CommandParameterReader::act(GameMap& aMap, UserInterface& aUi, std::string aInput, Point_t aPoint, std::vector<std::string>& aReturnMsg)
 {
-    if (mParamCmd->processParameter(aInput, aPoint, aReturnMsg) != ActionStatus::SUCCESS)
+    if (aInput == "exit" || aInput == "quit")
     {
-        DEBUG_LOG_L3("read param failed for ", dynamic_cast<CommandHandler*>(mParamCmd)->command());
+        return ActionStatus::EXIT;
+    }
+
+    ParameterizedCommand* const pParamCmd = dynamic_cast<ParameterizedCommand*>(mCmd);
+    if (!pParamCmd)
+    {
+        // not inherit from ParameterizedCommand
+        ActionStatus rc = mCmd->act(aMap, aUi, splitString(aInput), aReturnMsg);
+        INFO_LOG(mCmd->command() + "::act() returned " + actionStatusToStr(rc));
+        if (rc != ActionStatus::PARAM_REQUIRED)
+        {
+            return ActionStatus::EXIT;
+        }
+        return ActionStatus::PARAM_REQUIRED;
+    }
+
+    if (pParamCmd->processParameter(aInput, aPoint, aReturnMsg) != ActionStatus::SUCCESS)
+    {
+        DEBUG_LOG_L3("read param failed for ", mCmd->command());
         return ActionStatus::FAILED;
     }
-    DEBUG_LOG_L3("read param succeeded for ", dynamic_cast<CommandHandler*>(mParamCmd)->command());
-    if (mParamCmd->parameterComplete())
+    DEBUG_LOG_L3("read param succeeded for ", mCmd->command());
+    if (pParamCmd->parameterComplete())
     {
-            DEBUG_LOG_L3("read param completed ", dynamic_cast<CommandHandler*>(mParamCmd)->command());
-            CommandHandler* const pCmdHandler = dynamic_cast<CommandHandler*>(mParamCmd);
-            if (!pCmdHandler)
-            {
-                ERROR_LOG("ParameterizedCommand is not a CommandHandler");
-                return ActionStatus::FAILED;
-            }
+            DEBUG_LOG_L3("read param completed ", mCmd->command());
             aReturnMsg.clear();
-            pCmdHandler->act(aMap, aUi, {}, aReturnMsg);
-            mParamCmd->resetParameters();
+            mCmd->act(aMap, aUi, {}, aReturnMsg);
+            pParamCmd->resetParameters();
             return ActionStatus::EXIT;
     }
-    DEBUG_LOG_L3("read param continue... ", dynamic_cast<CommandHandler*>(mParamCmd)->command());
+    DEBUG_LOG_L3("read param continue... ", mCmd->command());
     // read-in succeeded, but more parameters are required
     return ActionStatus::SUCCESS;
 }

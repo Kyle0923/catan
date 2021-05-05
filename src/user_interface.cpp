@@ -469,6 +469,7 @@ int UserInterface::loop(GameMap& aMap)
             input = "";
             INFO_LOG("USER input: mouse event");
         }
+        const std::string inputPrefix(mInputStartX, '>');  // for later printToConsole
 
         std::vector<std::string> returnMsg;
         ActionStatus rc = currentCommandHelper()->act(aMap, *this, input, mouseClicked, returnMsg);
@@ -493,7 +494,6 @@ int UserInterface::loop(GameMap& aMap)
             mvwaddstr(mInputWindow, mInputStartY, 1, symbol.c_str());
             wmove(mInputWindow, mInputStartY, mInputStartX + 1);
         }
-        const std::string inputPrefix((rc == ActionStatus::EXIT ? mInputStartX + 1 : mInputStartX), '>');
         printToConsole(returnMsg, inputPrefix + input, false, 0);
 
         mouseClicked = Point_t{0, 0};

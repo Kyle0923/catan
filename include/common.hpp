@@ -12,7 +12,6 @@
 #define INCLUDE_COMMON_HPP
 
 #include <string>
-#include "curses.h"
 
 struct Point_t
 {
@@ -54,7 +53,7 @@ enum class ActionStatus
 {
     SUCCESS = 0,
     PARTIAL_COMMAND,  // partial command, e.g, "he" is a partial command of "help", do not remove current cli
-    PARAM_REQUIRED,   // parameter required, will push cmdHelper stack with CommandParameterReader by commandDispatcher
+    PARAM_REQUIRED,   // parameter required, commandDispatcher will push cmdHelper_stack with CommandParameterReader
     EXIT,             // only "exit" & "quit" should return this, child command finished, back to parent command, effectively pop cmdHelper stack
     FAILED,           // internal error, write to log
 };

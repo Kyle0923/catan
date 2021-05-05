@@ -27,8 +27,9 @@ ActionStatus ParameterExampleCommandHandler::act(GameMap& aMap, UserInterface& a
     {
         return ActionStatus::PARAM_REQUIRED;
     }
-    aReturnMsg.push_back("Clicked on '" + aMap.getTerrain(mPoint)->getStringId() + "'");
-    aReturnMsg.push_back("Passed in param '" + mParam + "'");
+    aReturnMsg.push_back("User clicked on '" + aMap.getTerrain(mPoint)->getStringId() + "'");
+    aReturnMsg.push_back("And passed in param '" + mParam + "'");
+    aReturnMsg.push_back(command() + "::act() successful");
     return ActionStatus::SUCCESS;
 }
 
@@ -44,7 +45,7 @@ ActionStatus ParameterExampleCommandHandler::processParameter(std::string aParam
     {
         DEBUG_LOG_L3("reading mouse event ", aPoint);
         mPoint = aPoint;
-        aReturnMsg.push_back(Logger::formatString("clicked on ", aPoint));
+        aReturnMsg.push_back(Logger::formatString("Mouse clicked on ", aPoint));
         aReturnMsg.push_back("please enter param...");
         return ActionStatus::SUCCESS;
     }

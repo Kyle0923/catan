@@ -18,9 +18,9 @@
 class CommandParameterReader : public CommandHelper
 {
 private:
-    ParameterizedCommand* const mParamCmd;
+    CommandHandler* const mCmd;
 public:
-    CommandParameterReader(ParameterizedCommand* const aParamCmd);
+    CommandParameterReader(CommandHandler* const aCmd);
     virtual ~CommandParameterReader() = default;
 
     virtual std::vector<std::string> inputMatcher(std::string aInput, std::string* const aLongestCommonStr = nullptr) const override;
