@@ -4,8 +4,13 @@
  *
  * @author Zonghao Huang <kyle0923@qq.com>
  *
+ * @brief a example to use pushCommandHelper to create subcommand
+ *        should not build when RELEASE=1
+ *
  * All right reserved.
  */
+
+#ifndef RELEASE
 
 #include "command_common.hpp"
 
@@ -19,3 +24,5 @@ ActionStatus SubCmdHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<s
     aUi.pushCommandHelper(std::make_unique<CommandDispatcher>(std::vector<CommandHandler*>({new SubCmdHandler()})));
     return ActionStatus::SUCCESS;
 }
+
+#endif /* RELEASE */

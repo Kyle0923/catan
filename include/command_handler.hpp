@@ -70,8 +70,10 @@ public:
      * @param aParam - string parameter
      * @param aPoint - for mouse event, the coord on GameMap
      * @param aReturnMsg - return message, instructions for user or error message
+     *
+     * @return processParameter should return either ActionStatus::SUCCESS or ActionStatus::FAILED
      */
-    virtual ActionStatus processParameter(std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) = 0;
+    virtual ActionStatus processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) = 0;
 
     /**
      * return true when all necessary parameters are read in.

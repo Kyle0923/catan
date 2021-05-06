@@ -43,6 +43,24 @@ public:
     HelpHandler(CommandDispatcher* const aDispatcher);
 };
 
+class BuildHandler: public CommandHandler, public ParameterizedCommand
+{
+private:
+    Point_t mPoint;
+    std::string mParam;
+public:
+    virtual std::string command() const override final;
+    virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
+
+    virtual ActionStatus processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+    virtual bool parameterComplete() const override final;
+    virtual void resetParameters() override final;
+    virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;
+
+    BuildHandler();
+    virtual ~BuildHandler() = default;
+};
+
 #ifndef RELEASE
 
 class SubCmdHandler: public CommandHandler
@@ -60,7 +78,7 @@ public:
     virtual std::string command() const override final;
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
 
-    virtual ActionStatus processParameter(std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+    virtual ActionStatus processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
     virtual bool parameterComplete() const override final;
     virtual void resetParameters() override final;
     virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;
@@ -70,6 +88,6 @@ public:
 
 };
 
-#endif
+#endif /* RELEASE */
 
 #endif /* INCLUDE_COMMAND_COMMON_HPP */

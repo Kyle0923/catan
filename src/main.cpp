@@ -34,6 +34,7 @@ int main(int argc, char** argv)
 
     UserInterface ui(gameMap, std::make_unique<CommandDispatcher>(  \
         std::vector<CommandHandler*>({                              \
+            new BuildHandler(),                                     \
             new SubCmdHandler(),                                    \
             new ParameterExampleCommandHandler()})                  \
     ));

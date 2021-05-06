@@ -2,10 +2,15 @@
  * Project: catan
  * @file parameter_example.cpp
  *
+ * @brief a example to use parameterized_command
+ *        should not build when RELEASE=1
+ *
  * @author Zonghao Huang <kyle0923@qq.com>
  *
  * All right reserved.
  */
+
+#ifndef RELEASE
 
 #include "command_common.hpp"
 
@@ -33,7 +38,7 @@ ActionStatus ParameterExampleCommandHandler::act(GameMap& aMap, UserInterface& a
     return ActionStatus::SUCCESS;
 }
 
-ActionStatus ParameterExampleCommandHandler::processParameter(std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
+ActionStatus ParameterExampleCommandHandler::processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
 {
     // first prompt user for a mouse event
     if (aParam == "" && aPoint == Point_t{0, 0})
@@ -75,3 +80,5 @@ void ParameterExampleCommandHandler::instruction(std::vector<std::string>& aRetu
     aReturnMsg.push_back("Please first click a terrain on the map");
     aReturnMsg.push_back("then enter a string value");
 }
+
+#endif /* RELEASE */

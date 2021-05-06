@@ -87,6 +87,12 @@ public:
         return dynamic_cast<const T* const>(aTerrain);
     };
 
+    template<typename T>
+    inline bool isTerrain(const Point_t& aPoint)
+    {
+        return isTerrain<T>(getTerrain(aPoint));
+    };
+
     const Vertex* addVertex(const size_t aTopLeftX, const size_t aTopLeftY);
     const Edge* addEdge(const size_t aTopLeftX, const size_t aTopLeftY, const char aPattern);
     const Land* addLand(const size_t aTopLeftX, const size_t aTopLeftY, const ResourceTypes aResource);

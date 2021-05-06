@@ -18,7 +18,7 @@ CommandParameterReader::CommandParameterReader(CommandHandler* const aCmd):
 
 ActionStatus CommandParameterReader::act(GameMap& aMap, UserInterface& aUi, std::string aInput, Point_t aPoint, std::vector<std::string>& aReturnMsg)
 {
-    if (aInput == "exit" || aInput == "quit")
+    if (aInput == "exit")
     {
         return ActionStatus::EXIT;
     }
@@ -36,7 +36,14 @@ ActionStatus CommandParameterReader::act(GameMap& aMap, UserInterface& aUi, std:
         return ActionStatus::PARAM_REQUIRED;
     }
 
-    if (pParamCmd->processParameter(aInput, aPoint, aReturnMsg) != ActionStatus::SUCCESS)
+    if (aInput == "" && aPoint == Point_t{0, 0})
+    {
+        // no param provided
+        pParamCmd->instruction(aReturnMsg);
+        return ActionStatus::FAILED;
+    }
+
+    if (pParamCmd->processParameter(aMap, aInput, aPoint, aReturnMsg) != ActionStatus::SUCCESS)
     {
         DEBUG_LOG_L3("read param failed for ", mCmd->command());
         return ActionStatus::FAILED;
