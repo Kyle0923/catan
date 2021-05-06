@@ -485,7 +485,8 @@ int UserInterface::loop(GameMap& aMap)
             // no more handler, exit
             break;
         }
-        else if (rc != ActionStatus::PARTIAL_COMMAND)
+
+        if (rc != ActionStatus::PARTIAL_COMMAND)
         {
             // clear user window, reset cursor position
             wmove(mInputWindow, mInputStartY, 1);

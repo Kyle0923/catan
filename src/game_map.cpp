@@ -605,6 +605,7 @@ int GameMap::clearAndResize(const int aSizeHorizontal, const int aSizeVertical)
     mNumHarbour = constant::NUM_OF_HARBOUR;
     mRobLandId = -1;
     mInitialized = false;
+    mCurrentPlayer = 0;
     mVertices.clear();
     mEdges.clear();
     mLands.clear();
@@ -665,34 +666,117 @@ int GameMap::addPlayer(size_t aNumOfPlayer)
     return mPlayers.size();
 }
 
-int GameMap::buildColony(const int aPlayerId, const int aVertexX, const int aVertexY, const ColonyType aColony)
+size_t GameMap::nextPlayer()
 {
-    if (!boundaryCheck(aVertexX, aVertexY))
+    if (mPlayers.size() == 0)
     {
-        WARN_LOG("buildColony called for an out-of-bound Point{", aVertexX, ", ", aVertexY, '}');
-        return 1;
+        ERROR_LOG("No player");
     }
-    Vertex* const pVertex = dynamic_cast<Vertex*>(mGameMap.at(aVertexY).at(aVertexX));
-    if (!pVertex)
-    {
-        WARN_LOG("Expected vertex at Point{", aVertexX, ", ", aVertexY, "}, actual: " + mGameMap.at(aVertexY).at(aVertexX)->getStringId());
-        return 1;
-    }
-    return pVertex->setOwner(aPlayerId, aColony);
+    mCurrentPlayer = (mCurrentPlayer + 1) % mPlayers.size();
+    return mCurrentPlayer;
 }
 
-int GameMap::buildRoad(const int aPlayerId, const int aEdgeX, const int aEdgeY)
+size_t GameMap::currentPlayer() const
 {
-    if (!boundaryCheck(aEdgeX, aEdgeY))
+    return mCurrentPlayer;
+}
+
+bool GameMap::playerHasResourceForRoad() const
+{
+    return mPlayers[mCurrentPlayer]->hasResourceForRoad();
+}
+
+bool GameMap::playerHasResourceForSettlement() const
+{
+    return mPlayers[mCurrentPlayer]->hasResourceForSettlement();
+}
+
+bool GameMap::playerHasResourceForCity() const
+{
+    return mPlayers[mCurrentPlayer]->hasResourceForCity();
+}
+
+int GameMap::buildColony(const Point_t aPoint, const ColonyType aColony)
+{
+    if (!boundaryCheck(aPoint.x, aPoint.y))
     {
-        WARN_LOG("buildRoad called for an out-of-bound Point{", aEdgeX, ", ", aEdgeY, '}');
+        WARN_LOG("buildColony called for an out-of-bound ", aPoint);
         return 1;
     }
-    Edge* const pEdge = dynamic_cast<Edge*>(mGameMap.at(aEdgeY).at(aEdgeX));
+    if (aColony == ColonyType::NONE)
+    {
+        WARN_LOG("buildColony called with ColonyType::NONE");
+        return 1;
+    }
+    Vertex* const pVertex = dynamic_cast<Vertex*>(mGameMap.at(aPoint.y).at(aPoint.x));
+    if (!pVertex)
+    {
+        WARN_LOG("Expected vertex at ", aPoint, ", actual: " + mGameMap.at(aPoint.y).at(aPoint.x)->getStringId());
+        return 1;
+    }
+
+    int vertexOwner = pVertex->getOwner();
+    if ((aColony == ColonyType::SETTLEMENT && vertexOwner != -1) || \
+        (aColony == ColonyType::CITY && vertexOwner != static_cast<int>(mCurrentPlayer)))
+    {
+        WARN_LOG(pVertex->getStringId() + " is owned by Player#", vertexOwner, " already, cannot reset for Player#", mCurrentPlayer);
+        return 2;
+    }
+
+    if (aColony == ColonyType::SETTLEMENT)
+    {
+        if (!mPlayers[mCurrentPlayer]->hasResourceForSettlement())
+        {
+            return 3;
+        }
+        mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::CLAY, 1);
+        mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::WOOD, 1);
+        mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::WHEAT, 1);
+        mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::SHEEP, 1);
+
+        mPlayers[mCurrentPlayer]->addColony(*pVertex);
+    }
+    else
+    {
+        if (!mPlayers[mCurrentPlayer]->hasResourceForCity())
+        {
+            return 3;
+        }
+        mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::WHEAT, 2);
+        mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::ORE, 3);
+    }
+
+    return pVertex->setOwner(mCurrentPlayer, aColony);
+}
+
+int GameMap::buildRoad(const Point_t aPoint)
+{
+    if (!boundaryCheck(aPoint.x, aPoint.y))
+    {
+        WARN_LOG("buildRoad called for an out-of-bound ", aPoint);
+        return 1;
+    }
+    Edge* const pEdge = dynamic_cast<Edge*>(mGameMap.at(aPoint.y).at(aPoint.x));
     if (!pEdge)
     {
-        WARN_LOG("Expected vertex at Point{", aEdgeX, ", ", aEdgeY, "}, actual: " + mGameMap.at(aEdgeY).at(aEdgeX)->getStringId());
+        WARN_LOG("Expected edge at ", aPoint, ", actual: " + mGameMap.at(aPoint.y).at(aPoint.x)->getStringId());
         return 1;
     }
-    return pEdge->setOwner(aPlayerId);
+    if (pEdge->getOwner() != -1)
+    {
+        WARN_LOG(pEdge->getStringId() + " is owned by Player#", pEdge->getOwner(), " already, cannot reset for Player#", mCurrentPlayer);
+        return 2;
+    }
+
+    if (!mPlayers[mCurrentPlayer]->hasResourceForRoad())
+    {
+        return 3;
+    }
+
+    mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::CLAY, 1);
+    mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::WOOD, 1);
+
+    mPlayers[mCurrentPlayer]->addRoad(*pEdge);
+
+    return pEdge->setOwner(mCurrentPlayer);
 }

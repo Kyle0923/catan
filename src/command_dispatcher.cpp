@@ -120,6 +120,7 @@ const std::map<std::string, CommandHandler*>& CommandDispatcher::getHandlers() c
 CommandDispatcher::CommandDispatcher(std::vector<CommandHandler*> aCmdHandler)
 {
     addCommandHandler(new ExitHandler());
+    addCommandHandler(new NextHandler());
     addCommandHandler(new HelpHandler(this));
 
     for (auto& handler: aCmdHandler)

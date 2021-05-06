@@ -34,10 +34,49 @@ ActionStatus BuildHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<st
         return ActionStatus::PARAM_REQUIRED;
     }
 
-    // TODO:
-    // mParam == road ? settlement ? city ?
-    // aMap::buildable(currentUser) ? false -> aReturnMsg.push("insufficient resource")
-    // true -> aMap::build(Point_t), aResturnMsg.push("done")
+    bool enoughResource = false;
+    int rc = 1;
+    if (mParam == "road")
+    {
+        enoughResource = aMap.playerHasResourceForRoad();
+        if (enoughResource)
+        {
+            rc = aMap.buildRoad(mPoint);
+        }
+    }
+    else if (mParam == "settlement")
+    {
+        enoughResource = aMap.playerHasResourceForSettlement();
+        if (enoughResource)
+        {
+            rc = aMap.buildColony(mPoint, ColonyType::SETTLEMENT);
+        }
+    }
+    else if (mParam == "city")
+    {
+        enoughResource = aMap.playerHasResourceForCity();
+        if (enoughResource)
+        {
+            rc = aMap.buildColony(mPoint, ColonyType::CITY);
+        }
+    }
+
+    if (!enoughResource)
+    {
+        aReturnMsg.push_back("current player has insufficient resource");
+        return ActionStatus::SUCCESS;
+    }
+
+    if (rc == 2)
+    {
+        aReturnMsg.push_back(Logger::formatString("Incorrect owner of ", mPoint));
+    }
+    else if (rc == 0)
+    {
+        INFO_LOG("Successfully build " + mParam + " for Player#", aMap.currentPlayer());
+        aReturnMsg.push_back("Construction complete");
+    }
+
     return ActionStatus::SUCCESS;
 }
 
@@ -47,7 +86,7 @@ ActionStatus BuildHandler::processParameter(GameMap& aMap, std::string aParam, P
     if (mParam == "")
     {
         INFO_LOG(command() + " reading parameter " + aParam);
-        if (aParam == "road" || aParam == "road" || aParam == "city")
+        if (aParam == "road" || aParam == "settlement" || aParam == "city")
         {
             mParam = aParam;
             instruction(aReturnMsg);

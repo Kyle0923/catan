@@ -43,6 +43,13 @@ public:
     HelpHandler(CommandDispatcher* const aDispatcher);
 };
 
+class NextHandler: public CommandHandler
+{
+    virtual std::string command() const override final;
+    virtual std::string description() const override final;
+    virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
+};
+
 class BuildHandler: public CommandHandler, public ParameterizedCommand
 {
 private:

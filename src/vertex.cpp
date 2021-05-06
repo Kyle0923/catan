@@ -92,42 +92,13 @@ std::set<const Edge*> Vertex::getOtherEdges(const Edge& aEdge) const
 
 int Vertex::setOwner(int aPlayerId, ColonyType aColony)
 {
-    switch(aColony)
-    {
-        case ColonyType::NONE:
-        {
-            WARN_LOG("setOwner called with ColonyType == NONE");
-            return -1;
-        }
-        case ColonyType::SETTLEMENT:
-        {
-            if (aPlayerId != -1)
-            {
-                WARN_LOG(getStringId() + " is owned by Player#", mOwner, " already, cannot reset for Player#", aPlayerId);
-                return -2;
-            }
-            mOwner = aPlayerId;
-            mColony = aColony;
-            INFO_LOG("Successfully set " + colonyTypesToStr(aColony) + " for Player#", mOwner, " for " + getStringId());
-            return 0;
-        }
-        case ColonyType::CITY:
-        {
-            if (aPlayerId != mOwner)
-            {
-                WARN_LOG(getStringId() + " is owned by Player#", mOwner, " already, cannot reset for Player#", aPlayerId);
-                return -2;
-            }
-            mColony = aColony;
-            INFO_LOG("Successfully set " + colonyTypesToStr(aColony) + " for Player#", mOwner, " for " + getStringId());
-            return 0;
-        }
-    }
-    WARN_LOG("Unkown aColony Type: ", (int)aColony);
-    return -3;
+    mOwner = aPlayerId;
+    mColony = aColony;
+    INFO_LOG("Successfully set " + colonyTypesToStr(aColony) + " for Player#", mOwner, " for " + getStringId());
+    return 0;
 }
 
-size_t Vertex::getOwner() const
+int Vertex::getOwner() const
 {
     return mOwner;
 }

@@ -33,12 +33,18 @@ public:
     void drawDevelopmentCard(DevelopmentCardTypes aCard, size_t aAmount = 1);
     int useDevelopmentCard(DevelopmentCardTypes aCard);
     void addResources(ResourceTypes aResource, size_t aAmount);
+    bool consumeResources(ResourceTypes aResource, size_t aAmount);
     void addColony(const Vertex& aVertex);
     void addRoad(const Edge& aEdge);
     void setLargestArmy(const bool aLargestArmy);
     void setLongestRoad(const bool aLongestRoad);
     size_t getPlayerLongestRoadSize() const;
     int getId() const;
+
+    bool hasResources(ResourceTypes aResource, size_t aAmount) const;
+    bool hasResourceForRoad() const;
+    bool hasResourceForSettlement() const;
+    bool hasResourceForCity() const;
 
     // aPublic: to show to public? when set to true, exclude devCard(Victory Point Card)
     size_t getVictoryPoint(bool aPublic);

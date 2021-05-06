@@ -35,6 +35,16 @@ void Player::addResources(ResourceTypes aResource, size_t aAmount)
     mResourcesOnHand.at(static_cast<size_t>(aResource)) += aAmount;
 }
 
+bool Player::consumeResources(ResourceTypes aResource, size_t aAmount)
+{
+    if (mResourcesOnHand.at(static_cast<size_t>(aResource)) >= aAmount)
+    {
+        mResourcesOnHand.at(static_cast<size_t>(aResource)) -= aAmount;
+        return true;
+    }
+    return false;
+}
+
 void Player::addColony(const Vertex& aVertex)
 {
     mColony.emplace(&aVertex);
@@ -78,10 +88,46 @@ int Player::getId() const
     return mId;
 }
 
+bool Player::hasResources(ResourceTypes aResource, size_t aAmount) const
+{
+    if (mResourcesOnHand.at(static_cast<size_t>(aResource)) >= aAmount)
+    {
+        return true;
+    }
+    return false;
+}
+
+bool Player::hasResourceForRoad() const
+{
+    // 1 clay, 1 wood
+    return hasResources(ResourceTypes::CLAY, 1) && hasResources(ResourceTypes::WOOD, 1);
+}
+
+bool Player::hasResourceForSettlement() const
+{
+    // 1 clay, 1 wood, 1 wheat, 1 sheep
+    return hasResources(ResourceTypes::CLAY, 1) && \
+           hasResources(ResourceTypes::WOOD, 1) && \
+           hasResources(ResourceTypes::WHEAT, 1) && \
+           hasResources(ResourceTypes::SHEEP, 1);
+}
+
+bool Player::hasResourceForCity() const
+{
+    // 2 wheat, 3 ore
+    return hasResources(ResourceTypes::WHEAT, 2) && \
+           hasResources(ResourceTypes::ORE, 3);
+}
+
 Player::Player(int aId) :
     mId(aId),
     mLargestArmy(false),
     mLongestRoad(false)
 {
     // empty
+    mResourcesOnHand[(int)ResourceTypes::CLAY] = 10;
+    mResourcesOnHand[(int)ResourceTypes::SHEEP] = 10;
+    mResourcesOnHand[(int)ResourceTypes::WHEAT] = 10;
+    mResourcesOnHand[(int)ResourceTypes::WOOD] = 10;
+    mResourcesOnHand[(int)ResourceTypes::ORE] = 10;
 }

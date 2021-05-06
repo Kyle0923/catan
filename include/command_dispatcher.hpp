@@ -36,7 +36,7 @@ public:
 
     /**
      * the memory handling of CommandHandler* should be handled by Dispatcher
-     * help, quit, exit handlers will be added automatically
+     * help, next, exit handlers will be added automatically
      */
     CommandDispatcher(std::vector<CommandHandler*> aCmdHandler);
     virtual ~CommandDispatcher();

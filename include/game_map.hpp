@@ -32,6 +32,7 @@ private:
     size_t mSizeHorizontal;
     size_t mSizeVertical;
     size_t mNumHarbour;
+    size_t mCurrentPlayer;
     int mRobLandId;
     bool mInitialized;
 
@@ -119,14 +120,20 @@ public:
 
     // Player related
     int addPlayer(size_t aNumOfPlayer);
+    size_t nextPlayer();
+    size_t currentPlayer() const;
+    bool playerHasResourceForRoad() const;        // current player implied
+    bool playerHasResourceForSettlement() const;  // current player implied
+    bool playerHasResourceForCity() const;        // current player implied
 
     /**
      * return 0: ok
-     * return > 0 : incorrect coordinate
-     * return < 0 : error with Vertex/Edge internal handling
+     * return 1: incorrect coordinate
+     * return 2: incorrect owner
+     * return 3: insufficient resource
      */
-    int buildColony(const int aPlayerId, const int aVertexX, const int aVertexY, const ColonyType aColony);
-    int buildRoad(const int aPlayerId, const int aEdgeX, const int aEdgeY);
+    int buildColony(const Point_t aPoint, const ColonyType aColony);
+    int buildRoad(const Point_t aPoint);
 
     GameMap(const GameMap &) = delete;
     GameMap& operator=(const GameMap&) = delete;

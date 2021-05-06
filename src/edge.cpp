@@ -118,13 +118,14 @@ std::pair<Point_t, Point_t> Edge::getAdjacentVertexPoints() const
 
 int Edge::setOwner(int aPlayerId)
 {
-    if (mOwner != -1)
-    {
-        WARN_LOG(getStringId() + " is owned by Player#", mOwner, " already, cannot reset for Player#", aPlayerId);
-        return -1;
-    }
     mOwner = aPlayerId;
+    INFO_LOG("Successfully set owner Player#", mOwner, " for " + getStringId());
     return 0;
+}
+
+int Edge::getOwner() const
+{
+    return mOwner;
 }
 
 Edge::Edge(const int aId, const Point_t aTopLeft, const char aDirection) :

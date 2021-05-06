@@ -58,3 +58,20 @@ HelpHandler::HelpHandler(CommandDispatcher* const aDispatcher): mDispatcher(aDis
 {
     // empty
 }
+
+std::string NextHandler::command() const
+{
+    return "next";
+}
+
+std::string NextHandler::description() const
+{
+    return "Pass to next player";
+}
+
+ActionStatus NextHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
+{
+    size_t nextPlayer = aMap.nextPlayer();
+    aReturnMsg.push_back(Logger::formatString("Next Player is player#", nextPlayer));
+    return ActionStatus::SUCCESS;
+}

@@ -34,14 +34,9 @@ public:
     const std::set<const Vertex*>& getAdjacentVertices() const;
     std::set<const Edge*> getOtherEdges(const Edge& aEdge) const; //get connected edges that is not the input
 
-    /**
-     * return -1: ColonyType == NONE
-     * return -2: incorrect owner
-     * return -3: unkown ColonyType
-     */
     int setOwner(int aPlayerId, ColonyType aColony);
+    int getOwner() const;
 
-    size_t getOwner() const;
     ColonyType getColonyType() const;
     bool isCoastal() const;
     bool hasHarbour() const;

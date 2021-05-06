@@ -41,6 +41,7 @@ int main(int argc, char** argv)
 
     gameMap.initMap();
     gameMap.logMap();
+    gameMap.addPlayer(4U);
 
     ui.printMapToWindow(gameMap);
 

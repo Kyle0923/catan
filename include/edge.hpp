@@ -39,10 +39,8 @@ public:
     char getCharRepresentation(const size_t aPointX, const size_t aPointY, const bool aUseId = false) const override;
     std::string getStringId() const override;
 
-    /**
-     * return -1: edge occupied, cannot set for new PlayerID
-    */
     int setOwner(int aPlayerId);
+    int getOwner() const;
 
     Edge(const int aId, const Point_t aTopLeft, const char aDirection);
     virtual ~Edge();
