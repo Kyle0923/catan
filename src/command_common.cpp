@@ -72,6 +72,6 @@ std::string NextHandler::description() const
 ActionStatus NextHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
 {
     size_t nextPlayer = aMap.nextPlayer();
-    aReturnMsg.push_back(Logger::formatString("Next Player is player#", nextPlayer));
+    aReturnMsg.push_back(Logger::formatString("Current Player is player#", nextPlayer));
     return ActionStatus::SUCCESS;
 }

@@ -34,14 +34,22 @@ int main(int argc, char** argv)
 
     UserInterface ui(gameMap, std::make_unique<CommandDispatcher>(  \
         std::vector<CommandHandler*>({                              \
+            new BuildHandler()})                                    \
+    ));
+
+#if 0
+    // experiment
+    UserInterface ui(gameMap, std::make_unique<CommandDispatcher>(  \
+        std::vector<CommandHandler*>({                              \
             new BuildHandler(),                                     \
             new SubCmdHandler(),                                    \
             new ParameterExampleCommandHandler()})                  \
     ));
+#endif /* #if 0 */
 
     gameMap.initMap();
     gameMap.logMap();
-    gameMap.addPlayer(4U);
+    gameMap.addPlayer(6U);
 
     ui.printMapToWindow(gameMap);
 

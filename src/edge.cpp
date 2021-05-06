@@ -119,6 +119,7 @@ std::pair<Point_t, Point_t> Edge::getAdjacentVertexPoints() const
 int Edge::setOwner(int aPlayerId)
 {
     mOwner = aPlayerId;
+    mColorIndex = static_cast<ColorPairIndex>(mOwner + ColorPairIndex::PLAYER_START);
     INFO_LOG("Successfully set owner Player#", mOwner, " for " + getStringId());
     return 0;
 }

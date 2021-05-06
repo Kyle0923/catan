@@ -94,6 +94,7 @@ int Vertex::setOwner(int aPlayerId, ColonyType aColony)
 {
     mOwner = aPlayerId;
     mColony = aColony;
+    mColorIndex = static_cast<ColorPairIndex>(mOwner + ColorPairIndex::PLAYER_START);
     INFO_LOG("Successfully set " + colonyTypesToStr(aColony) + " for Player#", mOwner, " for " + getStringId());
     return 0;
 }

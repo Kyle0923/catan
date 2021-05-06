@@ -16,13 +16,22 @@ int UserInterface::initColors()
 {
     int rc = 0;
     rc |= init_color(COLOR_GREY, 700, 700, 700);
+    rc |= init_color(COLOR_DARK_GREY, 500, 500, 500);
+    rc |= init_color(COLOR_DARK_GREEN, 50, 400, 50);
 
     rc |= init_pair(ColorPairIndex::GAME_WIN, COLOR_BLACK, COLOR_CYAN);
-    rc |= init_pair(ColorPairIndex::USER_WIN, COLOR_BLACK, COLOR_WHITE);
-    rc |= init_pair(ColorPairIndex::PRINTOUT_WIN, COLOR_BLACK, COLOR_GREY);
+    rc |= init_pair(ColorPairIndex::INPUT_WIN, COLOR_BLACK, COLOR_WHITE);
+    rc |= init_pair(ColorPairIndex::OUTPUT_WIN, COLOR_BLACK, COLOR_GREY);
     rc |= init_pair(ColorPairIndex::GAME_WIN_BORDER, COLOR_WHITE, COLOR_BLUE);
-    rc |= init_pair(ColorPairIndex::USER_WIN_BORDER, COLOR_WHITE, COLOR_YELLOW);
-    rc |= init_pair(ColorPairIndex::TEMP, COLOR_GREEN, COLOR_YELLOW);
+
+    // user color
+    rc |= init_pair(ColorPairIndex::PLAYER_START + 0, COLOR_WHITE, COLOR_MAGENTA);
+    rc |= init_pair(ColorPairIndex::PLAYER_START + 1, COLOR_BLACK, COLOR_YELLOW);
+    rc |= init_pair(ColorPairIndex::PLAYER_START + 2, COLOR_WHITE, COLOR_RED);
+    rc |= init_pair(ColorPairIndex::PLAYER_START + 3, COLOR_WHITE, COLOR_BLUE);
+    rc |= init_pair(ColorPairIndex::PLAYER_START + 4, COLOR_WHITE, COLOR_DARK_GREEN);
+    rc |= init_pair(ColorPairIndex::PLAYER_START + 5, COLOR_BLACK, COLOR_DARK_GREY);
+
     return rc;
 }
 
@@ -69,11 +78,11 @@ int UserInterface::init(const GameMap& aMap, std::unique_ptr<CommandHelper>& aCm
     initColors();
 
     wbkgd(mGameWindow, COLOR_PAIR(ColorPairIndex::GAME_WIN));
-    wbkgd(mInputWindow, COLOR_PAIR(ColorPairIndex::USER_WIN));
-    wbkgd(mOutputWindow, COLOR_PAIR(ColorPairIndex::PRINTOUT_WIN));
+    wbkgd(mInputWindow, COLOR_PAIR(ColorPairIndex::INPUT_WIN));
+    wbkgd(mOutputWindow, COLOR_PAIR(ColorPairIndex::OUTPUT_WIN));
 
     printBorder(mGameWindow, ColorPairIndex::GAME_WIN_BORDER);
-    printBorder(mInputWindow, ColorPairIndex::USER_WIN_BORDER);
+    printBorder(mInputWindow, static_cast<ColorPairIndex>(ColorPairIndex::PLAYER_START + static_cast<int>(aMap.currentPlayer())));
 
     mvwaddch(mInputWindow, mInputStartY, mInputStartX, '>');
 
@@ -112,6 +121,11 @@ chtype UserInterface::getColorText(ColorPairIndex aColorIndex, char aCharacter)
     {
         return COLOR_PAIR(aColorIndex) | aCharacter;
     }
+}
+
+ColorPairIndex UserInterface::getInputWinBorderColor(int aPlayerId)
+{
+    return static_cast<ColorPairIndex>(ColorPairIndex::PLAYER_START + aPlayerId);
 }
 
 int UserInterface::printBorder(WINDOW* const aWindow, const ColorPairIndex aIndex)
@@ -161,13 +175,13 @@ void UserInterface::resizeAll(const GameMap& aMap)
     resizeOutputWindow();
 
     wbkgd(mGameWindow, COLOR_PAIR(ColorPairIndex::GAME_WIN));
-    wbkgd(mInputWindow, COLOR_PAIR(ColorPairIndex::USER_WIN));
-    wbkgd(mOutputWindow, COLOR_PAIR(ColorPairIndex::PRINTOUT_WIN));
+    wbkgd(mInputWindow, COLOR_PAIR(ColorPairIndex::INPUT_WIN));
+    wbkgd(mOutputWindow, COLOR_PAIR(ColorPairIndex::OUTPUT_WIN));
 
     wclear(mInputWindow);
     mvwaddch(mInputWindow, mInputStartY, mInputStartX, '>');
     printBorder(mGameWindow, ColorPairIndex::GAME_WIN_BORDER);
-    printBorder(mInputWindow, ColorPairIndex::USER_WIN_BORDER);
+    printBorder(mInputWindow, getInputWinBorderColor(aMap.currentPlayer()));
     update_panels();
     doupdate();
 }
@@ -306,7 +320,7 @@ int UserInterface::loop(GameMap& aMap)
     int spinCtr = 0;
     constexpr auto spinner = "/-\\|";
     std::string input = "";
-    Point_t mouseClicked{0, 0};
+    Point_t mouseEvent{0, 0};
     int keystroke;
 
     while (1)
@@ -328,23 +342,19 @@ int UserInterface::loop(GameMap& aMap)
             }
             case KEY_MOUSE:
             {
-                MEVENT mouseEvent{0};
-                if (ERR == nc_getmouse(&mouseEvent))
+                MEVENT clickEvent{0};
+                if (ERR == nc_getmouse(&clickEvent))
                 {
                     WARN_LOG("Encountered error when reading mouse event");
                 }
-                INFO_LOG("Mouse clicked, coord: [", mouseEvent.x, ", ", mouseEvent.y, "], key: ", mouseEvent.bstate);
-                if (!wenclose(mGameWindow, mouseEvent.y, mouseEvent.x))
+                INFO_LOG("Mouse clicked, coord: [", clickEvent.x, ", ", clickEvent.y, "], key: ", clickEvent.bstate);
+                if (!wenclose(mGameWindow, clickEvent.y, clickEvent.x))
                 {
                     DEBUG_LOG_L1("Mouse event not in GameWindow, discard");
                     continue;
                 }
-                mouseClicked = Point_t{static_cast<size_t>(mouseEvent.x), static_cast<size_t>(mouseEvent.y)};
+                mouseEvent = Point_t{static_cast<size_t>(clickEvent.x), static_cast<size_t>(clickEvent.y)};
                 break;
-                // const std::string id = aMap.getTerrain(mouseEvent.x, mouseEvent.y)->getStringId();
-                // aMap.setTerrainColor(mouseEvent.x, mouseEvent.y, ColorPairIndex::TEMP);
-                // printToConsole("Clicked " + id);
-                // continue;
             }
             case KEY_RESIZE:
             case KEY_F(5): // F5 function key
@@ -363,7 +373,7 @@ int UserInterface::loop(GameMap& aMap)
             {
                 wmove(mInputWindow, mInputStartY, mInputStartX + 1);
                 wclrtoeol(mInputWindow);
-                restoreBorder(mInputWindow, COLOR_PAIR(USER_WIN_BORDER));
+                restoreBorder(mInputWindow, COLOR_PAIR(getInputWinBorderColor(aMap.currentPlayer())));
                 break;
             }
             case KEY_BACKSPACE:
@@ -375,17 +385,16 @@ int UserInterface::loop(GameMap& aMap)
                 {
                     wmove(mInputWindow, curY, curX - 1);
                     wdelch(mInputWindow);
-                    restoreBorder(mInputWindow, COLOR_PAIR(USER_WIN_BORDER));
+                    restoreBorder(mInputWindow, COLOR_PAIR(getInputWinBorderColor(aMap.currentPlayer())));
                 }
                 break;
             }
             case KEY_DC: //delete
             {
                 wdelch(mInputWindow);
-                restoreBorder(mInputWindow, COLOR_PAIR(USER_WIN_BORDER));
+                restoreBorder(mInputWindow, COLOR_PAIR(getInputWinBorderColor(aMap.currentPlayer())));
                 break;
             }
-
             case KEY_LEFT:
             {
                 int curX, curY;
@@ -431,7 +440,7 @@ int UserInterface::loop(GameMap& aMap)
                 {
                     mvwaddstr(mInputWindow, mInputStartY, mInputStartX + 1, autoFillString.c_str());
                     wclrtoeol(mInputWindow);
-                    restoreBorder(mInputWindow, COLOR_PAIR(ColorPairIndex::USER_WIN_BORDER));
+                    restoreBorder(mInputWindow, COLOR_PAIR(getInputWinBorderColor(aMap.currentPlayer())));
                     wmove(mInputWindow, mInputStartY, mInputStartX + 1 + autoFillString.length());
                 }
                 break;
@@ -442,7 +451,7 @@ int UserInterface::loop(GameMap& aMap)
         {
             // echo to mInputWindow, advance cursor
             winsch(mInputWindow, keystroke);
-            restoreBorder(mInputWindow, COLOR_PAIR(ColorPairIndex::USER_WIN_BORDER)); // winsch will remove the border (char) at the end of current line
+            restoreBorder(mInputWindow, COLOR_PAIR(getInputWinBorderColor(aMap.currentPlayer()))); // winsch will remove the border (char) at the end of current line
             int curX, curY;
             getyx(mInputWindow, curY, curX);
             wmove(mInputWindow, curY, curX + 1);
@@ -459,6 +468,7 @@ int UserInterface::loop(GameMap& aMap)
         }
 
         // user hit 'enter' || mouse event
+
         if (keystroke != KEY_MOUSE)
         {
             readStringFromWindow(mInputWindow, mInputStartY, mInputStartX + 1, true, true, input);
@@ -472,7 +482,7 @@ int UserInterface::loop(GameMap& aMap)
         const std::string inputPrefix(mInputStartX, '>');  // for later printToConsole
 
         std::vector<std::string> returnMsg;
-        ActionStatus rc = currentCommandHelper()->act(aMap, *this, input, mouseClicked, returnMsg);
+        ActionStatus rc = currentCommandHelper()->act(aMap, *this, input, mouseEvent, returnMsg);
         if (rc == ActionStatus::EXIT)
         {
             mCommandHelperStack.pop_back();
@@ -497,10 +507,10 @@ int UserInterface::loop(GameMap& aMap)
         }
         printToConsole(returnMsg, inputPrefix + input, false, 0);
 
-        mouseClicked = Point_t{0, 0};
+        mouseEvent = Point_t{0, 0};
         printMapToWindow(aMap);
         printBorder(mGameWindow, ColorPairIndex::GAME_WIN_BORDER);
-        printBorder(mInputWindow, ColorPairIndex::USER_WIN_BORDER);
+        printBorder(mInputWindow, getInputWinBorderColor(aMap.currentPlayer()));
         update_panels();
         doupdate();
     }

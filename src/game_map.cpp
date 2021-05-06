@@ -725,6 +725,7 @@ int GameMap::buildColony(const Point_t aPoint, const ColonyType aColony)
 
     if (aColony == ColonyType::SETTLEMENT)
     {
+        // TODO: check if adjacent vertex is occupied
         if (!mPlayers[mCurrentPlayer]->hasResourceForSettlement())
         {
             return 3;

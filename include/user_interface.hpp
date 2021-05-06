@@ -23,22 +23,20 @@ enum ColorPairIndex
 {
     COLOR_PAIR_INDEX_RESERVED = 0,  // 0 is reserved by PDCurses
     GAME_WIN,
-    USER_WIN,
-    PRINTOUT_WIN,
+    INPUT_WIN,
+    OUTPUT_WIN,
     GAME_WIN_BORDER,
-    USER_WIN_BORDER,
     PLAYER_START,
     PLAYER_END = PLAYER_START + 6,
-#ifndef RELEASE
-    TEMP    // for experiment purpose
-#endif
 };
 
 enum ColorIndex
 {
     // 0 - 8 is used by PDCurses
     COLOR_INDEX_RESERVED = 9,
-    COLOR_GREY
+    COLOR_GREY,
+    COLOR_DARK_GREY,
+    COLOR_DARK_GREEN,
 };
 
 class UserInterface
@@ -62,6 +60,7 @@ private:
     int init(const GameMap& aMap, std::unique_ptr<CommandHelper>& aCmdDispatcher);
     int initColors();
     int printBorder(WINDOW* const aWindow, const ColorPairIndex aIndex);
+    ColorPairIndex getInputWinBorderColor(int aPlayerId);
     void restoreBorder(WINDOW* const aWindow, const chtype aColor);
     void resizeAll(const GameMap& aMap);
     void resizeOutputWindow();

@@ -27,12 +27,10 @@ void Logger::initLogger(std::string aLogFilename)
     }
     mLogger = &logger;
     logger.mLogFile.open(aLogFilename);
-#ifdef RELEASE
     log("Copyright (c) 2021, Zonghao Huang <kyle0923@qq.com>\n"   \
                 "All rights reserved.\n"    \
                 "cantan.exe - Release version ", VER_MAJOR, '.', VER_MINOR, '.', VER_PATCH,  \
                 ", Built on " __DATE__ " " __TIME__ "\n");
-#endif /* RELEASE */
 }
 
 template<>
