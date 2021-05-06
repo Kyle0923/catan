@@ -109,6 +109,18 @@ ColonyType Vertex::getColonyType() const
     return mColony;
 }
 
+bool Vertex::isAvailable() const
+{
+    for (const Vertex* const pAdjVertex : mAdjacentVertices)
+    {
+        if (pAdjVertex->getOwner() != -1)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 bool Vertex::isCoastal() const
 {
     return mIsCoastal;

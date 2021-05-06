@@ -37,6 +37,8 @@ public:
     int setOwner(int aPlayerId, ColonyType aColony);
     int getOwner() const;
 
+    bool isAvailable() const; // return true if and only if all adjacent vertices are not occupied
+
     ColonyType getColonyType() const;
     bool isCoastal() const;
     bool hasHarbour() const;

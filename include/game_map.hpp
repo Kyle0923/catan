@@ -127,10 +127,12 @@ public:
     bool playerHasResourceForCity() const;        // current player implied
 
     /**
-     * return 0: ok
-     * return 1: incorrect coordinate
-     * return 2: incorrect owner
-     * return 3: insufficient resource
+     * @return 0: ok
+     * @return 1: incorrect coordinate
+     * @return 2: incorrect owner
+     * @return 3: buildColony - adjacent vertex occupied
+     *            buildRoad   - adjacent vertex is not owner by current player
+     * @return 4: insufficient resource
      */
     int buildColony(const Point_t aPoint, const ColonyType aColony);
     int buildRoad(const Point_t aPoint);

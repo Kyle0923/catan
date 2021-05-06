@@ -13,11 +13,9 @@
 
 #include <cstddef>
 
-#ifdef RELEASE
 constexpr uint32_t VER_MAJOR = 0;
-constexpr uint32_t VER_MINOR = 1;
+constexpr uint32_t VER_MINOR = 8;
 constexpr uint32_t VER_PATCH = 0;
-#endif /* RELEASE */
 
 namespace constant
 {

@@ -725,10 +725,15 @@ int GameMap::buildColony(const Point_t aPoint, const ColonyType aColony)
 
     if (aColony == ColonyType::SETTLEMENT)
     {
-        // TODO: check if adjacent vertex is occupied
+        if (!pVertex->isAvailable())
+        {
+            WARN_LOG("One or more adjacent vertex of " + pVertex->getStringId() + " is owned, cannot build settlement here");
+            return 3;
+        }
+
         if (!mPlayers[mCurrentPlayer]->hasResourceForSettlement())
         {
-            return 3;
+            return 4;
         }
         mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::CLAY, 1);
         mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::WOOD, 1);
@@ -741,7 +746,7 @@ int GameMap::buildColony(const Point_t aPoint, const ColonyType aColony)
     {
         if (!mPlayers[mCurrentPlayer]->hasResourceForCity())
         {
-            return 3;
+            return 4;
         }
         mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::WHEAT, 2);
         mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::ORE, 3);
@@ -769,9 +774,15 @@ int GameMap::buildRoad(const Point_t aPoint)
         return 2;
     }
 
+    if (!pEdge->isAvailable(mCurrentPlayer))
+    {
+        WARN_LOG("None of the adjacent vertices of " + pEdge->getStringId() + " is owned by current player, cannot build road here");
+        return 3;
+    }
+
     if (!mPlayers[mCurrentPlayer]->hasResourceForRoad())
     {
-        return 3;
+        return 4;
     }
 
     mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::CLAY, 1);

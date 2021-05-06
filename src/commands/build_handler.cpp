@@ -34,47 +34,49 @@ ActionStatus BuildHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<st
         return ActionStatus::PARAM_REQUIRED;
     }
 
-    bool enoughResource = false;
-    int rc = 1;
+    int rc = -1;
     if (mParam == "road")
     {
-        enoughResource = aMap.playerHasResourceForRoad();
-        if (enoughResource)
-        {
-            rc = aMap.buildRoad(mPoint);
-        }
+        rc = aMap.buildRoad(mPoint);
     }
     else if (mParam == "settlement")
     {
-        enoughResource = aMap.playerHasResourceForSettlement();
-        if (enoughResource)
-        {
-            rc = aMap.buildColony(mPoint, ColonyType::SETTLEMENT);
-        }
+        rc = aMap.buildColony(mPoint, ColonyType::SETTLEMENT);
     }
     else if (mParam == "city")
     {
-        enoughResource = aMap.playerHasResourceForCity();
-        if (enoughResource)
-        {
-            rc = aMap.buildColony(mPoint, ColonyType::CITY);
-        }
+        rc = aMap.buildColony(mPoint, ColonyType::CITY);
     }
 
-    if (!enoughResource)
+    switch (rc)
     {
-        aReturnMsg.push_back("current player has insufficient resource");
-        return ActionStatus::SUCCESS;
-    }
-
-    if (rc == 2)
-    {
-        aReturnMsg.push_back(Logger::formatString("Incorrect owner of ", mPoint));
-    }
-    else if (rc == 0)
-    {
-        INFO_LOG("Successfully build " + mParam + " for Player#", aMap.currentPlayer());
-        aReturnMsg.push_back("Construction complete");
+        case 0:
+            INFO_LOG("Successfully build " + mParam + " for Player#", aMap.currentPlayer());
+            aReturnMsg.push_back("Construction complete");
+            break;
+        case 1:
+            aReturnMsg.push_back("Incorrect coordinate");
+            break;
+        case 2:
+            aReturnMsg.push_back(Logger::formatString("Incorrect owner of ", mPoint));
+            break;
+        case 3:
+            if (mParam == "road")
+            {
+                aReturnMsg.push_back("None of the adjacent vertices is owner by current player");
+            }
+            else
+            {
+                aReturnMsg.push_back("One or more adjacent vertex is occupied");
+            }
+            break;
+        case 4:
+            aReturnMsg.push_back("Insufficient resources");
+            break;
+        case -1:
+        default:
+            aReturnMsg.push_back("Internal error");
+            return ActionStatus::FAILED;
     }
 
     return ActionStatus::SUCCESS;

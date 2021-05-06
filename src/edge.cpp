@@ -129,6 +129,25 @@ int Edge::getOwner() const
     return mOwner;
 }
 
+bool Edge::isAvailable(int aPlayerId) const
+{
+    for (const Vertex* const pAdjVertex : mAdjacentVertices)
+    {
+        if (pAdjVertex->getOwner() == aPlayerId)
+        {
+            return true;
+        }
+    }
+    for (const Edge* const pAdjEdge : mAdjacentEdges)
+    {
+        if (pAdjEdge->getOwner() == aPlayerId)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 Edge::Edge(const int aId, const Point_t aTopLeft, const char aDirection) :
     Terrain(aId, aTopLeft),
     mOwner(-1)

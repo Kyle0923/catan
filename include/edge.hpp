@@ -39,6 +39,8 @@ public:
     char getCharRepresentation(const size_t aPointX, const size_t aPointY, const bool aUseId = false) const override;
     std::string getStringId() const override;
 
+    bool isAvailable(int aPlayerId) const;
+
     int setOwner(int aPlayerId);
     int getOwner() const;
 
