@@ -67,8 +67,13 @@ private:
 
     std::unique_ptr<CommandHelper>& currentCommandHelper();
 
-    // aUntilEol: true - read until end-of-line; false - read up to cursor
+    /**
+     * @param aUntilEol: true - read until end-of-line; false - read up to cursor
+     * @param aString: the string object to hold the read-in value
+     * @return the position of the last character
+     */
     int readStringFromWindow(WINDOW* const aWindow, int aStartingY, int aStartingX, bool aUntilEol, bool aTrimLeadingSpace, std::string& aString);
+    int readUserInput(bool aUntilEol, bool aTrimLeadingSpace, std::string& aString); // wrapper of readStringFromWindow
 
     /**
      * @param aIsList: print the vector using list format

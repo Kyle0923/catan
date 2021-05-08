@@ -196,6 +196,11 @@ void UserInterface::resizeOutputWindow()
     move_panel(mOutputPanel, inputWindowStartY + mInputStartY + 1, inputWindowStartX + 1);
 }
 
+int UserInterface::readUserInput(bool aUntilEol, bool aTrimLeadingSpace, std::string& aString)
+{
+    return readStringFromWindow(mInputWindow, mInputStartY, mInputStartX + 1, aUntilEol, aTrimLeadingSpace, aString);
+}
+
 int UserInterface::readStringFromWindow(WINDOW* const aWindow, int aStartingY, int aStartingX, bool aUntilEol, bool aTrimLeadingSpace, std::string& aString)
 {
     aString.clear();
@@ -433,14 +438,14 @@ int UserInterface::loop(GameMap& aMap)
             case KEY_NPAGE:
             {
                 std::string str;
-                int lastX = readStringFromWindow(mInputWindow, mInputStartY, mInputStartX + 1, true, false, str);
+                int lastX = readUserInput(true, false, str);
                 wmove(mInputWindow, 1, lastX);
                 break;
             }
             case '\t':
             {
                 // auto complete
-                readStringFromWindow(mInputWindow, mInputStartY, mInputStartX + 1, false, true, input);
+                readUserInput(false, true, input);
                 std::string autoFillString;
                 currentCommandHelper()->getPossibleInputs(input, &autoFillString);
                 if (autoFillString.length() > 0)
@@ -463,7 +468,7 @@ int UserInterface::loop(GameMap& aMap)
             wmove(mInputWindow, curY, curX + 1);
         }
 
-        readStringFromWindow(mInputWindow, mInputStartY, mInputStartX + 1, false, true, input);
+        readUserInput(false, true, input);
 
         // print matched commands to output window
         std::vector<std::string> matchedCmd;
@@ -485,7 +490,7 @@ int UserInterface::loop(GameMap& aMap)
 
         if (keystroke != KEY_MOUSE)
         {
-            readStringFromWindow(mInputWindow, mInputStartY, mInputStartX + 1, true, true, input);
+            readUserInput(true, true, input);
             INFO_LOG("USER input cmd: ", input);
         }
         else
