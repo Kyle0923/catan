@@ -32,20 +32,24 @@ int main(int argc, char** argv)
     MapIO mapFile(cliOpt.getOpt<CliOptIndex::MAP_FILE_PATH>());
     mapFile.readMap(gameMap);
 
+#ifdef RELEASE
     UserInterface ui(gameMap, std::make_unique<CommandDispatcher>(  \
         std::vector<CommandHandler*>({                              \
             new BuildHandler()})                                    \
     ));
 
-#if 0
+#else
+
     // experiment
     UserInterface ui(gameMap, std::make_unique<CommandDispatcher>(  \
         std::vector<CommandHandler*>({                              \
             new BuildHandler(),                                     \
+            new BuildingHandler(),                                  \
             new SubCmdHandler(),                                    \
             new ParameterExampleCommandHandler()})                  \
     ));
-#endif /* #if 0 */
+
+#endif /* ifdef RELEASE */
 
     gameMap.initMap();
     gameMap.logMap();

@@ -59,7 +59,7 @@ private:
 public:
     virtual std::string command() const override final;
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
-    virtual std::vector<std::string> paramAutoFillPool() const override final;
+    virtual std::vector<std::string> paramAutoFillPool(size_t aParamIndex) const override final;
 
     virtual ActionStatus processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
     virtual bool parameterComplete() const override final;
@@ -70,6 +70,10 @@ public:
     virtual ~BuildHandler() = default;
 };
 
+////////////////////////////////////////////////////////////////////////////////////
+// the commands below are meant to be used for testing in development.
+// they should not be built when RELEASE=1
+////////////////////////////////////////////////////////////////////////////////////
 #ifndef RELEASE
 
 class SubCmdHandler: public CommandHandler
@@ -95,6 +99,15 @@ public:
     ParameterExampleCommandHandler();
     virtual ~ParameterExampleCommandHandler() = default;
 
+};
+
+class BuildingHandler: public CommandHandler
+{
+    // test auto complete for when one command if a substring of another
+    // e.g., "build" and "building"
+    virtual std::string command() const override final;
+    virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
+    virtual std::vector<std::string> paramAutoFillPool(size_t aParamIndex) const override final;
 };
 
 #endif /* RELEASE */

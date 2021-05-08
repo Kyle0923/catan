@@ -18,12 +18,16 @@ CommandParameterReader::CommandParameterReader(CommandHandler* const aCmd):
 
 ActionStatus CommandParameterReader::act(GameMap& aMap, UserInterface& aUi, std::string aInput, Point_t aPoint, std::vector<std::string>& aReturnMsg)
 {
+    ParameterizedCommand* const pParamCmd = dynamic_cast<ParameterizedCommand*>(mCmd);
+
     if (aInput.find("exit") == 0)
     {
+        if (pParamCmd)
+        {
+            pParamCmd->resetParameters();
+        }
         return ActionStatus::EXIT;
     }
-
-    ParameterizedCommand* const pParamCmd = dynamic_cast<ParameterizedCommand*>(mCmd);
 
     if (!pParamCmd)
     {
@@ -40,6 +44,8 @@ ActionStatus CommandParameterReader::act(GameMap& aMap, UserInterface& aUi, std:
     if (aInput.find("help") == 0)
     {
         pParamCmd->instruction(aReturnMsg);
+        aReturnMsg.push_back("");
+        aReturnMsg.push_back("exit - exit current command");
         return ActionStatus::SUCCESS;
     }
 
@@ -72,8 +78,12 @@ ActionStatus CommandParameterReader::act(GameMap& aMap, UserInterface& aUi, std:
 
 std::vector<std::string> CommandParameterReader::getPossibleInputs(const std::string& aInput, std::string* const aAutoFillString) const
 {
-    std::vector<std::string> matchPool = mCmd->paramAutoFillPool();
-    matchPool.emplace_back("help");
-    matchPool.emplace_back("exit");
-    return stringMatcher(aInput, matchPool, aAutoFillString);
+    std::vector<std::string> params = splitString(aInput);
+    std::vector<std::string> matchPool = mCmd->paramAutoFillPool(params.size() - 1);
+    if (params.size() == 1)
+    {
+        matchPool.emplace_back("help");
+        matchPool.emplace_back("exit");
+    }
+    return stringMatcher(params.back(), matchPool, aAutoFillString);
 }

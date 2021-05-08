@@ -15,7 +15,7 @@ std::string CommandHandler::description() const
     return "";
 }
 
-std::vector<std::string> CommandHandler::paramAutoFillPool() const
+std::vector<std::string> CommandHandler::paramAutoFillPool(size_t aParamIndex) const
 {
     return {};
 }

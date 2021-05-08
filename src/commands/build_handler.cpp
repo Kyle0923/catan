@@ -25,9 +25,9 @@ std::string BuildHandler::command() const
     return "build";
 }
 
-std::vector<std::string> BuildHandler::paramAutoFillPool() const
+std::vector<std::string> BuildHandler::paramAutoFillPool(size_t aParamIndex) const
 {
-    if (mBuildType == "")
+    if (mBuildType == "" && aParamIndex == 0)
     {
         return mBuildTypeMatchingPool;
     }

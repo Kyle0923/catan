@@ -25,6 +25,8 @@ public:
     /**
      * find the strings in aMatchPool that starts with aInput
      * if aAutoFillString is provided, return the auto complete part of aInput (longest common string "minus" aInput)
+     * @caution: if aInput is empty, it will match everything in aMatchPool
+     *           if this is not desired, caller need to handle that before calling this function
      */
     static std::vector<std::string> \
         stringMatcher(const std::string& aInput, const std::vector<std::string>& aMatchPool, std::string* const aAutoFillString);

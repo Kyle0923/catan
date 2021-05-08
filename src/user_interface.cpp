@@ -198,6 +198,7 @@ void UserInterface::resizeOutputWindow()
 
 int UserInterface::readStringFromWindow(WINDOW* const aWindow, int aStartingY, int aStartingX, bool aUntilEol, bool aTrimLeadingSpace, std::string& aString)
 {
+    aString.clear();
     int curX, curY; // save cursor position, restore it later
     getyx(aWindow, curY, curX);
     const int bufferSize = COLS - aStartingX;
@@ -205,20 +206,26 @@ int UserInterface::readStringFromWindow(WINDOW* const aWindow, int aStartingY, i
     if (aUntilEol)
     {
         mvwinnstr(aWindow, aStartingY, aStartingX, buffer, bufferSize);
+        aString = std::string(buffer);
+        trimTrailingSpace(aString);
     }
     else
     {
-        if (curX - aStartingX + 1 <= 0)
+        // read up to (curX - 1)
+        if (curX <= aStartingX)
         {
-            WARN_LOG("curX - aStartingX + 1 <= 0");
+            WARN_LOG("Incorrect curX position: curX <= aStartingX");
         }
         else
         {
-            mvwinnstr(aWindow, aStartingY, aStartingX, buffer, curX - aStartingX + 1);
+            // read length == (curX - aStartingX), from aStartingX to curX-1
+            // do not trim trailing space, trailing space serves as delimiter to inform
+            // getPossibleInputs() that the command is ended
+            mvwinnstr(aWindow, aStartingY, aStartingX, buffer, curX - aStartingX);
+            aString = std::string(buffer);
         }
     }
-    aString = std::string(buffer);
-    trimTrailingSpace(aString);
+
     if (aTrimLeadingSpace)
     {
         trimLeadingSpace(aString);
@@ -410,8 +417,8 @@ int UserInterface::loop(GameMap& aMap)
                 char nextPos = static_cast<char>(mvwinch(mInputWindow, curY, curX + 1));
                 if (nextPos == ' ' && currPos == ' ')
                 {
-                    DEBUG_LOG_L2("Key Right reached EOL");
-                    // reached eol, put cursor back
+                    DEBUG_LOG_L2("Key Right reached end-of-input");
+                    // put cursor back
                     wmove(mInputWindow, curY, curX);
                 }
                 break;
@@ -432,7 +439,7 @@ int UserInterface::loop(GameMap& aMap)
             }
             case '\t':
             {
-                // auto fill
+                // auto complete
                 readStringFromWindow(mInputWindow, mInputStartY, mInputStartX + 1, false, true, input);
                 std::string autoFillString;
                 currentCommandHelper()->getPossibleInputs(input, &autoFillString);
@@ -444,7 +451,7 @@ int UserInterface::loop(GameMap& aMap)
                 }
                 break;
             }
-        }
+        } /* switch (keystroke) */
 
         if (isprint(keystroke) && keystroke <= 126)
         {
@@ -455,10 +462,18 @@ int UserInterface::loop(GameMap& aMap)
             getyx(mInputWindow, curY, curX);
             wmove(mInputWindow, curY, curX + 1);
         }
+
         readStringFromWindow(mInputWindow, mInputStartY, mInputStartX + 1, false, true, input);
+
         // print matched commands to output window
-        std::vector<std::string> matchedCmd = currentCommandHelper()->getPossibleInputs(input);
-        printToConsole(matchedCmd, "", true, input.length());
+        std::vector<std::string> matchedCmd;
+        if (input != "" || keystroke == '\t')
+        {
+            // if input is empty, we do not print the possibleInputs
+            // unless user hit tab
+            matchedCmd = currentCommandHelper()->getPossibleInputs(input);
+        }
+        printToConsole(matchedCmd, "", true, splitString(input).back().length());
 
         if (!(keystroke == KEY_ENTER || keystroke == PADENTER || keystroke == KEY_MOUSE \
             || keystroke == '\n' || keystroke == '\r'))

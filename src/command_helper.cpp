@@ -12,30 +12,8 @@
 
 std::vector<std::string> CommandHelper::stringMatcher(const std::string& aInput, const std::vector<std::string>& aMatchPool, std::string* const aAutoFillString)
 {
-    // TODO: issue when there is whitespace after the last param, e.g, "he " returns "he lp"
-    if (aMatchPool.size() == 1)
-    {
-        // matchPool size == 1, if aInput matches, return aMatchPool
-        if (aMatchPool.front().find(aInput) == 0)
-        {
-            if (aAutoFillString)
-            {
-                *aAutoFillString = aMatchPool.front().substr(aInput.length()) + " ";
-            }
-            return aMatchPool;
-        }
-        else
-        {
-            return {};
-        }
-    }
-
-    if (aInput.length() == 0 || aMatchPool.size() == 0)
-    {
-        // no input, return empty
-        // prevent return everything in aMatchPool
-        return {};
-    }
+    // if aInput is empty, it will match everything in aMatchPool
+    // if that is not desired, caller need to handle that before calling this function
 
     std::vector<std::string> matched;
     std::string shortestStr;

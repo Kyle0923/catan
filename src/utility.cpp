@@ -15,6 +15,11 @@
 
 std::vector<std::string> splitString(const std::string& aString, char aDelim)
 {
+    if (aString.length() == 0)
+    {
+        return {""};
+    }
+
     std::vector<std::string> result;
     std::string temp;
     std::istringstream paramStream(aString);
@@ -22,8 +27,12 @@ std::vector<std::string> splitString(const std::string& aString, char aDelim)
     {
         if (temp != "")
         {
-            result.push_back(temp);
+            result.emplace_back(temp);
         }
+    }
+    if (result.size() == 0 || aString.back() == aDelim)
+    {
+        result.emplace_back("");
     }
     return result;
 }

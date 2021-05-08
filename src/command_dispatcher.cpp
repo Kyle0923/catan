@@ -17,26 +17,15 @@ BackdoorHandler CommandDispatcher::mBackdoorHandler;  // handles backdoor comman
 
 std::vector<std::string> CommandDispatcher::getPossibleInputs(const std::string& aInput, std::string* const aAutoFillString) const
 {
-    if (aInput == "")
-    {
-        return {};
-    }
-
     std::vector<std::string> inputBreakdown = splitString(aInput);
     const std::string& command = inputBreakdown.front();
-    if (mCommandHandlers.count(command) == 1)
+
+    if (inputBreakdown.size() > 1)
     {
-        // command matched
-        if (inputBreakdown.size() > 1)
+        if (mCommandHandlers.count(command) == 1)
         {
-            // try to match the last param
-            return stringMatcher(inputBreakdown.back(), mCommandHandlers.at(command)->paramAutoFillPool(), aAutoFillString);
-        }
-        else
-        {
-            // no param is provided, the only case this will return non-empty is when paramAutoFillPool returns only 1 value
-            // the handling is implemented in stringMatcher to centralize the logic
-            return stringMatcher("", mCommandHandlers.at(command)->paramAutoFillPool(), aAutoFillString);
+            // command matched, try to match the last param
+            return stringMatcher(inputBreakdown.back(), mCommandHandlers.at(command)->paramAutoFillPool(inputBreakdown.size() - 2), aAutoFillString);
         }
     }
     else if (inputBreakdown.size() == 1)
