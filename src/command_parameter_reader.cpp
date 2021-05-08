@@ -18,12 +18,13 @@ CommandParameterReader::CommandParameterReader(CommandHandler* const aCmd):
 
 ActionStatus CommandParameterReader::act(GameMap& aMap, UserInterface& aUi, std::string aInput, Point_t aPoint, std::vector<std::string>& aReturnMsg)
 {
-    if (aInput == "exit")
+    if (aInput.find("exit") == 0)
     {
         return ActionStatus::EXIT;
     }
 
     ParameterizedCommand* const pParamCmd = dynamic_cast<ParameterizedCommand*>(mCmd);
+
     if (!pParamCmd)
     {
         // not inherit from ParameterizedCommand
@@ -36,9 +37,16 @@ ActionStatus CommandParameterReader::act(GameMap& aMap, UserInterface& aUi, std:
         return ActionStatus::PARAM_REQUIRED;
     }
 
+    if (aInput.find("help") == 0)
+    {
+        pParamCmd->instruction(aReturnMsg);
+        return ActionStatus::SUCCESS;
+    }
+
     if (aInput == "" && aPoint == Point_t{0, 0})
     {
         // no param provided
+        aReturnMsg.push_back("Parameter needed");
         pParamCmd->instruction(aReturnMsg);
         return ActionStatus::FAILED;
     }
@@ -62,9 +70,10 @@ ActionStatus CommandParameterReader::act(GameMap& aMap, UserInterface& aUi, std:
     return ActionStatus::SUCCESS;
 }
 
-std::vector<std::string> CommandParameterReader::getPossibleInputs(const std::string&, std::string* const aLongestCommonStr) const
+std::vector<std::string> CommandParameterReader::getPossibleInputs(const std::string& aInput, std::string* const aAutoFillString) const
 {
-    // TODO: to be implemented, (get a ptr *matchPool from cmdHandler?)
-    // return stringMatcher(aInput, *matchPool, aLongestCommonStr);
-    return {};
+    std::vector<std::string> matchPool = mCmd->paramAutoFillPool();
+    matchPool.emplace_back("help");
+    matchPool.emplace_back("exit");
+    return stringMatcher(aInput, matchPool, aAutoFillString);
 }

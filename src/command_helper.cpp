@@ -10,9 +10,27 @@
 #include "command_helper.hpp"
 #include "logger.hpp"
 
-std::vector<std::string> CommandHelper::stringMatcher(const std::string& aInput, const std::vector<std::string>& aMatchPool, std::string* const aLongestCommonStr = nullptr)
+std::vector<std::string> CommandHelper::stringMatcher(const std::string& aInput, const std::vector<std::string>& aMatchPool, std::string* const aAutoFillString)
 {
-    if (aInput.length() == 0)
+    // TODO: issue when there is whitespace after the last param, e.g, "he " returns "he lp"
+    if (aMatchPool.size() == 1)
+    {
+        // matchPool size == 1, if aInput matches, return aMatchPool
+        if (aMatchPool.front().find(aInput) == 0)
+        {
+            if (aAutoFillString)
+            {
+                *aAutoFillString = aMatchPool.front().substr(aInput.length()) + " ";
+            }
+            return aMatchPool;
+        }
+        else
+        {
+            return {};
+        }
+    }
+
+    if (aInput.length() == 0 || aMatchPool.size() == 0)
     {
         // no input, return empty
         // prevent return everything in aMatchPool
@@ -56,27 +74,27 @@ std::vector<std::string> CommandHelper::stringMatcher(const std::string& aInput,
     }
     DEBUG_LOG_L0("stringMatcher matched: ", matched);
 
-    // if aLongestCommonStr is provided, return the longest common string back via aLongestCommonStr
-    if (aLongestCommonStr)
+    // if aAutoFillString is provided, return the auto complete part back via aAutoFillString
+    if (aAutoFillString)
     {
-        *aLongestCommonStr = aInput;
+        std::string longestCommonStr = aInput;
         if (matched.size() == 1 && matched.at(0).length() > aInput.size())
         {
-            *aLongestCommonStr = matched.at(0);
+            // full match, insert a whitespace at the end, "exi" => "exit "
+            longestCommonStr = matched.at(0) + " ";
         }
         else if (matched.size() > 1)
         {
-            std::string longestCommonSubstring;
             // find the longest common string
-            for (size_t ii = aInput.length() - 1; ii < shortestStr.size(); ++ii)
+            for (size_t ii = aInput.length(); ii < shortestStr.size(); ++ii)
             {
-                char c = matched.at(0).at(ii); // the ii-th char of the first matched string
+                char letter = matched.at(0).at(ii); // the ii-th char of the first matched string
                 bool notmatch = false;
                 for (size_t jj = 1; jj < matched.size(); ++jj)
                 {
                     const std::string& str = matched.at(jj);
-                    DEBUG_LOG_L0("cmp: ", str.at(ii), " & ", c);
-                    if (str.at(ii) != c)
+                    DEBUG_LOG_L0("cmp: ", str.at(ii), " & ", letter);
+                    if (str.at(ii) != letter)
                     {
                         notmatch = true;
                         break;
@@ -84,7 +102,7 @@ std::vector<std::string> CommandHelper::stringMatcher(const std::string& aInput,
                     if (jj == matched.size() - 1)
                     {
                         // all matched
-                        longestCommonSubstring = matched.at(0).substr(0, ii + 1);
+                        longestCommonStr.push_back(letter);
                     }
                 }
                 if (notmatch)
@@ -92,8 +110,8 @@ std::vector<std::string> CommandHelper::stringMatcher(const std::string& aInput,
                     break;
                 }
             }
-            *aLongestCommonStr = longestCommonSubstring;
         }
+        *aAutoFillString = longestCommonStr.substr(aInput.length());
     }
     return matched;
 }

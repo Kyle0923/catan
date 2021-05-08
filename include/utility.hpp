@@ -25,7 +25,7 @@ public:
 };
 
 template<typename T>
-int isInVector(const T& aTofind, const std::vector<T>& aVector)
+int indexInVector(const T& aTofind, const std::vector<T>& aVector)
 {
     auto pos = std::find(aVector.begin(), aVector.end(), aTofind);
     if (pos != aVector.end())

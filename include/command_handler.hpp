@@ -54,6 +54,11 @@ public:
      */
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) = 0;
 
+    /**
+     * for auto fill, returns a vector of possible input parameters
+     */
+    virtual std::vector<std::string> paramAutoFillPool() const;
+
     CommandHandler() = default;
     virtual ~CommandHandler() = default;
 };

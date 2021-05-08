@@ -15,9 +15,37 @@
 
 BackdoorHandler CommandDispatcher::mBackdoorHandler;  // handles backdoor commands
 
-std::vector<std::string> CommandDispatcher::getPossibleInputs(const std::string& aInput, std::string* const aLongestCommonStr) const
+std::vector<std::string> CommandDispatcher::getPossibleInputs(const std::string& aInput, std::string* const aAutoFillString) const
 {
-    return stringMatcher(aInput, mCommand, aLongestCommonStr);
+    if (aInput == "")
+    {
+        return {};
+    }
+
+    std::vector<std::string> inputBreakdown = splitString(aInput);
+    const std::string& command = inputBreakdown.front();
+    if (mCommandHandlers.count(command) == 1)
+    {
+        // command matched
+        if (inputBreakdown.size() > 1)
+        {
+            // try to match the last param
+            return stringMatcher(inputBreakdown.back(), mCommandHandlers.at(command)->paramAutoFillPool(), aAutoFillString);
+        }
+        else
+        {
+            // no param is provided, the only case this will return non-empty is when paramAutoFillPool returns only 1 value
+            // the handling is implemented in stringMatcher to centralize the logic
+            return stringMatcher("", mCommandHandlers.at(command)->paramAutoFillPool(), aAutoFillString);
+        }
+    }
+    else if (inputBreakdown.size() == 1)
+    {
+        // handling partial command, e.g., provide a match for "exit" when aInput is "exi"
+        // only make senses when inputBreakdown is of size 1
+        return stringMatcher(command, mCommands, aAutoFillString);
+    }
+    return {};
 }
 
 ActionStatus CommandDispatcher::act(GameMap& aMap, UserInterface& aUi, std::string aInput, Point_t aPoint, std::vector<std::string>& aReturnMsg)
@@ -29,7 +57,7 @@ ActionStatus CommandDispatcher::act(GameMap& aMap, UserInterface& aUi, std::stri
 
     std::string command = aInput.substr(0, aInput.find(' '));
 
-    if (command != mBackdoorHandler.command() && mCommandHandler.count(command) != 1)
+    if (command != mBackdoorHandler.command() && mCommandHandlers.count(command) != 1)
     {
         // unknown command, possible partial command
 
@@ -65,7 +93,7 @@ ActionStatus CommandDispatcher::act(GameMap& aMap, UserInterface& aUi, std::stri
     }
     else
     {
-        pCmdHandler = mCommandHandler.at(command);
+        pCmdHandler = mCommandHandlers.at(command);
     }
     ActionStatus rc = pCmdHandler->act(aMap, aUi, commandParam, aReturnMsg);
     if (rc == ActionStatus::PARAM_REQUIRED)
@@ -96,25 +124,25 @@ int CommandDispatcher::addCommandHandler(CommandHandler* const aHandler)
         return 1;
     }
 
-    if (mCommandHandler.count(aHandler->command()) != 0)
+    if (mCommandHandlers.count(aHandler->command()) != 0)
     {
         ERROR_LOG("Handler for " + aHandler->command() + " exists");
         return 1;
     }
 
-    mCommandHandler.emplace(aHandler->command(), aHandler);
-    mCommand.push_back(aHandler->command());
+    mCommandHandlers.emplace(aHandler->command(), aHandler);
+    mCommands.push_back(aHandler->command());
     return 0;
 }
 
 const std::vector<std::string>& CommandDispatcher::getCommands() const
 {
-    return mCommand;
+    return mCommands;
 }
 
 const std::map<std::string, CommandHandler*>& CommandDispatcher::getHandlers() const
 {
-    return mCommandHandler;
+    return mCommandHandlers;
 }
 
 CommandDispatcher::CommandDispatcher(std::vector<CommandHandler*> aCmdHandler)
@@ -128,9 +156,9 @@ CommandDispatcher::CommandDispatcher(std::vector<CommandHandler*> aCmdHandler)
         addCommandHandler(handler);
     }
 
-    if (mCommandHandler.size() != mCommand.size())
+    if (mCommandHandlers.size() != mCommands.size())
     {
-        ERROR_LOG("CommandDispatcher::init failed, size of mCommand and mCommandHandler do not match");
+        ERROR_LOG("CommandDispatcher::init failed, size of mCommands and mCommandHandlers do not match");
     }
     else
     {
@@ -140,7 +168,7 @@ CommandDispatcher::CommandDispatcher(std::vector<CommandHandler*> aCmdHandler)
 
 CommandDispatcher::~CommandDispatcher()
 {
-    for (auto& iter : mCommandHandler)
+    for (auto& iter : mCommandHandlers)
     {
         delete iter.second;
     }

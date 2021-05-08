@@ -22,11 +22,11 @@ class CommandDispatcher : public CommandHelper
 {
 private:
     static BackdoorHandler mBackdoorHandler;  // handles backdoor commands
-    std::map<std::string, CommandHandler*> mCommandHandler;
-    std::vector<std::string> mCommand;
+    std::map<std::string, CommandHandler*> mCommandHandlers;
+    std::vector<std::string> mCommands;
     int addCommandHandler(CommandHandler* const aHandler);
 public:
-    virtual std::vector<std::string> getPossibleInputs(const std::string& aInput, std::string* const aLongestCommonStr = nullptr) const override;
+    virtual std::vector<std::string> getPossibleInputs(const std::string& aInput, std::string* const aAutoFillString = nullptr) const override;
 
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::string aInput, \
                               Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;

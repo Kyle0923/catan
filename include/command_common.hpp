@@ -54,10 +54,12 @@ class BuildHandler: public CommandHandler, public ParameterizedCommand
 {
 private:
     Point_t mPoint;
-    std::string mParam;
+    std::string mBuildType;
+    const static std::vector<std::string> mBuildTypeMatchingPool; // possible values of mBuildType
 public:
     virtual std::string command() const override final;
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
+    virtual std::vector<std::string> paramAutoFillPool() const override final;
 
     virtual ActionStatus processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
     virtual bool parameterComplete() const override final;

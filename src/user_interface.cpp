@@ -435,19 +435,18 @@ int UserInterface::loop(GameMap& aMap)
                 // auto fill
                 readStringFromWindow(mInputWindow, mInputStartY, mInputStartX + 1, false, true, input);
                 std::string autoFillString;
-                std::vector<std::string> matched = currentCommandHelper()->getPossibleInputs(input, &autoFillString);
-                if (autoFillString.length() > input.size())
+                currentCommandHelper()->getPossibleInputs(input, &autoFillString);
+                if (autoFillString.length() > 0)
                 {
-                    mvwaddstr(mInputWindow, mInputStartY, mInputStartX + 1, autoFillString.c_str());
-                    wclrtoeol(mInputWindow);
+                    winsstr(mInputWindow, autoFillString.c_str());
                     restoreBorder(mInputWindow, COLOR_PAIR(getInputWinBorderColor(aMap.currentPlayer())));
-                    wmove(mInputWindow, mInputStartY, mInputStartX + 1 + autoFillString.length());
+                    wmove(mInputWindow, mInputStartY, getcurx(mInputWindow) + autoFillString.length());
                 }
                 break;
             }
         }
 
-        if (isprint((char)keystroke) && keystroke <= 126)
+        if (isprint(keystroke) && keystroke <= 126)
         {
             // echo to mInputWindow, advance cursor
             winsch(mInputWindow, keystroke);
@@ -462,7 +461,7 @@ int UserInterface::loop(GameMap& aMap)
         printToConsole(matchedCmd, "", true, input.length());
 
         if (!(keystroke == KEY_ENTER || keystroke == PADENTER || keystroke == KEY_MOUSE \
-            || (char)keystroke == '\n' || (char)keystroke == '\r'))
+            || keystroke == '\n' || keystroke == '\r'))
         {
             continue;
         }

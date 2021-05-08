@@ -11,9 +11,11 @@
 
 #include "command_common.hpp"
 
+const std::vector<std::string> BuildHandler::mBuildTypeMatchingPool = {"road", "settlement", "city"};
+
 BuildHandler::BuildHandler() :
     mPoint(Point_t{0, 0}),
-    mParam("")
+    mBuildType("")
 {
     // empty
 }
@@ -21,6 +23,15 @@ BuildHandler::BuildHandler() :
 std::string BuildHandler::command() const
 {
     return "build";
+}
+
+std::vector<std::string> BuildHandler::paramAutoFillPool() const
+{
+    if (mBuildType == "")
+    {
+        return mBuildTypeMatchingPool;
+    }
+    return {};
 }
 
 ActionStatus BuildHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
@@ -35,15 +46,15 @@ ActionStatus BuildHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<st
     }
 
     int rc = -1;
-    if (mParam == "road")
+    if (mBuildType == "road")
     {
         rc = aMap.buildRoad(mPoint);
     }
-    else if (mParam == "settlement")
+    else if (mBuildType == "settlement")
     {
         rc = aMap.buildColony(mPoint, ColonyType::SETTLEMENT);
     }
-    else if (mParam == "city")
+    else if (mBuildType == "city")
     {
         rc = aMap.buildColony(mPoint, ColonyType::CITY);
     }
@@ -51,7 +62,7 @@ ActionStatus BuildHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<st
     switch (rc)
     {
         case 0:
-            INFO_LOG("Successfully build " + mParam + " for Player#", aMap.currentPlayer());
+            INFO_LOG("Successfully build " + mBuildType + " for Player#", aMap.currentPlayer());
             aReturnMsg.push_back("Construction complete");
             break;
         case 1:
@@ -61,7 +72,7 @@ ActionStatus BuildHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<st
             aReturnMsg.push_back(Logger::formatString("Incorrect owner of ", mPoint));
             break;
         case 3:
-            if (mParam == "road")
+            if (mBuildType == "road")
             {
                 aReturnMsg.push_back("None of the adjacent vertices is owner by current player");
             }
@@ -85,12 +96,12 @@ ActionStatus BuildHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<st
 ActionStatus BuildHandler::processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
 {
     // first prompt user for build type: road or settlement or city
-    if (mParam == "")
+    if (mBuildType == "")
     {
         INFO_LOG(command() + " reading parameter " + aParam);
-        if (aParam == "road" || aParam == "settlement" || aParam == "city")
+        if (indexInVector(aParam, mBuildTypeMatchingPool) >= 0)
         {
-            mParam = aParam;
+            mBuildType = aParam;
             instruction(aReturnMsg);
             return ActionStatus::SUCCESS;
         }
@@ -104,7 +115,7 @@ ActionStatus BuildHandler::processParameter(GameMap& aMap, std::string aParam, P
     if (mPoint == Point_t{0, 0})
     {
         INFO_LOG(command() + "reading mouse event ", aPoint);
-        if (mParam == "road")
+        if (mBuildType == "road")
         {
             if (aMap.isTerrain<Edge>(aPoint))
             {
@@ -118,7 +129,7 @@ ActionStatus BuildHandler::processParameter(GameMap& aMap, std::string aParam, P
                 return ActionStatus::FAILED;
             }
         }
-        else if (mParam == "settlement" || mParam == "city" )
+        else if (mBuildType == "settlement" || mBuildType == "city" )
         {
             if (aMap.isTerrain<Vertex>(aPoint))
             {
@@ -139,26 +150,26 @@ ActionStatus BuildHandler::processParameter(GameMap& aMap, std::string aParam, P
 
 bool BuildHandler::parameterComplete() const
 {
-    return (mPoint != Point_t{0, 0} && mParam != "");
+    return (mPoint != Point_t{0, 0} && mBuildType != "");
 }
 
 void BuildHandler::resetParameters()
 {
     mPoint = Point_t{0, 0};
-    mParam = "";
+    mBuildType = "";
 }
 
 void BuildHandler::instruction(std::vector<std::string>& aReturnMsg) const
 {
-    if (mParam == "" && mPoint == Point_t{0, 0})
+    if (mBuildType == "" && mPoint == Point_t{0, 0})
     {
         aReturnMsg.push_back("Please first type in what you want to build: road, settlement, or city");
         aReturnMsg.push_back("Then click on the map where you want to build");
         return;
     }
-    else if (mParam != "" && mPoint == Point_t{0, 0})
+    else if (mBuildType != "" && mPoint == Point_t{0, 0})
     {
-        aReturnMsg.push_back("You want to build a " + mParam);
+        aReturnMsg.push_back("You want to build a " + mBuildType);
         aReturnMsg.push_back("Please click on the map where you want to build");
         return;
     }

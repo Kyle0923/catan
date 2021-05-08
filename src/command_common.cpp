@@ -15,6 +15,11 @@ std::string CommandHandler::description() const
     return "";
 }
 
+std::vector<std::string> CommandHandler::paramAutoFillPool() const
+{
+    return {};
+}
+
 std::string ExitHandler::command() const
 {
     return "exit";
@@ -45,7 +50,7 @@ ActionStatus HelpHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std
         {
             cmd += " - " + iter.second->description();
         }
-        if ( (aArgs.size() > 0 && isInVector(iter.first, aArgs) >= 0)
+        if ( (aArgs.size() > 0 && indexInVector(iter.first, aArgs) >= 0)
              || (aArgs.size() == 0) )
         {
             aReturnMsg.push_back(cmd);
