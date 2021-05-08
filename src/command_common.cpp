@@ -80,3 +80,8 @@ ActionStatus NextHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std
     aReturnMsg.push_back(Logger::formatString("Current Player is player#", nextPlayer));
     return ActionStatus::SUCCESS;
 }
+
+std::string PassHandler::command() const
+{
+    return "pass";
+}

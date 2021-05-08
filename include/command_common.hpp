@@ -45,9 +45,15 @@ public:
 
 class NextHandler: public CommandHandler
 {
-    virtual std::string command() const override final;
+    virtual std::string command() const override;
     virtual std::string description() const override final;
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
+};
+
+// alias of NextHandler
+class PassHandler: public NextHandler
+{
+    virtual std::string command() const override final;
 };
 
 class BuildHandler: public CommandHandler, public ParameterizedCommand
@@ -67,7 +73,6 @@ public:
     virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;
 
     BuildHandler();
-    virtual ~BuildHandler() = default;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -97,8 +102,6 @@ public:
     virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;
 
     ParameterExampleCommandHandler();
-    virtual ~ParameterExampleCommandHandler() = default;
-
 };
 
 class BuildingHandler: public CommandHandler

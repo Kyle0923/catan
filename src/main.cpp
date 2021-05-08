@@ -35,7 +35,10 @@ int main(int argc, char** argv)
 #ifdef RELEASE
     UserInterface ui(gameMap, std::make_unique<CommandDispatcher>(  \
         std::vector<CommandHandler*>({                              \
-            new BuildHandler()})                                    \
+            new BuildHandler(),                                     \
+            new NextHandler(),                                      \
+            new PassHandler(),                                      \
+        })
     ));
 
 #else
@@ -44,9 +47,12 @@ int main(int argc, char** argv)
     UserInterface ui(gameMap, std::make_unique<CommandDispatcher>(  \
         std::vector<CommandHandler*>({                              \
             new BuildHandler(),                                     \
+            new NextHandler(),                                      \
+            new PassHandler(),                                      \
             new BuildingHandler(),                                  \
             new SubCmdHandler(),                                    \
-            new ParameterExampleCommandHandler()})                  \
+            new ParameterExampleCommandHandler()                    \
+        })
     ));
 
 #endif /* ifdef RELEASE */
