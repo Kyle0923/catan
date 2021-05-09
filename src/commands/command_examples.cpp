@@ -106,16 +106,18 @@ ActionStatus BuildingHandler::act(GameMap& aMap, UserInterface& aUi, std::vector
     return ActionStatus::SUCCESS;
 }
 
-std::vector<std::string> BuildingHandler::paramAutoFillPool(size_t aParamIndex) const
+const std::vector<std::string>& BuildingHandler::paramAutoFillPool(size_t aParamIndex) const
 {
+    static const std::vector<std::string> param0 = {"default0"};
+    static const std::vector<std::string> param1 = {"default1"};
     switch (aParamIndex)
     {
     case 0:
-        return {"default0"};
+        return param0;
     case 1:
-        return {"default1"};
+        return param1;
     default:
-        return {};
+        return mEmptyVector;
     }
 }
 

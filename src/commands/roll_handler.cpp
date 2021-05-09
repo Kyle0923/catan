@@ -2,7 +2,7 @@
  * Project: catan
  * @file roll_handler.cpp
  *
- * @brief roll the dice, if rolled 7, push_back a robberMoveHandler for further handling
+ * @brief roll the dice, if rolled 7, push_back the mRobberMoveHandler for further handling
  *
  * @author Zonghao Huang <kyle0923@qq.com>
  *
@@ -28,8 +28,8 @@ ActionStatus RollHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std
     aReturnMsg.emplace_back("You rolled: " + std::to_string(dice));
     if (dice == 7)
     {
-        aUi.pushCommandHelper(std::make_unique<CommandParameterReader>(&robberMoveHandler));
-        robberMoveHandler.instruction(aReturnMsg);
+        aUi.pushCommandHelper(std::make_unique<CommandParameterReader>(&mRobberMoveHandler));
+        mRobberMoveHandler.instruction(aReturnMsg);
     }
     return ActionStatus::SUCCESS;
 }

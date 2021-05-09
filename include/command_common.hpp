@@ -67,7 +67,7 @@ public:
     virtual std::string command() const override final;
     virtual std::string description() const override final;
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
-    virtual std::vector<std::string> paramAutoFillPool(size_t aParamIndex) const override final;
+    virtual const std::vector<std::string>& paramAutoFillPool(size_t aParamIndex) const override final;
 
     virtual ActionStatus processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
     virtual bool parameterComplete() const override final;
@@ -98,10 +98,22 @@ public:
 class RollHandler: public CommandHandler
 {
 private:
-    RobberMoveHandler robberMoveHandler;
+    RobberMoveHandler mRobberMoveHandler;
 public:
     virtual std::string command() const override final;
     virtual std::string description() const override final;
+    virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
+};
+
+class DevelopmentCardHandler: public CommandHandler
+{
+private:
+    RobberMoveHandler mRobberMoveHandler;
+    const static std::vector<std::string> mPlayableDevCard;
+public:
+    virtual std::string command() const override final;
+    virtual std::string description() const override final;
+    virtual const std::vector<std::string>& paramAutoFillPool(size_t aParamIndex) const override final;
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
 };
 
@@ -147,7 +159,7 @@ class BuildingHandler: public CommandHandler
     // e.g., "build" and "building"
     virtual std::string command() const override final;
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
-    virtual std::vector<std::string> paramAutoFillPool(size_t aParamIndex) const override final;
+    virtual const std::vector<std::string>& paramAutoFillPool(size_t aParamIndex) const override final;
 };
 
 #endif /* RELEASE */

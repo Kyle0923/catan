@@ -58,10 +58,17 @@ public:
      * for auto complete, returns a vector of possible input parameters
      * @param aParamIndex - the index of the to-be-auto-complete parameter
      */
-    virtual std::vector<std::string> paramAutoFillPool(size_t aParamIndex) const;
+    virtual const std::vector<std::string>& paramAutoFillPool(size_t aParamIndex) const;
 
     CommandHandler() = default;
     virtual ~CommandHandler() = default;
+
+protected:
+    /**
+     * an empty std::string vector, paramAutoFillPool() returns const reference to reduce copying
+     * this empty vector is in static memory, so it is return-able as a reference
+     */
+    static const std::vector<std::string> mEmptyVector;
 };
 
 /**

@@ -30,13 +30,13 @@ std::string BuildHandler::description() const
     return "build settlement/city or road";
 }
 
-std::vector<std::string> BuildHandler::paramAutoFillPool(size_t aParamIndex) const
+const std::vector<std::string>& BuildHandler::paramAutoFillPool(size_t aParamIndex) const
 {
     if (mBuildType == "" && aParamIndex == 0)
     {
         return mBuildTypeMatchingPool;
     }
-    return {};
+    return mEmptyVector;
 }
 
 ActionStatus BuildHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)

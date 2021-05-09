@@ -10,14 +10,16 @@
 #include <map>
 #include "command_common.hpp"
 
+const std::vector<std::string> CommandHandler::mEmptyVector = {};
+
 std::string CommandHandler::description() const
 {
     return "";
 }
 
-std::vector<std::string> CommandHandler::paramAutoFillPool(size_t aParamIndex) const
+const std::vector<std::string>& CommandHandler::paramAutoFillPool(size_t aParamIndex) const
 {
-    return {};
+    return mEmptyVector;
 }
 
 std::string ExitHandler::command() const
