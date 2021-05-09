@@ -11,13 +11,14 @@
 
 CC := g++
 ARTIFACT := catan.exe
-SRC_DIR := src
-CMD_SRC_DIR := $(SRC_DIR)/commands
-SRC := $(wildcard $(SRC_DIR)/*.cpp)
-SRC += $(wildcard $(CMD_SRC_DIR)/*.cpp)
+SRC_DIR_BASE := src
+SRC_DIR := $(SRC_DIR_BASE) \
+	$(SRC_DIR_BASE)/commands \
+
+SRC := $(wildcard $(SRC_DIR:%=%/*.cpp))
 OBJ_DIR := bin
-# OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
-OBJ := $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(notdir $(SRC)))
+OBJ := $(SRC:$(SRC_DIR_BASE)/%.cpp=$(OBJ_DIR)/%.o)
+# OBJ := $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(notdir $(SRC)))
 INC := -Iinclude
 LIB :=
 
@@ -32,7 +33,7 @@ THIRD_PARTY_LIB_DIR := $(patsubst %/lib/,%, $(dir $(THIRD_PARTY_LIB)))
 INC += $(THIRD_PARTY_LIB_DIR:%=-I%/include)
 
 LIB += $(THIRD_PARTY_LIB_DIR:%=-L%/lib) \
-       $(patsubst lib%,-l%,$(basename $(notdir $(THIRD_PARTY_LIB)))) \
+	$(patsubst lib%,-l%,$(basename $(notdir $(THIRD_PARTY_LIB)))) \
 
 CPPFLAGS := $(INC) -MMD -MP
 CFLAGS   := -Wall -std=c++14
@@ -58,10 +59,7 @@ ifneq ($(RELEASE),)
 	@echo -e "\nBuilding for RELEASE completed: $(ARTIFACT)"
 endif
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR) $(THIRD_PARTY_LIB_DIR)
-	$(CC) $(CPPFLAGS) $(CFLAGS) -MF $(patsubst %.o,%.d,$@) -c $< -o $@
-
-$(OBJ_DIR)/%.o: $(CMD_SRC_DIR)/%.cpp | $(OBJ_DIR) $(THIRD_PARTY_LIB_DIR)
+$(OBJ_DIR)/%.o: $(SRC_DIR_BASE)/%.cpp | $(OBJ_DIR) $(THIRD_PARTY_LIB_DIR)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -MF $(patsubst %.o,%.d,$@) -c $< -o $@
 
 $(THIRD_PARTY_LIB): $(THIRD_PARTY_LIB_DIR)
@@ -69,7 +67,7 @@ $(THIRD_PARTY_LIB_DIR):
 	$(MAKE) -C $@
 
 $(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)
+	mkdir -p $(patsubst $(SRC_DIR_BASE)%,$(OBJ_DIR)%,$(SRC_DIR))
 
 lint:
 	bash ./lint.sh
