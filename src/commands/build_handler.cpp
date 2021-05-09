@@ -162,10 +162,10 @@ void BuildHandler::resetParameters()
 
 void BuildHandler::instruction(std::vector<std::string>& aReturnMsg) const
 {
-    if (mBuildType == "" && mPoint == Point_t{0, 0})
+    if (mBuildType == "")
     {
-        aReturnMsg.push_back("Please first type in what you want to build: road, settlement, or city");
-        aReturnMsg.push_back("Then click on the map where you want to build");
+        aReturnMsg.push_back("What do you want to build:");
+        aReturnMsg.push_back(stringVectorJoin(mBuildTypeMatchingPool));
         return;
     }
     else if (mBuildType != "" && mPoint == Point_t{0, 0})

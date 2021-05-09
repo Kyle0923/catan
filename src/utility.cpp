@@ -145,6 +145,29 @@ std::string actionStatusToStr(const ActionStatus aStatus)
 #undef CASE_PRINT
 }
 
+bool stringToInteger(const std::string& aToRead, int& aReturnInt)
+{
+    int rtn;
+    char* endpos = nullptr;
+    rtn = std::strtol(aToRead.c_str(), &endpos, 10);
+    if (errno == ERANGE || endpos == aToRead.c_str())
+    {
+        return false;
+    }
+    aReturnInt = rtn;
+    return true;
+}
+
+std::string stringVectorJoin(const std::vector<std::string>& aStrVec)
+{
+    std::string rtn;
+    for (auto str : aStrVec)
+    {
+        rtn += "[" + str + "] ";
+    }
+    return rtn;
+}
+
 std::string& trimLeadingSpace(std::string& aString)
 {
     static const std::string whitespaces (" \t\f\v\n\r");

@@ -105,16 +105,27 @@ public:
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
 };
 
-class DevelopmentCardHandler: public CommandHandler
+class DevelopmentCardHandler: public CommandHandler, public ParameterizedCommand
 {
 private:
+    std::string mAction;
+    int mDevCard;
     RobberMoveHandler mRobberMoveHandler;
+    const static std::vector<std::string> mActionPool;
     const static std::vector<std::string> mPlayableDevCard;
 public:
     virtual std::string command() const override final;
     virtual std::string description() const override final;
     virtual const std::vector<std::string>& paramAutoFillPool(size_t aParamIndex) const override final;
+    virtual size_t currentParamIndex() const override final;
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
+
+    virtual ActionStatus processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+    virtual bool parameterComplete() const override final;
+    virtual void resetParameters() override final;
+    virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;
+
+    DevelopmentCardHandler();
 };
 
 class StatusHandler: public CommandHandler

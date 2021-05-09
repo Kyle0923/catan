@@ -27,13 +27,7 @@ ActionStatus StatusHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<s
     int playerId = -1;
     if (aArgs.size() > 0)
     {
-        char* endpos = nullptr;
-        playerId = std::strtol(aArgs.front().c_str(), &endpos, 10);
-        if (errno == ERANGE || endpos == aArgs.front().c_str())
-        {
-            // strtol failed, fallback to default -1
-            playerId = -1;
-        }
+        stringToInteger(aArgs.front(), playerId);
     }
     aMap.summarizePlayerStatus(playerId, aReturnMsg);
     return ActionStatus::SUCCESS;

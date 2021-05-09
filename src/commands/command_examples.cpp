@@ -72,7 +72,7 @@ ActionStatus ParameterExampleCommandHandler::processParameter(GameMap& aMap, std
         aReturnMsg.push_back("entered: " + aParam);
         return ActionStatus::SUCCESS;
     }
-    return ActionStatus::FAILED;
+    return ActionStatus::SUCCESS;
 }
 
 bool ParameterExampleCommandHandler::parameterComplete() const

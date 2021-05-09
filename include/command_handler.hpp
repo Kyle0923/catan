@@ -56,9 +56,12 @@ public:
 
     /**
      * for auto complete, returns a vector of possible input parameters
+     * user of this command should also implement currentParamIndex() if more than 1 param is expected
      * @param aParamIndex - the index of the to-be-auto-complete parameter
      */
     virtual const std::vector<std::string>& paramAutoFillPool(size_t aParamIndex) const;
+    // the index of current-reading parameter
+    virtual size_t currentParamIndex() const;
 
     CommandHandler() = default;
     virtual ~CommandHandler() = default;

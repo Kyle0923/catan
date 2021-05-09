@@ -22,6 +22,11 @@ const std::vector<std::string>& CommandHandler::paramAutoFillPool(size_t aParamI
     return mEmptyVector;
 }
 
+size_t CommandHandler::currentParamIndex() const
+{
+    return 0;
+}
+
 std::string ExitHandler::command() const
 {
     return "exit";

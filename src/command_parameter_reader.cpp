@@ -44,10 +44,11 @@ ActionStatus CommandParameterReader::act(GameMap& aMap, UserInterface& aUi, std:
         return ActionStatus::SUCCESS;
     }
 
+    std::vector<std::string> params = splitString(aInput);
     if (!pParamCmd)
     {
         // not inherit from ParameterizedCommand
-        ActionStatus rc = mCmd->act(aMap, aUi, splitString(aInput), aReturnMsg);
+        ActionStatus rc = mCmd->act(aMap, aUi, params, aReturnMsg);
         INFO_LOG(mCmd->command() + "::act() returned " + actionStatusToStr(rc));
         if (rc != ActionStatus::PARAM_REQUIRED)
         {
@@ -64,32 +65,42 @@ ActionStatus CommandParameterReader::act(GameMap& aMap, UserInterface& aUi, std:
         return ActionStatus::FAILED;
     }
 
-    if (pParamCmd->processParameter(aMap, aInput, aPoint, aReturnMsg) != ActionStatus::SUCCESS)
+    bool readSuccessful = true;
+    for (std::string param : params)
     {
-        DEBUG_LOG_L3("read param failed for ", mCmd->command());
-        pParamCmd->instruction(aReturnMsg);
-        return ActionStatus::FAILED;
-    }
-    DEBUG_LOG_L3("read param succeeded for ", mCmd->command());
-    if (pParamCmd->parameterComplete())
-    {
-            DEBUG_LOG_L3("read param completed ", mCmd->command());
-            aReturnMsg.clear();
-            mCmd->act(aMap, aUi, {}, aReturnMsg);
-            pParamCmd->resetParameters();
-            return ActionStatus::EXIT;
+        ActionStatus rc = pParamCmd->processParameter(aMap, param, aPoint, aReturnMsg);
+        readSuccessful &= (rc == ActionStatus::SUCCESS);
+
+        INFO_LOG(mCmd->command() + "::processParameter(), param: " + param + ", ", \
+                    aPoint, "; returned " + actionStatusToStr(rc));
     }
 
-    pParamCmd->instruction(aReturnMsg);
-    DEBUG_LOG_L3("read param continue... ", mCmd->command());
-    // read-in succeeded, but more parameters are required
-    return ActionStatus::SUCCESS;
+    if (!pParamCmd->parameterComplete())
+    {
+        if (!readSuccessful)
+        {
+            DEBUG_LOG_L3("read param failed for ", mCmd->command());
+        }
+        else
+        {
+            DEBUG_LOG_L3("parameter required for ", mCmd->command());
+        }
+        pParamCmd->instruction(aReturnMsg);
+        return ActionStatus::PARAM_REQUIRED;
+    }
+
+    INFO_LOG("read param completed for " + mCmd->command() + ", calling act()");
+    aReturnMsg.clear();
+    mCmd->act(aMap, aUi, {}, aReturnMsg);
+    pParamCmd->resetParameters();
+    return ActionStatus::EXIT;
+
 }
 
 std::vector<std::string> CommandParameterReader::getPossibleInputs(const std::string& aInput, std::string* const aAutoFillString) const
 {
     std::vector<std::string> params = splitString(aInput);
-    std::vector<std::string> matchPool = mCmd->paramAutoFillPool(params.size() - 1);
+    std::vector<std::string> matchPool = mCmd->paramAutoFillPool(mCmd->currentParamIndex() + params.size() - 1);
     if (params.size() == 1)
     {
         matchPool.emplace_back("help");

@@ -32,6 +32,7 @@ enum class ResourceTypes
 };
 constexpr size_t CONSUMABLE_RESOURCE_SIZE = static_cast<size_t>(ResourceTypes::ORE) + 1U;
 
+// the order in DevelopmentCardTypes must be exactly the same as in DevelopmentCardHandler::mPlayableDevCard
 enum DevelopmentCardTypes
 {
     KNIGHT = 0,

@@ -39,6 +39,7 @@ int main(int argc, char** argv)
             new PassHandler(),
             new RollHandler(),
             new StatusHandler(),
+            new DevelopmentCardHandler(),
 #ifndef RELEASE
             // these commands are only for testing in development
             new BuildingHandler(),

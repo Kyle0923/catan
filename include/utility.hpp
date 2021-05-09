@@ -63,6 +63,13 @@ std::string summarizeEnumArray(const std::array<T, N>& aEnumArray, std::string (
     return message;
 };
 
+// read string, return true if successful or false if failed
+// if failed, aReturnInt is not changed
+extern bool stringToInteger(const std::string& aToRead, int& aReturnInt);
+
+// join a string_vector in the form of "[foo] [bar] [baz]""
+extern std::string stringVectorJoin(const std::vector<std::string>& aStrVec);
+
 extern std::string& trimLeadingSpace(std::string& aString);
 extern std::string& trimTrailingSpace(std::string& aString);
 
