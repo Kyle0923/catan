@@ -16,9 +16,16 @@ SRC_DIR := $(SRC_DIR_BASE) \
 	$(SRC_DIR_BASE)/commands \
 
 SRC := $(wildcard $(SRC_DIR:%=%/*.cpp))
-OBJ_DIR := bin
-OBJ := $(SRC:$(SRC_DIR_BASE)/%.cpp=$(OBJ_DIR)/%.o)
-# OBJ := $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(notdir $(SRC)))
+
+BIN_DIR_BASE := bin
+ifneq ($(RELEASE),)
+BIN_DIR := $(BIN_DIR_BASE)/release
+else
+BIN_DIR := $(BIN_DIR_BASE)/debug
+endif
+
+OBJ := $(SRC:$(SRC_DIR_BASE)/%.cpp=$(BIN_DIR)/%.o)
+# OBJ := $(patsubst %.cpp,$(BIN_DIR)/%.o,$(notdir $(SRC)))
 INC := -Iinclude
 LIB :=
 
@@ -59,21 +66,21 @@ ifneq ($(RELEASE),)
 	@echo -e "\nBuilding for RELEASE completed: $(ARTIFACT)"
 endif
 
-$(OBJ_DIR)/%.o: $(SRC_DIR_BASE)/%.cpp | $(OBJ_DIR) $(THIRD_PARTY_LIB_DIR)
+$(BIN_DIR)/%.o: $(SRC_DIR_BASE)/%.cpp | $(BIN_DIR) $(THIRD_PARTY_LIB_DIR)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -MF $(patsubst %.o,%.d,$@) -c $< -o $@
 
 $(THIRD_PARTY_LIB): $(THIRD_PARTY_LIB_DIR)
 $(THIRD_PARTY_LIB_DIR):
 	$(MAKE) -C $@
 
-$(OBJ_DIR):
-	mkdir -p $(patsubst $(SRC_DIR_BASE)%,$(OBJ_DIR)%,$(SRC_DIR))
+$(BIN_DIR):
+	mkdir -p $(patsubst $(SRC_DIR_BASE)%,$(BIN_DIR)%,$(SRC_DIR))
 
 lint:
 	bash ./lint.sh
 
 clean:
-	rm -fr $(OBJ_DIR)
+	rm -fr $(BIN_DIR_BASE)
 	rm -f $(ARTIFACT) $(ARTIFACT:.exe=_release.exe)
 
 clean_all: clean $(CLEAN_THIRD_PARTY)
