@@ -88,6 +88,11 @@ int Player::getId() const
     return mId;
 }
 
+const std::array<size_t, CONSUMABLE_RESOURCE_SIZE>& Player::getResources() const
+{
+    return mResourcesOnHand;
+}
+
 bool Player::hasResources(ResourceTypes aResource, size_t aAmount) const
 {
     if (mResourcesOnHand.at(static_cast<size_t>(aResource)) >= aAmount)

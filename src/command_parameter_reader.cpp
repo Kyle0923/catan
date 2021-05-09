@@ -29,6 +29,21 @@ ActionStatus CommandParameterReader::act(GameMap& aMap, UserInterface& aUi, std:
         return ActionStatus::EXIT;
     }
 
+    if (aInput.find("help") == 0)
+    {
+        if (pParamCmd)
+        {
+            pParamCmd->instruction(aReturnMsg);
+        }
+        else
+        {
+            aReturnMsg.emplace_back(mCmd->description());
+        }
+        aReturnMsg.emplace_back("");
+        aReturnMsg.emplace_back("exit - exit current command");
+        return ActionStatus::SUCCESS;
+    }
+
     if (!pParamCmd)
     {
         // not inherit from ParameterizedCommand
@@ -41,18 +56,10 @@ ActionStatus CommandParameterReader::act(GameMap& aMap, UserInterface& aUi, std:
         return ActionStatus::PARAM_REQUIRED;
     }
 
-    if (aInput.find("help") == 0)
-    {
-        pParamCmd->instruction(aReturnMsg);
-        aReturnMsg.push_back("");
-        aReturnMsg.push_back("exit - exit current command");
-        return ActionStatus::SUCCESS;
-    }
-
     if (aInput == "" && aPoint == Point_t{0, 0})
     {
         // no param provided
-        aReturnMsg.push_back("Parameter needed");
+        aReturnMsg.emplace_back("Parameter needed");
         pParamCmd->instruction(aReturnMsg);
         return ActionStatus::FAILED;
     }
@@ -60,6 +67,7 @@ ActionStatus CommandParameterReader::act(GameMap& aMap, UserInterface& aUi, std:
     if (pParamCmd->processParameter(aMap, aInput, aPoint, aReturnMsg) != ActionStatus::SUCCESS)
     {
         DEBUG_LOG_L3("read param failed for ", mCmd->command());
+        pParamCmd->instruction(aReturnMsg);
         return ActionStatus::FAILED;
     }
     DEBUG_LOG_L3("read param succeeded for ", mCmd->command());
@@ -71,6 +79,8 @@ ActionStatus CommandParameterReader::act(GameMap& aMap, UserInterface& aUi, std:
             pParamCmd->resetParameters();
             return ActionStatus::EXIT;
     }
+
+    pParamCmd->instruction(aReturnMsg);
     DEBUG_LOG_L3("read param continue... ", mCmd->command());
     // read-in succeeded, but more parameters are required
     return ActionStatus::SUCCESS;

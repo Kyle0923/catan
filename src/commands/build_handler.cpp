@@ -102,12 +102,10 @@ ActionStatus BuildHandler::processParameter(GameMap& aMap, std::string aParam, P
         if (indexInVector(aParam, mBuildTypeMatchingPool) >= 0)
         {
             mBuildType = aParam;
-            instruction(aReturnMsg);
             return ActionStatus::SUCCESS;
         }
         else
         {
-            instruction(aReturnMsg);
             return ActionStatus::FAILED;
         }
     }
@@ -125,7 +123,6 @@ ActionStatus BuildHandler::processParameter(GameMap& aMap, std::string aParam, P
             else
             {
                 aReturnMsg.push_back("Player clicked is not an edge");
-                instruction(aReturnMsg);
                 return ActionStatus::FAILED;
             }
         }
@@ -139,7 +136,6 @@ ActionStatus BuildHandler::processParameter(GameMap& aMap, std::string aParam, P
             else
             {
                 aReturnMsg.push_back("Player clicked is not a vertex");
-                instruction(aReturnMsg);
                 return ActionStatus::FAILED;
             }
         }

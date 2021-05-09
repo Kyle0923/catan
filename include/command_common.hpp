@@ -75,6 +75,34 @@ public:
     BuildHandler();
 };
 
+// RobberMoveHandler should only be used by RollHandler
+class RobberMoveHandler: public CommandHandler, public ParameterizedCommand
+{
+private:
+    Point_t mRobberDestination;
+    Point_t mRobbingVertex;
+public:
+    virtual std::string command() const override final;
+    virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
+
+    virtual ActionStatus processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+    virtual bool parameterComplete() const override final;
+    virtual void resetParameters() override final;
+    virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;
+
+    RobberMoveHandler();
+};
+
+class RollHandler: public CommandHandler
+{
+private:
+    RobberMoveHandler robberMoveHandler;
+public:
+    virtual std::string command() const override final;
+    virtual std::string description() const override final;
+    virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
+};
+
 ////////////////////////////////////////////////////////////////////////////////////
 // the commands below are meant to be used for testing in development.
 // they should not be built when RELEASE=1

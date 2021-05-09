@@ -41,6 +41,7 @@ public:
     size_t getPlayerLongestRoadSize() const;
     int getId() const;
 
+    const std::array<size_t, CONSUMABLE_RESOURCE_SIZE>& getResources() const;
     bool hasResources(ResourceTypes aResource, size_t aAmount) const;
     bool hasResourceForRoad() const;
     bool hasResourceForSettlement() const;

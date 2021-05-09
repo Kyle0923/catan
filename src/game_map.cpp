@@ -271,7 +271,7 @@ std::vector<int> GameMap::randomizeResource(SequenceConfig_t aConfig)
     {
         for (size_t counter = 0U; counter < aConfig[index]; ++counter)
         {
-            resourceSequence.push_back(index);
+            resourceSequence.emplace_back(index);
         }
     }
     std::shuffle(resourceSequence.begin(), resourceSequence.end(), mEngine);
@@ -398,6 +398,24 @@ int GameMap::assignResourceAndDice()
     return 0;
 }
 
+Terrain* GameMap::_getTerrain(const int x, const int y) const
+{
+    if (boundaryCheck(x,y))
+    {
+        return mGameMap.at(y).at(x);
+    }
+    else
+    {
+        WARN_LOG("Coord (", x, ", ", y, ") is out of bound");
+        return nullptr;
+    }
+}
+
+Terrain* GameMap::_getTerrain(const Point_t& aPoint) const
+{
+    return _getTerrain(aPoint.x, aPoint.y);
+}
+
 const Terrain* GameMap::getTerrain(const int x, const int y) const
 {
     if (boundaryCheck(x,y))
@@ -485,7 +503,7 @@ int GameMap::setTerrainColor(const int x, const int y, ColorPairIndex aColorInde
         return 1;
     }
     DEBUG_LOG_L3("setting color#", (int)aColorIndex, " for Point{", x, ", ", y, '}');
-    mGameMap.at(y).at(x)->setColor(aColorIndex);
+    _getTerrain(x, y)->setColor(aColorIndex);
     return 0;
 
 }
@@ -708,10 +726,10 @@ int GameMap::buildColony(const Point_t aPoint, const ColonyType aColony)
         WARN_LOG("buildColony called with ColonyType::NONE");
         return 1;
     }
-    Vertex* const pVertex = dynamic_cast<Vertex*>(mGameMap.at(aPoint.y).at(aPoint.x));
+    Vertex* const pVertex = dynamic_cast<Vertex*>(_getTerrain(aPoint));
     if (!pVertex)
     {
-        WARN_LOG("Expected vertex at ", aPoint, ", actual: " + mGameMap.at(aPoint.y).at(aPoint.x)->getStringId());
+        WARN_LOG("Expected vertex at ", aPoint, ", actual: " + _getTerrain(aPoint)->getStringId());
         return 1;
     }
 
@@ -762,10 +780,10 @@ int GameMap::buildRoad(const Point_t aPoint)
         WARN_LOG("buildRoad called for an out-of-bound ", aPoint);
         return 1;
     }
-    Edge* const pEdge = dynamic_cast<Edge*>(mGameMap.at(aPoint.y).at(aPoint.x));
+    Edge* const pEdge = dynamic_cast<Edge*>(_getTerrain(aPoint));
     if (!pEdge)
     {
-        WARN_LOG("Expected edge at ", aPoint, ", actual: " + mGameMap.at(aPoint.y).at(aPoint.x)->getStringId());
+        WARN_LOG("Expected edge at ", aPoint, ", actual: " + _getTerrain(aPoint)->getStringId());
         return 1;
     }
     if (pEdge->getOwner() != -1)
@@ -791,4 +809,69 @@ int GameMap::buildRoad(const Point_t aPoint)
     mPlayers[mCurrentPlayer]->addRoad(*pEdge);
 
     return pEdge->setOwner(mCurrentPlayer);
+}
+
+int GameMap::moveRobber(const Point_t aDestination)
+{
+    if (!isTerrain<Land>(aDestination))
+    {
+        return 1;
+    }
+    int landId = _getTerrain(aDestination)->getId();
+    mLands.at(mRobLandId)->rob(false);
+    mLands.at(landId)->rob(true);
+    mRobLandId = landId;
+    return 0;
+}
+
+int GameMap::robVertex(const Point_t aVertex, ResourceTypes& aRobResource)
+{
+    Vertex* const pVertex = dynamic_cast<Vertex*>(_getTerrain(aVertex));
+    if (!pVertex)
+    {
+        return 1;
+    }
+    int owner = pVertex->getOwner();
+    if (owner == -1)
+    {
+        return 2;
+    }
+    auto resource = mPlayers.at(owner)->getResources();
+    SequenceConfig_t seqConfig(resource);
+    std::vector<int> randomResource = randomizeResource(seqConfig);
+    if (randomResource.size() == 0)
+    {
+        return 3;
+    }
+    aRobResource = static_cast<ResourceTypes>(randomResource.front());
+    mPlayers.at(owner)->consumeResources(aRobResource, 1U);
+    mPlayers.at(mCurrentPlayer)->addResources(aRobResource, 1U);
+    return 0;
+}
+
+int GameMap::rollDice()
+{
+    static std::uniform_int_distribution<int> distribution(1,6);
+    int dice = distribution(mEngine) + distribution(mEngine);
+    INFO_LOG("Player#", mCurrentPlayer, " rolled: ", dice);
+    for (Land* const pLand : mLands)
+    {
+        if (pLand->getDiceNum() == dice && !pLand->isUnderRobber())
+        {
+            for (const Vertex* const pConstVertex : pLand->getAdjacentVertices())
+            {
+                const int playerId = pConstVertex->getOwner();
+                if (playerId != -1)
+                {
+                    // vertex is owned by Player
+                    const ResourceTypes resource = pLand->getResourceType();
+                    const size_t numOfResource = static_cast<size_t>(pConstVertex->getColonyType());
+
+                    DEBUG_LOG_L3("Adding ", numOfResource, " " + resourceTypesToStr(resource) + " to Player#", playerId);
+                    mPlayers.at(playerId)->addResources(resource, numOfResource);
+                }
+            }
+        }
+    }
+    return dice;
 }

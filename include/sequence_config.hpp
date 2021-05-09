@@ -14,6 +14,7 @@
 #define INCLUDE_SEQUENCE_CONFIG_HPP
 
 #include <vector>
+#include <array>
 #include "common.hpp"
 
 /* SequenceConfig_t is an array whose value represents the num of occurrences of the index in the output
@@ -24,6 +25,13 @@ struct SequenceConfig_t
 {
     std::vector<size_t> mConfig;
     SequenceConfig_t(const size_t aSize);
+    SequenceConfig_t(const std::vector<size_t>& aVec);
+    template<size_t N>
+    SequenceConfig_t(const std::array<size_t, N>& aArray) :
+        mConfig(aArray.begin(), aArray.end())
+    {
+        //empty
+    };
     size_t size() const;
     size_t& operator[](const size_t aIndex);
     size_t& operator[](const ResourceTypes aIndex);

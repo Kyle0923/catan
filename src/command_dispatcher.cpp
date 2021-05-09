@@ -120,7 +120,7 @@ int CommandDispatcher::addCommandHandler(CommandHandler* const aHandler)
     }
 
     mCommandHandlers.emplace(aHandler->command(), aHandler);
-    mCommands.push_back(aHandler->command());
+    mCommands.emplace_back(aHandler->command());
     return 0;
 }
 

@@ -38,6 +38,7 @@ int main(int argc, char** argv)
             new BuildHandler(),                                     \
             new NextHandler(),                                      \
             new PassHandler(),                                      \
+            new RollHandler(),                                      \
         })
     ));
 
@@ -49,6 +50,7 @@ int main(int argc, char** argv)
             new BuildHandler(),                                     \
             new NextHandler(),                                      \
             new PassHandler(),                                      \
+            new RollHandler(),                                      \
             new BuildingHandler(),                                  \
             new SubCmdHandler(),                                    \
             new ParameterExampleCommandHandler()                    \

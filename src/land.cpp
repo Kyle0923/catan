@@ -136,7 +136,7 @@ Land::Land(const int aId, const Point_t aTopLeft, const ResourceTypes aResourceT
     Terrain(aId, aTopLeft),
     mResourceType(aResourceType),
     mDiceNum(0),
-    mIsUnderRob(false)
+    mIsUnderRobber(false)
 {
     // empty
 }
@@ -148,7 +148,17 @@ void Land::setDiceNum(int aDice)
 
 void Land::rob(bool aIsRob)
 {
-    mIsUnderRob = aIsRob;
+    mIsUnderRobber = aIsRob;
+}
+
+bool Land::isUnderRobber() const
+{
+    return mIsUnderRobber;
+}
+
+const std::vector<const Vertex*>& Land::getAdjacentVertices() const
+{
+    return mAdjacentVertices;
 }
 
 char Land::getCharRepresentation(const size_t aPointX, const size_t aPointY, const bool aUseId) const
@@ -188,11 +198,11 @@ char Land::getCharRepresentation(const size_t aPointX, const size_t aPointY, con
         if (mResourceType != ResourceTypes::DESERT)
         {
             // print dice num
-            const std::string robber = (mIsUnderRob ? "#" : "");
+            const std::string robber = (mIsUnderRobber ? "#" : "");
             const std::string label = robber + std::to_string(mDiceNum) + robber;
             return printAtMiddle(WIDTH, offset, label);
         }
-        else if (mIsUnderRob)
+        else if (mIsUnderRobber)
         {
             // desert under rob
             return printAtMiddle(WIDTH, offset, "##");

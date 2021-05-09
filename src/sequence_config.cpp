@@ -5,6 +5,12 @@ SequenceConfig_t::SequenceConfig_t(const size_t aSize) : mConfig(aSize, 0)
     //empty
 }
 
+SequenceConfig_t::SequenceConfig_t(const std::vector<size_t>& aVec) :
+    mConfig(aVec)
+{
+    //empty
+}
+
 size_t SequenceConfig_t::size() const
 {
     return mConfig.size();
