@@ -39,6 +39,7 @@ private:
     CommandDispatcher* const mDispatcher;
 public:
     virtual std::string command() const override final;
+    virtual std::string description() const override final;
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
     HelpHandler(CommandDispatcher* const aDispatcher);
 };
@@ -64,6 +65,7 @@ private:
     const static std::vector<std::string> mBuildTypeMatchingPool; // possible values of mBuildType
 public:
     virtual std::string command() const override final;
+    virtual std::string description() const override final;
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
     virtual std::vector<std::string> paramAutoFillPool(size_t aParamIndex) const override final;
 
@@ -98,6 +100,13 @@ class RollHandler: public CommandHandler
 private:
     RobberMoveHandler robberMoveHandler;
 public:
+    virtual std::string command() const override final;
+    virtual std::string description() const override final;
+    virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
+};
+
+class StatusHandler: public CommandHandler
+{
     virtual std::string command() const override final;
     virtual std::string description() const override final;
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;

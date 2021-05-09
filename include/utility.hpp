@@ -12,6 +12,7 @@
 #define INCLUDE_UTILITY_HPP
 
 #include <vector>
+#include <array>
 #include <algorithm>
 #include "common.hpp"
 
@@ -50,6 +51,17 @@ extern std::string resourceTypesToStr(const ResourceTypes aResource);
 extern std::string developmentCardTypesToStr(const DevelopmentCardTypes aCard);
 extern std::string colonyTypesToStr(const ColonyType aColony);
 extern std::string actionStatusToStr(const ActionStatus aStatus);
+
+template<typename T, typename U, size_t N, std::enable_if_t<N != 0>* = nullptr>
+std::string summarizeEnumArray(const std::array<T, N>& aEnumArray, std::string (*enumToStringFunc)(const U))
+{
+    std::string message = enumToStringFunc(static_cast<U>(0U)) + ": " + std::to_string(aEnumArray.at(0U));
+    for (size_t index = 1; index < N; ++index)
+    {
+        message += ", " + enumToStringFunc(static_cast<U>(index)) + ": " + std::to_string(aEnumArray.at(index));
+    }
+    return message;
+};
 
 extern std::string& trimLeadingSpace(std::string& aString);
 extern std::string& trimTrailingSpace(std::string& aString);

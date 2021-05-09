@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <chrono>
 #include <set>
+#include <numeric>
 #include <cstdlib>
 #include "logger.hpp"
 #include "utility.hpp"
@@ -712,6 +713,55 @@ bool GameMap::playerHasResourceForSettlement() const
 bool GameMap::playerHasResourceForCity() const
 {
     return mPlayers[mCurrentPlayer]->hasResourceForCity();
+}
+
+void GameMap::summarizePlayerStatus(int aPlayerId, std::vector<std::string>& aReturnMsg) const
+{
+    if (aPlayerId == -1)
+    {
+        aPlayerId = mCurrentPlayer;
+    }
+    if (aPlayerId < 0 || aPlayerId >= static_cast<int>(mPlayers.size()))
+    {
+        WARN_LOG("in summarizePlayerStatus() playerId is out-of-range");
+        aReturnMsg.emplace_back("incorrect player ID");
+        return;
+    }
+    const Player* const player = mPlayers.at(aPlayerId);
+    auto playerResources = player->getResources();
+    auto playerDevCard = player->getDevCards();
+    auto playerDevCardUsed = player->getUsedDevCards();
+    const size_t victoryPoint = player->getVictoryPoint(aPlayerId == static_cast<int>(mCurrentPlayer));
+
+    aReturnMsg.emplace_back("Status of Player#" + std::to_string(aPlayerId));
+    aReturnMsg.emplace_back("");
+    if (aPlayerId == static_cast<int>(mCurrentPlayer))
+    {
+        // current player, show all information
+        aReturnMsg.emplace_back("Resources: ");
+        aReturnMsg.emplace_back("  " + summarizeEnumArray(playerResources, resourceTypesToStr));
+        aReturnMsg.emplace_back("");
+
+        aReturnMsg.emplace_back("Development card: ");
+        aReturnMsg.emplace_back("  " + summarizeEnumArray(playerDevCard, developmentCardTypesToStr));
+        aReturnMsg.emplace_back("");
+
+        aReturnMsg.emplace_back("Used development card: ");
+        aReturnMsg.emplace_back("  " + summarizeEnumArray(playerDevCardUsed, developmentCardTypesToStr));
+        aReturnMsg.emplace_back("");
+
+    }
+    else
+    {
+        // current player, only show public information
+        aReturnMsg.emplace_back("Number of Resources: " + \
+                std::to_string(std::accumulate(playerResources.begin(), playerResources.end(), 0U)));
+        aReturnMsg.emplace_back("Number of Development card: " + \
+                std::to_string(std::accumulate(playerDevCard.begin(), playerDevCard.end(), 0U)));
+        aReturnMsg.emplace_back("Number of Used development card: " + \
+                std::to_string(std::accumulate(playerDevCardUsed.begin(), playerDevCardUsed.end(), 0U)));
+    }
+    aReturnMsg.emplace_back(Logger::formatString("Victory point: ", victoryPoint));
 }
 
 int GameMap::buildColony(const Point_t aPoint, const ColonyType aColony)

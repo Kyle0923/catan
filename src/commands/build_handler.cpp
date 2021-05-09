@@ -25,6 +25,11 @@ std::string BuildHandler::command() const
     return "build";
 }
 
+std::string BuildHandler::description() const
+{
+    return "build settlement/city or road";
+}
+
 std::vector<std::string> BuildHandler::paramAutoFillPool(size_t aParamIndex) const
 {
     if (mBuildType == "" && aParamIndex == 0)

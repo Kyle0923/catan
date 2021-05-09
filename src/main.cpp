@@ -32,32 +32,21 @@ int main(int argc, char** argv)
     MapIO mapFile(cliOpt.getOpt<CliOptIndex::MAP_FILE_PATH>());
     mapFile.readMap(gameMap);
 
-#ifdef RELEASE
-    UserInterface ui(gameMap, std::make_unique<CommandDispatcher>(  \
-        std::vector<CommandHandler*>({                              \
-            new BuildHandler(),                                     \
-            new NextHandler(),                                      \
-            new PassHandler(),                                      \
-            new RollHandler(),                                      \
+    UserInterface ui(gameMap, std::make_unique<CommandDispatcher>(
+        std::vector<CommandHandler*>({
+            new BuildHandler(),
+            new NextHandler(),
+            new PassHandler(),
+            new RollHandler(),
+            new StatusHandler(),
+#ifndef RELEASE
+            // these commands are only for testing in development
+            new BuildingHandler(),
+            new SubCmdHandler(),
+            new ParameterExampleCommandHandler()
+#endif /* ifndef RELEASE*/
         })
     ));
-
-#else
-
-    // experiment
-    UserInterface ui(gameMap, std::make_unique<CommandDispatcher>(  \
-        std::vector<CommandHandler*>({                              \
-            new BuildHandler(),                                     \
-            new NextHandler(),                                      \
-            new PassHandler(),                                      \
-            new RollHandler(),                                      \
-            new BuildingHandler(),                                  \
-            new SubCmdHandler(),                                    \
-            new ParameterExampleCommandHandler()                    \
-        })
-    ));
-
-#endif /* ifdef RELEASE */
 
     gameMap.initMap();
     gameMap.logMap();

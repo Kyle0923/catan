@@ -130,6 +130,11 @@ public:
     bool playerHasResourceForRoad() const;        // current player implied
     bool playerHasResourceForSettlement() const;  // current player implied
     bool playerHasResourceForCity() const;        // current player implied
+    /**
+     * @brief for StatusHandler command, stringify player's status,
+     * @param aPlayerId - player ID, or -1 for current player ID
+     */
+    void summarizePlayerStatus(int aPlayerId, std::vector<std::string>& aReturnMsg) const;
 
     // roll dice, assign resources, move robber if rolled 7
     // return the dice

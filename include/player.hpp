@@ -42,13 +42,15 @@ public:
     int getId() const;
 
     const std::array<size_t, CONSUMABLE_RESOURCE_SIZE>& getResources() const;
+    const std::array<size_t, DEVELOPMENT_CARD_TYPE_SIZE>& getDevCards() const;
+    const std::array<size_t, DEVELOPMENT_CARD_TYPE_SIZE>& getUsedDevCards() const;
     bool hasResources(ResourceTypes aResource, size_t aAmount) const;
     bool hasResourceForRoad() const;
     bool hasResourceForSettlement() const;
     bool hasResourceForCity() const;
 
     // aPublic: to show to public? when set to true, exclude devCard(Victory Point Card)
-    size_t getVictoryPoint(bool aPublic);
+    size_t getVictoryPoint(bool aPublic) const;
 
     Player(int aId);
 };

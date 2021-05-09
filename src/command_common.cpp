@@ -40,6 +40,11 @@ std::string HelpHandler::command() const
     return "help";
 }
 
+std::string HelpHandler::description() const
+{
+    return "print help message";
+}
+
 ActionStatus HelpHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
 {
     const std::map<std::string, CommandHandler*>& handlers = mDispatcher->getHandlers();

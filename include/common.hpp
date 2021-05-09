@@ -38,9 +38,9 @@ enum DevelopmentCardTypes
     ROAD_BUILDING,
     YEAR_OF_PLENTY,
     MONOPOLY,
-    VICTORY_POINT
+    ONE_VICTORY_POINT
 };
-constexpr size_t DEVELOPMENT_CARD_TYPE_SIZE = static_cast<size_t>(DevelopmentCardTypes::VICTORY_POINT) + 1U;
+constexpr size_t DEVELOPMENT_CARD_TYPE_SIZE = static_cast<size_t>(DevelopmentCardTypes::ONE_VICTORY_POINT) + 1U;
 
 enum ColonyType
 {

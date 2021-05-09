@@ -71,11 +71,11 @@ size_t Player::getPlayerLongestRoadSize() const
     return 0;
 }
 
-size_t Player::getVictoryPoint(bool aPublic)
+size_t Player::getVictoryPoint(bool aPublic) const
 {
     size_t vicPoint = (mLargestArmy ? 2 : 0) + \
         (mLongestRoad ? 2 : 0) + \
-        (aPublic ? 0 : mDevCard.at(DevelopmentCardTypes::VICTORY_POINT));
+        (aPublic ? 0 : mDevCard.at(DevelopmentCardTypes::ONE_VICTORY_POINT));
     for (const Vertex* const pVertex : mColony)
     {
         vicPoint += pVertex->getColonyType();
@@ -91,6 +91,16 @@ int Player::getId() const
 const std::array<size_t, CONSUMABLE_RESOURCE_SIZE>& Player::getResources() const
 {
     return mResourcesOnHand;
+}
+
+const std::array<size_t, DEVELOPMENT_CARD_TYPE_SIZE>& Player::getDevCards() const
+{
+    return mDevCard;
+}
+
+const std::array<size_t, DEVELOPMENT_CARD_TYPE_SIZE>& Player::getUsedDevCards() const
+{
+    return mDevCardUsed;
 }
 
 bool Player::hasResources(ResourceTypes aResource, size_t aAmount) const
@@ -127,7 +137,10 @@ bool Player::hasResourceForCity() const
 Player::Player(int aId) :
     mId(aId),
     mLargestArmy(false),
-    mLongestRoad(false)
+    mLongestRoad(false),
+    mResourcesOnHand({0}),
+    mDevCard({0}),
+    mDevCardUsed({0})
 {
     // empty
     mResourcesOnHand[(int)ResourceTypes::CLAY] = 10;

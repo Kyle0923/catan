@@ -102,7 +102,7 @@ std::string developmentCardTypesToStr(const DevelopmentCardTypes aCard)
         CASE_PRINT(ROAD_BUILDING);
         CASE_PRINT(YEAR_OF_PLENTY);
         CASE_PRINT(MONOPOLY);
-        CASE_PRINT(VICTORY_POINT);
+        CASE_PRINT(ONE_VICTORY_POINT);
     }
     return "";
 
