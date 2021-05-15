@@ -13,20 +13,20 @@
 
 void Player::drawDevelopmentCard(DevelopmentCardTypes aCard, size_t aAmount)
 {
-    mDevCard.at(aCard) += aAmount;
+    mDevCard.at(static_cast<size_t>(aCard)) += aAmount;
 }
 
-int Player::useDevelopmentCard(DevelopmentCardTypes aCard)
+int Player::consumeDevelopmentCard(DevelopmentCardTypes aCard)
 {
-    if (mDevCard.at(aCard) == 0)
+    if (mDevCard.at(static_cast<size_t>(aCard)) == 0)
     {
         WARN_LOG("Unable to use development card: " + developmentCardTypesToStr(aCard));
         return 1;
     }
 
     INFO_LOG("Used development card " + developmentCardTypesToStr(aCard));
-    --mDevCard.at(aCard);
-    ++mDevCardUsed.at(aCard);
+    --mDevCard.at(static_cast<size_t>(aCard));
+    ++mDevCardUsed.at(static_cast<size_t>(aCard));
     return 0;
 }
 
@@ -75,7 +75,7 @@ size_t Player::getVictoryPoint(bool aPublic) const
 {
     size_t vicPoint = (mLargestArmy ? 2 : 0) + \
         (mLongestRoad ? 2 : 0) + \
-        (aPublic ? 0 : mDevCard.at(DevelopmentCardTypes::ONE_VICTORY_POINT));
+        (aPublic ? 0 : mDevCard.at(static_cast<size_t>(DevelopmentCardTypes::ONE_VICTORY_POINT)));
     for (const Vertex* const pVertex : mColony)
     {
         vicPoint += pVertex->getColonyType();
@@ -112,26 +112,14 @@ bool Player::hasResources(ResourceTypes aResource, size_t aAmount) const
     return false;
 }
 
-bool Player::hasResourceForRoad() const
+bool Player::hasResources(const std::map<ResourceTypes, size_t>& aResourceConfig) const
 {
-    // 1 clay, 1 wood
-    return hasResources(ResourceTypes::CLAY, 1) && hasResources(ResourceTypes::WOOD, 1);
-}
-
-bool Player::hasResourceForSettlement() const
-{
-    // 1 clay, 1 wood, 1 wheat, 1 sheep
-    return hasResources(ResourceTypes::CLAY, 1) && \
-           hasResources(ResourceTypes::WOOD, 1) && \
-           hasResources(ResourceTypes::WHEAT, 1) && \
-           hasResources(ResourceTypes::SHEEP, 1);
-}
-
-bool Player::hasResourceForCity() const
-{
-    // 2 wheat, 3 ore
-    return hasResources(ResourceTypes::WHEAT, 2) && \
-           hasResources(ResourceTypes::ORE, 3);
+    bool rc = true;
+    for (auto iter : aResourceConfig)
+    {
+        rc &= hasResources(iter.first, iter.second);
+    }
+    return rc;
 }
 
 Player::Player(int aId) :
@@ -143,6 +131,7 @@ Player::Player(int aId) :
     mDevCardUsed({0})
 {
     // empty
+    // TODO: the following is for testing only
     mResourcesOnHand[(int)ResourceTypes::CLAY] = 10;
     mResourcesOnHand[(int)ResourceTypes::SHEEP] = 10;
     mResourcesOnHand[(int)ResourceTypes::WHEAT] = 10;

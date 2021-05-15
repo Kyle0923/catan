@@ -13,6 +13,7 @@
 
 #include <array>
 #include <set>
+#include <map>
 #include "common.hpp"
 #include "vertex.hpp"
 #include "edge.hpp"
@@ -31,7 +32,7 @@ private:
 
 public:
     void drawDevelopmentCard(DevelopmentCardTypes aCard, size_t aAmount = 1);
-    int useDevelopmentCard(DevelopmentCardTypes aCard);
+    int consumeDevelopmentCard(DevelopmentCardTypes aCard);
     void addResources(ResourceTypes aResource, size_t aAmount);
     bool consumeResources(ResourceTypes aResource, size_t aAmount);
     void addColony(const Vertex& aVertex);
@@ -44,10 +45,9 @@ public:
     const std::array<size_t, CONSUMABLE_RESOURCE_SIZE>& getResources() const;
     const std::array<size_t, DEVELOPMENT_CARD_TYPE_SIZE>& getDevCards() const;
     const std::array<size_t, DEVELOPMENT_CARD_TYPE_SIZE>& getUsedDevCards() const;
+
     bool hasResources(ResourceTypes aResource, size_t aAmount) const;
-    bool hasResourceForRoad() const;
-    bool hasResourceForSettlement() const;
-    bool hasResourceForCity() const;
+    bool hasResources(const std::map<ResourceTypes, size_t>& aResourceConfig) const;
 
     // aPublic: to show to public? when set to true, exclude devCard(Victory Point Card)
     size_t getVictoryPoint(bool aPublic) const;

@@ -22,7 +22,7 @@ class UserInterface;
 
 /**
  * @usage:
- * command handlers except "help", "exit" & "quit" need to add to CommandDispatcher constructor
+ * command handlers except "help", "exit" need to add to CommandDispatcher constructor
  */
 
 class CommandHandler

@@ -33,3 +33,9 @@ ActionStatus RollHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std
     }
     return ActionStatus::SUCCESS;
 }
+
+RollHandler::RollHandler() :
+    mRobberMoveHandler(RobberMoveHandler::getRobberHandler())
+{
+    // empty
+}

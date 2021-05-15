@@ -64,34 +64,39 @@ ActionStatus BuildHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<st
         rc = aMap.buildColony(mPoint, ColonyType::CITY);
     }
 
+    if (rc != 0)
+    {
+        aReturnMsg.emplace_back(Logger::formatString("Construction failed, rc=", rc));
+    }
+
     switch (rc)
     {
         case 0:
-            INFO_LOG("Successfully build " + mBuildType + " for Player#", aMap.currentPlayer());
-            aReturnMsg.push_back("Construction complete");
+            INFO_LOG("Successfully built " + mBuildType + " for Player#", aMap.currentPlayer());
+            aReturnMsg.emplace_back("Construction complete");
             break;
         case 1:
-            aReturnMsg.push_back("Incorrect coordinate");
+            aReturnMsg.emplace_back("Incorrect coordinate");
             break;
         case 2:
-            aReturnMsg.push_back(Logger::formatString("Incorrect owner of ", mPoint));
+            aReturnMsg.emplace_back(Logger::formatString("Incorrect owner of ", mPoint));
             break;
         case 3:
             if (mBuildType == "road")
             {
-                aReturnMsg.push_back("None of the adjacent vertices is owner by current player");
+                aReturnMsg.emplace_back("None of the adjacent vertices is owner by current player");
             }
             else
             {
-                aReturnMsg.push_back("One or more adjacent vertex is occupied");
+                aReturnMsg.emplace_back("One or more adjacent vertex is occupied");
             }
             break;
         case 4:
-            aReturnMsg.push_back("Insufficient resources");
+            aReturnMsg.emplace_back("Insufficient resources");
             break;
         case -1:
         default:
-            aReturnMsg.push_back("Internal error");
+            aReturnMsg.emplace_back("Internal error");
             return ActionStatus::FAILED;
     }
 
@@ -101,9 +106,9 @@ ActionStatus BuildHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<st
 ActionStatus BuildHandler::processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
 {
     // first prompt user for build type: road or settlement or city
+    INFO_LOG(command() + " reading parameter " + aParam);
     if (mBuildType == "")
     {
-        INFO_LOG(command() + " reading parameter " + aParam);
         if (indexInVector(aParam, mBuildTypeMatchingPool) >= 0)
         {
             mBuildType = aParam;
@@ -117,7 +122,6 @@ ActionStatus BuildHandler::processParameter(GameMap& aMap, std::string aParam, P
 
     if (mPoint == Point_t{0, 0})
     {
-        INFO_LOG(command() + "reading mouse event ", aPoint);
         if (mBuildType == "road")
         {
             if (aMap.isTerrain<Edge>(aPoint))
@@ -127,7 +131,7 @@ ActionStatus BuildHandler::processParameter(GameMap& aMap, std::string aParam, P
             }
             else
             {
-                aReturnMsg.push_back("Player clicked is not an edge");
+                aReturnMsg.emplace_back("Player clicked is not an edge");
                 return ActionStatus::FAILED;
             }
         }
@@ -140,7 +144,7 @@ ActionStatus BuildHandler::processParameter(GameMap& aMap, std::string aParam, P
             }
             else
             {
-                aReturnMsg.push_back("Player clicked is not a vertex");
+                aReturnMsg.emplace_back("Player clicked is not a vertex");
                 return ActionStatus::FAILED;
             }
         }
@@ -164,14 +168,14 @@ void BuildHandler::instruction(std::vector<std::string>& aReturnMsg) const
 {
     if (mBuildType == "")
     {
-        aReturnMsg.push_back("What do you want to build:");
-        aReturnMsg.push_back(stringVectorJoin(mBuildTypeMatchingPool));
+        aReturnMsg.emplace_back("What do you want to build:");
+        aReturnMsg.emplace_back(stringVectorJoin(mBuildTypeMatchingPool));
         return;
     }
     else if (mBuildType != "" && mPoint == Point_t{0, 0})
     {
-        aReturnMsg.push_back("You want to build a " + mBuildType);
-        aReturnMsg.push_back("Please click on the map where you want to build");
+        aReturnMsg.emplace_back("You want to build a " + mBuildType);
+        aReturnMsg.emplace_back("Please click on the map where you want to build");
         return;
     }
 }

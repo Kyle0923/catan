@@ -68,8 +68,10 @@ private:
     int createHarboursDefault();
     int createHarboursRandom();
 
-    /* SequenceConfig_t is an array whose value represents the num of occurrences of the index in the output
-     * e.g., aConfig[CLAY] = 2 means, there should be 2 CLAY in the returned vector
+    /**
+     * @param aConfig
+     * a SequenceConfig_t  whose value represents the num of occurrences of the index in the output
+     * e.g., aConfig[CLAY] = 2, means there should be 2 CLAY in the returned vector
      */
     std::vector<int> randomizeResource(SequenceConfig_t aConfig);
 
@@ -127,9 +129,20 @@ public:
     int addPlayer(size_t aNumOfPlayer);
     size_t nextPlayer();
     size_t currentPlayer() const;
-    bool playerHasResourceForRoad() const;        // current player implied
-    bool playerHasResourceForSettlement() const;  // current player implied
-    bool playerHasResourceForCity() const;        // current player implied
+    bool currentPlayerHasResourceForRoad() const;
+    bool currentPlayerHasResourceForSettlement() const;
+    bool currentPlayerHasResourceForCity() const;
+    bool currentPlayerHasResourceForDevCard() const;
+    /**
+     * @return 0: ok, aDevCard stores the DevCard got
+     * @return 1: insufficent resources/dev_card
+     * @brief:
+     *   buy: update player's devCard status and remove player's resource
+     *   consume: ONLY modify player's devCard status, no other action is performed
+     */
+    int currentPlayerBuyDevCard(DevelopmentCardTypes& aDevCard);
+    int currentPlayerConsumeDevCard(const DevelopmentCardTypes aDevCard);
+
     /**
      * @brief for StatusHandler command, stringify player's status,
      * @param aPlayerId - player ID, or -1 for current player ID
@@ -141,9 +154,10 @@ public:
     int rollDice();
 
     // robber related
-    /** @return 1: incorrect terrain */
+    /** @return 0: ok, 1: incorrect terrain */
     int moveRobber(const Point_t aDestination);
     /**
+     * @return 0: ok
      * @return 1: incorrect Point_t
      * @return 2: no owner
      * @return 3: aPlayerToRob has no resources

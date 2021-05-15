@@ -10,6 +10,7 @@
  */
 
 #include "command_common.hpp"
+#include "command_parameter_reader.hpp"
 
 const std::vector<std::string> DevelopmentCardHandler::mActionPool = {"play", "buy"};
 // the order in mPlayableDevCard must be exactly the same as defined in enum DevelopmentCardTypes
@@ -18,7 +19,8 @@ const std::vector<std::string> DevelopmentCardHandler::mPlayableDevCard = \
 
 DevelopmentCardHandler::DevelopmentCardHandler() :
     mAction(""),
-    mDevCard(-1)
+    mDevCard(-1),
+    mRobberMoveHandler(RobberMoveHandler::getRobberHandler())
 {
     // empty
 }
@@ -39,7 +41,7 @@ const std::vector<std::string>& DevelopmentCardHandler::paramAutoFillPool(size_t
     {
         return mActionPool;
     }
-    else if (aParamIndex == 1)
+    else if (aParamIndex == 1 && mAction == "play")
     {
         return mPlayableDevCard;
     }
@@ -73,8 +75,54 @@ ActionStatus DevelopmentCardHandler::act(GameMap& aMap, UserInterface& aUi, std:
     {
         return ActionStatus::PARAM_REQUIRED;
     }
-    // TODO: aMap.playCard / aMap.buyCard
-    return ActionStatus::SUCCESS;
+
+    DevelopmentCardTypes devCard = static_cast<DevelopmentCardTypes>(mDevCard);
+    if (mAction == "buy")
+    {
+        int rc = aMap.currentPlayerBuyDevCard(devCard);
+        rc == 0 ?
+            aReturnMsg.emplace_back("Successfully buy a development card: " + developmentCardTypesToStr(devCard))
+            :
+            aReturnMsg.emplace_back("Failed to buy a development card, insufficient resources");
+        return ActionStatus::SUCCESS;
+    }
+    // mAction == "play"
+    if (devCard == DevelopmentCardTypes::ONE_VICTORY_POINT)
+    {
+        aReturnMsg.emplace_back("No action for development card ONE_VICTORY_POINT");
+        return ActionStatus::SUCCESS;
+    }
+
+    aMap.currentPlayerConsumeDevCard(devCard);
+    switch (devCard)
+    {
+        case DevelopmentCardTypes::KNIGHT:
+        {
+            aUi.pushCommandHelper(std::make_unique<CommandParameterReader>(&mRobberMoveHandler));
+            mRobberMoveHandler.instruction(aReturnMsg);
+            return ActionStatus::SUCCESS;
+        }
+        case DevelopmentCardTypes::ROAD_BUILDING:
+        {
+            aUi.pushCommandHelper(std::make_unique<CommandParameterReader>(&mRoadBuilder));
+            mRoadBuilder.instruction(aReturnMsg);
+            return ActionStatus::SUCCESS;
+        }
+        case DevelopmentCardTypes::YEAR_OF_PLENTY:
+        {
+            // aMap::get_resource(res1, res2)
+            return ActionStatus::SUCCESS;
+        }
+        case DevelopmentCardTypes::MONOPOLY:
+        {
+            // aMap::something
+            return ActionStatus::SUCCESS;
+        }
+        default:
+        {
+            return ActionStatus::SUCCESS;
+        }
+    }
 }
 
 ActionStatus DevelopmentCardHandler::processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)

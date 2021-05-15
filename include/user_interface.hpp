@@ -13,6 +13,7 @@
 
 #include <memory>
 #include <vector>
+#include <list>
 #include <curses.h>
 #include <panel.h>
 #include "command_helper.hpp"
@@ -51,7 +52,14 @@ private:
     WINDOW* mOutputWindow;
     PANEL* mOutputPanel;
 
-    std::vector< std::unique_ptr<CommandHelper> > mCommandHelperStack;
+    /**
+     * @brief
+     * the CommandHelperStack is implemented as a std::list as it requires frequent insertion / removal
+     * with front being the most recently added element
+     * i.e., pushCommandHelper() is a wrapper of emplace_front()
+     *       and currentCommandHandler() is the front()
+     */
+    std::list< std::unique_ptr<CommandHelper> > mCommandHelperStack;
 
     // coord of '>' in the input window
     int mInputStartX;
@@ -65,7 +73,7 @@ private:
     void resizeAll(const GameMap& aMap);
     void resizeOutputWindow();
 
-    std::unique_ptr<CommandHelper>& currentCommandHelper();
+    const CommandHelper* currentCommandHelper();
 
     /**
      * @param aUntilEol: true - read until end-of-line; false - read up to cursor

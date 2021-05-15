@@ -50,16 +50,14 @@ class NextHandler: public CommandHandler
     virtual std::string description() const override final;
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
 };
-
-// alias of NextHandler
-class PassHandler: public NextHandler
+class PassHandler: public NextHandler // alias of NextHandler
 {
     virtual std::string command() const override final;
 };
 
 class BuildHandler: public CommandHandler, public ParameterizedCommand
 {
-private:
+protected:
     Point_t mPoint;
     std::string mBuildType;
     const static std::vector<std::string> mBuildTypeMatchingPool; // possible values of mBuildType
@@ -71,18 +69,28 @@ public:
 
     virtual ActionStatus processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
     virtual bool parameterComplete() const override final;
-    virtual void resetParameters() override final;
+    virtual void resetParameters() override;
     virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;
 
     BuildHandler();
 };
 
-// RobberMoveHandler should only be used by RollHandler
+// for road_building development_card, implementation is in build_handler.cpp
+class RoadBuildingHandler: public BuildHandler
+{
+public:
+    // virtual void resetParameters() override final;
+    // RoadBuildingHandler();
+};
+
+// Singleton object
+// should only be used by RollHandler, DevelopmentCardHandler
 class RobberMoveHandler: public CommandHandler, public ParameterizedCommand
 {
 private:
     Point_t mRobberDestination;
     Point_t mRobbingVertex;
+    RobberMoveHandler();
 public:
     virtual std::string command() const override final;
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
@@ -92,17 +100,18 @@ public:
     virtual void resetParameters() override final;
     virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;
 
-    RobberMoveHandler();
+    static RobberMoveHandler& getRobberHandler();
 };
 
 class RollHandler: public CommandHandler
 {
 private:
-    RobberMoveHandler mRobberMoveHandler;
+    RobberMoveHandler& mRobberMoveHandler;
 public:
     virtual std::string command() const override final;
     virtual std::string description() const override final;
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
+    RollHandler();
 };
 
 class DevelopmentCardHandler: public CommandHandler, public ParameterizedCommand
@@ -110,7 +119,8 @@ class DevelopmentCardHandler: public CommandHandler, public ParameterizedCommand
 private:
     std::string mAction;
     int mDevCard;
-    RobberMoveHandler mRobberMoveHandler;
+    RobberMoveHandler& mRobberMoveHandler;
+    RoadBuildingHandler mRoadBuilder;
     const static std::vector<std::string> mActionPool;
     const static std::vector<std::string> mPlayableDevCard;
 public:

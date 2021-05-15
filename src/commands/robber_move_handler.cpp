@@ -110,3 +110,9 @@ RobberMoveHandler::RobberMoveHandler() :
 {
     // empty
 }
+
+RobberMoveHandler& RobberMoveHandler::getRobberHandler()
+{
+    static RobberMoveHandler robberHandler;
+    return robberHandler;
+}

@@ -299,19 +299,19 @@ void UserInterface::printToConsole(const std::string& aMsg)
 
 int UserInterface::pushCommandHelper(std::unique_ptr<CommandHelper> aCmdDispatcher)
 {
-    mCommandHelperStack.emplace_back(std::move(aCmdDispatcher));
+    mCommandHelperStack.emplace_front(std::move(aCmdDispatcher));
     ++mInputStartY;
     ++mInputStartX;
     return 0;
 }
 
-std::unique_ptr<CommandHelper>& UserInterface::currentCommandHelper()
+const CommandHelper* UserInterface::currentCommandHelper()
 {
     if (mCommandHelperStack.size() == 0)
     {
         ERROR_LOG("No command dispatcher available");
     }
-    return mCommandHelperStack.back();
+    return mCommandHelperStack.front().get();
 }
 
 UserInterface::UserInterface(const GameMap& aMap, std::unique_ptr<CommandHelper> aCmdDispatcher) :
@@ -501,10 +501,11 @@ int UserInterface::loop(GameMap& aMap)
         const std::string inputPrefix(mInputStartX, '>');  // for later printToConsole
 
         std::vector<std::string> returnMsg;
-        ActionStatus rc = currentCommandHelper()->act(aMap, *this, input, mouseEvent, returnMsg);
+        auto currentCmdHelperIter = mCommandHelperStack.begin();
+        ActionStatus rc = (*currentCmdHelperIter)->act(aMap, *this, input, mouseEvent, returnMsg);
         if (rc == ActionStatus::EXIT)
         {
-            mCommandHelperStack.pop_back();
+            mCommandHelperStack.erase(currentCmdHelperIter);
             --mInputStartY;
             --mInputStartX;
         }

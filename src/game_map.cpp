@@ -283,6 +283,7 @@ int GameMap::checkOverlap() const
 {
     std::unordered_map<Point_t, std::string, PointHash> points;
     int overlapCount = 0;
+
     auto lambda = [&points, &overlapCount](const std::vector<Point_t>& aPoints, const std::string& aId)
         {
             for (const Point_t& point : aPoints)
@@ -316,6 +317,7 @@ int GameMap::checkOverlap() const
     {
         lambda(pHarbour->getAllPoints(), pHarbour->getStringId());
     }
+
     if (overlapCount)
     {
         ERROR_LOG("Detected ", overlapCount, " Overlap");
@@ -324,6 +326,7 @@ int GameMap::checkOverlap() const
     {
         INFO_LOG("No Overlap detected");
     }
+
     return overlapCount;
 }
 
@@ -700,19 +703,66 @@ size_t GameMap::currentPlayer() const
     return mCurrentPlayer;
 }
 
-bool GameMap::playerHasResourceForRoad() const
+bool GameMap::currentPlayerHasResourceForRoad() const
 {
-    return mPlayers[mCurrentPlayer]->hasResourceForRoad();
+    // 1 clay, 1 wood
+    return mPlayers[mCurrentPlayer]->hasResources({
+        {ResourceTypes::CLAY, 1},
+        {ResourceTypes::WOOD, 1}
+    });
 }
 
-bool GameMap::playerHasResourceForSettlement() const
+bool GameMap::currentPlayerHasResourceForSettlement() const
 {
-    return mPlayers[mCurrentPlayer]->hasResourceForSettlement();
+    // 1 clay, 1 wood, 1 wheat, 1 sheep
+    return mPlayers[mCurrentPlayer]->hasResources({
+        {ResourceTypes::CLAY, 1},
+        {ResourceTypes::WOOD, 1},
+        {ResourceTypes::WHEAT, 1},
+        {ResourceTypes::SHEEP, 1}
+    });
 }
 
-bool GameMap::playerHasResourceForCity() const
+bool GameMap::currentPlayerHasResourceForCity() const
 {
-    return mPlayers[mCurrentPlayer]->hasResourceForCity();
+    // 2 wheat, 3 ore
+    return mPlayers[mCurrentPlayer]->hasResources({
+        {ResourceTypes::WHEAT, 2},
+        {ResourceTypes::ORE, 3}
+    });
+}
+
+bool GameMap::currentPlayerHasResourceForDevCard() const
+{
+    // 1 sheep, 1 wheat, 1 ore
+    return mPlayers[mCurrentPlayer]->hasResources({
+        {ResourceTypes::SHEEP, 1},
+        {ResourceTypes::WHEAT, 1},
+        {ResourceTypes::ORE, 1}
+    });
+}
+
+int GameMap::currentPlayerBuyDevCard(DevelopmentCardTypes& aDevCard)
+{
+    if (!currentPlayerHasResourceForDevCard())
+    {
+        return 1;
+    }
+    // TODO: draw dev card from devCardPile
+    static std::uniform_int_distribution<int> distribution(
+        static_cast<int>(DevelopmentCardTypes::KNIGHT), static_cast<int>(DevelopmentCardTypes::ONE_VICTORY_POINT));
+    aDevCard = static_cast<DevelopmentCardTypes>(distribution(mEngine));
+    Player* & currPlayer = mPlayers[mCurrentPlayer];
+    currPlayer->drawDevelopmentCard(aDevCard, 1);
+    currPlayer->consumeResources(ResourceTypes::SHEEP, 1);
+    currPlayer->consumeResources(ResourceTypes::WHEAT, 1);
+    currPlayer->consumeResources(ResourceTypes::ORE, 1);
+    return 0;
+}
+
+int GameMap::currentPlayerConsumeDevCard(const DevelopmentCardTypes aDevCard)
+{
+    return mPlayers[mCurrentPlayer]->consumeDevelopmentCard(aDevCard);
 }
 
 void GameMap::summarizePlayerStatus(int aPlayerId, std::vector<std::string>& aReturnMsg) const
@@ -799,7 +849,7 @@ int GameMap::buildColony(const Point_t aPoint, const ColonyType aColony)
             return 3;
         }
 
-        if (!mPlayers[mCurrentPlayer]->hasResourceForSettlement())
+        if (!currentPlayerHasResourceForSettlement())
         {
             return 4;
         }
@@ -812,7 +862,7 @@ int GameMap::buildColony(const Point_t aPoint, const ColonyType aColony)
     }
     else
     {
-        if (!mPlayers[mCurrentPlayer]->hasResourceForCity())
+        if (!currentPlayerHasResourceForCity())
         {
             return 4;
         }
@@ -848,7 +898,7 @@ int GameMap::buildRoad(const Point_t aPoint)
         return 3;
     }
 
-    if (!mPlayers[mCurrentPlayer]->hasResourceForRoad())
+    if (!currentPlayerHasResourceForRoad())
     {
         return 4;
     }
