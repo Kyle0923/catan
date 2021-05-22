@@ -134,7 +134,7 @@ public:
     bool currentPlayerHasResourceForCity() const;
     bool currentPlayerHasResourceForDevCard() const;
     /**
-     * @return 0: ok, aDevCard stores the DevCard got
+     * @return 0: ok, aDevCard returns the DevCard got
      * @return 1: insufficent resources/dev_card
      * @brief:
      *   buy: update player's devCard status and remove player's resource
@@ -142,6 +142,12 @@ public:
      */
     int currentPlayerBuyDevCard(DevelopmentCardTypes& aDevCard);
     int currentPlayerConsumeDevCard(const DevelopmentCardTypes aDevCard);
+
+    /**
+     * @return 0 on success
+     * @return 1 if aResource is not one of the comsumpable resources
+    */
+    int currentPlayerPlayMonopoly(const ResourceTypes aResource);
 
     /**
      * @brief for StatusHandler command, stringify player's status,

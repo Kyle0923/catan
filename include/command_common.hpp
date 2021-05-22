@@ -114,6 +114,26 @@ public:
     YearOfPlentyHandler();
 };
 
+// for monopoly development_card
+class MonopolyHandler: public CommandHandler, public ParameterizedCommand
+{
+private:
+    ResourceTypes mResource;
+    const static std::vector<std::string>& mResourceTypeMatchingPool; // possible values of mBuildType
+
+public:
+    virtual std::string command() const override final;
+    virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
+    virtual const std::vector<std::string>& paramAutoFillPool(size_t aParamIndex) const override final;
+
+    virtual ActionStatus processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+    virtual bool parameterComplete() const override final;
+    virtual void resetParameters() override;
+    virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;
+
+    MonopolyHandler();
+};
+
 // Singleton object
 // should only be used by RollHandler, DevelopmentCardHandler
 class RobberMoveHandler: public CommandHandler, public ParameterizedCommand
@@ -153,6 +173,7 @@ private:
     RobberMoveHandler& mRobberMoveHandler;
     RoadBuildingHandler mRoadBuilder;
     YearOfPlentyHandler mYearOfPlentyHandler;
+    MonopolyHandler mMonopolyHandler;
     const static std::vector<std::string> mActionPool;
     const static std::vector<std::string> mPlayableDevCard;
 public:

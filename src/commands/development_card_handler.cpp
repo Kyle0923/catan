@@ -121,7 +121,8 @@ ActionStatus DevelopmentCardHandler::act(GameMap& aMap, UserInterface& aUi, std:
         }
         case DevelopmentCardTypes::MONOPOLY:
         {
-            // aMap::something
+            aUi.pushCommandHelper(std::make_unique<CommandParameterReader>(&mMonopolyHandler));
+            mMonopolyHandler.instruction(aReturnMsg);
             return ActionStatus::SUCCESS;
         }
         default:
