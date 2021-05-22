@@ -11,6 +11,7 @@
 #ifndef INCLUDE_COMMON_HPP
 #define INCLUDE_COMMON_HPP
 
+#include <vector>
 #include <string>
 
 struct Point_t
@@ -19,6 +20,7 @@ struct Point_t
     size_t y;
 };
 
+// the order in ResourceTypes must be exactly the same as in vector consumableResourceStringValue
 enum class ResourceTypes
 {
     NONE = -1,
@@ -31,6 +33,7 @@ enum class ResourceTypes
     ANY = 6,
 };
 constexpr size_t CONSUMABLE_RESOURCE_SIZE = static_cast<size_t>(ResourceTypes::ORE) + 1U;
+extern const std::vector<std::string> consumableResourceStringValue;    // definition is in utility.cpp
 
 // the order in DevelopmentCardTypes must be exactly the same as in DevelopmentCardHandler::mPlayableDevCard
 enum class DevelopmentCardTypes

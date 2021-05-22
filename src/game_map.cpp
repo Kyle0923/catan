@@ -781,7 +781,7 @@ void GameMap::summarizePlayerStatus(int aPlayerId, std::vector<std::string>& aRe
     auto playerResources = player->getResources();
     auto playerDevCard = player->getDevCards();
     auto playerDevCardUsed = player->getUsedDevCards();
-    const size_t victoryPoint = player->getVictoryPoint(aPlayerId == static_cast<int>(mCurrentPlayer));
+    const size_t victoryPoint = player->getVictoryPoint(aPlayerId != static_cast<int>(mCurrentPlayer));
 
     aReturnMsg.emplace_back("Status of Player#" + std::to_string(aPlayerId));
     aReturnMsg.emplace_back("");
@@ -812,6 +812,11 @@ void GameMap::summarizePlayerStatus(int aPlayerId, std::vector<std::string>& aRe
                 std::to_string(std::accumulate(playerDevCardUsed.begin(), playerDevCardUsed.end(), 0U)));
     }
     aReturnMsg.emplace_back(Logger::formatString("Victory point: ", victoryPoint));
+}
+
+void GameMap::currentPlayerAddResource(const ResourceTypes aResource)
+{
+    mPlayers.at(mCurrentPlayer)->addResources(aResource, 1);
 }
 
 int GameMap::buildColony(const Point_t aPoint, const ColonyType aColony)

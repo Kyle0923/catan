@@ -149,6 +149,8 @@ public:
      */
     void summarizePlayerStatus(int aPlayerId, std::vector<std::string>& aReturnMsg) const;
 
+    void currentPlayerAddResource(const ResourceTypes aResource);
+
     // roll dice, assign resources, move robber if rolled 7
     // return the dice
     int rollDice();

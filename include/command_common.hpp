@@ -69,18 +69,49 @@ public:
 
     virtual ActionStatus processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
     virtual bool parameterComplete() const override final;
-    virtual void resetParameters() override;
+    virtual void resetParameters() override final;
     virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;
 
     BuildHandler();
 };
 
-// for road_building development_card, implementation is in build_handler.cpp
-class RoadBuildingHandler: public BuildHandler
+// for road_building development_card
+class RoadBuildingHandler: public CommandHandler, public ParameterizedCommand
 {
+private:
+    size_t mRoadCounter;
 public:
-    // virtual void resetParameters() override final;
-    // RoadBuildingHandler();
+    virtual std::string command() const override final;
+    virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
+
+    virtual ActionStatus processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+    virtual bool parameterComplete() const override final;
+    virtual void resetParameters() override;
+    virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;
+
+    RoadBuildingHandler();
+};
+
+// for year_of_plenty development_card
+class YearOfPlentyHandler: public CommandHandler, public ParameterizedCommand
+{
+private:
+    ResourceTypes mResource1;
+    ResourceTypes mResource2;
+    const static std::vector<std::string>& mResourceTypeMatchingPool; // possible values of mBuildType
+
+public:
+    virtual std::string command() const override final;
+    virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
+    virtual const std::vector<std::string>& paramAutoFillPool(size_t aParamIndex) const override final;
+    virtual size_t currentParamIndex() const override final;
+
+    virtual ActionStatus processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+    virtual bool parameterComplete() const override final;
+    virtual void resetParameters() override;
+    virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;
+
+    YearOfPlentyHandler();
 };
 
 // Singleton object
@@ -121,6 +152,7 @@ private:
     int mDevCard;
     RobberMoveHandler& mRobberMoveHandler;
     RoadBuildingHandler mRoadBuilder;
+    YearOfPlentyHandler mYearOfPlentyHandler;
     const static std::vector<std::string> mActionPool;
     const static std::vector<std::string> mPlayableDevCard;
 public:

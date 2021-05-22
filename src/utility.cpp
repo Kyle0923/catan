@@ -13,6 +13,9 @@
 #include "vertex.hpp"
 #include "edge.hpp"
 
+const std::vector<std::string> consumableResourceStringValue = \
+    {"clay", "sheep", "wheat", "wood", "ore"};
+
 std::vector<std::string> splitString(const std::string& aString, char aDelim)
 {
     if (aString.length() == 0)

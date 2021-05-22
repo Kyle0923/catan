@@ -60,7 +60,10 @@ public:
      * @param aParamIndex - the index of the to-be-auto-complete parameter
      */
     virtual const std::vector<std::string>& paramAutoFillPool(size_t aParamIndex) const;
-    // the index of current-reading parameter
+    /**
+     * the index of current-reading parameter
+     * it is used as a helper function to deduce aParamIndex in paramAutoFillPool
+     */
     virtual size_t currentParamIndex() const;
 
     CommandHandler() = default;

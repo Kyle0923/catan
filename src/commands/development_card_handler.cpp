@@ -93,7 +93,12 @@ ActionStatus DevelopmentCardHandler::act(GameMap& aMap, UserInterface& aUi, std:
         return ActionStatus::SUCCESS;
     }
 
-    aMap.currentPlayerConsumeDevCard(devCard);
+    if (aMap.currentPlayerConsumeDevCard(devCard) == 1)
+    {
+        aReturnMsg.emplace_back("Insufficient development card: " + developmentCardTypesToStr(devCard));
+        return ActionStatus::SUCCESS;
+    }
+
     switch (devCard)
     {
         case DevelopmentCardTypes::KNIGHT:
@@ -110,7 +115,8 @@ ActionStatus DevelopmentCardHandler::act(GameMap& aMap, UserInterface& aUi, std:
         }
         case DevelopmentCardTypes::YEAR_OF_PLENTY:
         {
-            // aMap::get_resource(res1, res2)
+            aUi.pushCommandHelper(std::make_unique<CommandParameterReader>(&mYearOfPlentyHandler));
+            mYearOfPlentyHandler.instruction(aReturnMsg);
             return ActionStatus::SUCCESS;
         }
         case DevelopmentCardTypes::MONOPOLY:
