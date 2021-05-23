@@ -198,6 +198,27 @@ class StatusHandler: public CommandHandler
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
 };
 
+class FirstTwoRoundHandler: public CommandHandler, public ParameterizedCommand
+{
+private:
+    size_t mRound;  // round 1 or 2
+    size_t mIndex;  // current index of mOrder
+    Point_t mSettelment;
+    Point_t mRoad;
+    const std::vector<int> mOrder;
+    std::unique_ptr<CommandHelper> mTopLevelCmdDispatcher;  // when first two rounds is finished, push this to UI cmdHelper stack
+public:
+    virtual std::string command() const override final;
+    virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
+
+    virtual ActionStatus processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+    virtual bool parameterComplete() const override final;
+    virtual void resetParameters() override final;
+    virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;
+
+    FirstTwoRoundHandler(const std::vector<int>& aOrder, std::unique_ptr<CommandHelper> aCmdDispatcher);
+};
+
 ////////////////////////////////////////////////////////////////////////////////////
 // the commands below are meant to be used for testing in development.
 // they should not be built when RELEASE=1

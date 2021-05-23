@@ -620,6 +620,14 @@ const std::deque< std::deque<Terrain*> >& GameMap::getTerrainMap() const
     return mGameMap;
 }
 
+std::vector<int> GameMap::getFirstTwoRoundOrder()
+{
+    SequenceConfig_t playerOrderConfig( std::vector<size_t>(mPlayers.size(), 1U) );
+    std::vector<int> playerOrder = randomizeResource(playerOrderConfig);
+    INFO_LOG("First two round player order: ", playerOrder);
+    return playerOrder;
+}
+
 int GameMap::clearAndResize(const int aSizeHorizontal, const int aSizeVertical)
 {
     mSizeHorizontal = aSizeHorizontal;

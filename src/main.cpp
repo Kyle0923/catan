@@ -29,8 +29,12 @@ int main(int argc, char** argv)
     Logger::setDebugLevel(cliOpt.getOpt<CliOptIndex::DEBUG_LEVEL>());
 
     GameMap gameMap;
-    MapIO mapFile(cliOpt.getOpt<CliOptIndex::MAP_FILE_PATH>());
-    mapFile.readMap(gameMap);
+
+    {
+        // auto release mapFile
+        MapIO mapFile(cliOpt.getOpt<CliOptIndex::MAP_FILE_PATH>());
+        mapFile.readMap(gameMap);
+    }
 
     UserInterface ui(gameMap, std::make_unique<CommandDispatcher>(
         std::vector<CommandHandler*>({
@@ -54,6 +58,8 @@ int main(int argc, char** argv)
     gameMap.addPlayer(6U);
 
     ui.printMapToWindow(gameMap);
+
+    const std::vector<int> playerOrder = gameMap.getFirstTwoRoundOrder();
 
     ui.loop(gameMap);
 

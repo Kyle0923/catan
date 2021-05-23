@@ -125,6 +125,12 @@ public:
     void logMap(bool aUseId = false);  // std::cout implementation, convenient in development
     const std::deque< std::deque<Terrain*> >& getTerrainMap() const;
 
+    /**
+     * first two rounds, players will place their first two settlements and roads
+     * and they will get the resources next to the second settlement
+     */
+    std::vector<int> getFirstTwoRoundOrder();
+
     // Player related
     int addPlayer(size_t aNumOfPlayer);
     size_t nextPlayer();

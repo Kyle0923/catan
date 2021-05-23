@@ -91,10 +91,16 @@ ActionStatus CommandParameterReader::act(GameMap& aMap, UserInterface& aUi, std:
 
     INFO_LOG("read param completed for " + mCmd->command() + ", calling act()");
     aReturnMsg.clear();
-    mCmd->act(aMap, aUi, {}, aReturnMsg);
-    pParamCmd->resetParameters();
-    return ActionStatus::EXIT;
-
+    ActionStatus rc = mCmd->act(aMap, aUi, {}, aReturnMsg);
+    if (rc == ActionStatus::PARAM_REQUIRED)
+    {
+        return ActionStatus::PARAM_REQUIRED;
+    }
+    else
+    {
+        pParamCmd->resetParameters();
+        return ActionStatus::EXIT;
+    }
 }
 
 std::vector<std::string> CommandParameterReader::getPossibleInputs(const std::string& aInput, std::string* const aAutoFillString) const
