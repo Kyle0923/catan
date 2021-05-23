@@ -36,7 +36,7 @@ ActionStatus RoadBuildingHandler::processParameter(GameMap& aMap, std::string aP
 {
     INFO_LOG(command() + "reading mouse event ", aPoint);
 
-    int rc = aMap.buildRoad(aPoint);
+    int rc = aMap.buildRoad(aPoint, false);
 
     if (rc != 0)
     {

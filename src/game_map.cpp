@@ -842,7 +842,7 @@ void GameMap::currentPlayerAddResource(const ResourceTypes aResource)
     mPlayers.at(mCurrentPlayer)->addResources(aResource, 1);
 }
 
-int GameMap::buildColony(const Point_t aPoint, const ColonyType aColony)
+int GameMap::buildColony(const Point_t aPoint, const ColonyType aColony, bool aConsumeResource)
 {
     if (!boundaryCheck(aPoint.x, aPoint.y))
     {
@@ -881,10 +881,14 @@ int GameMap::buildColony(const Point_t aPoint, const ColonyType aColony)
         {
             return 4;
         }
-        mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::CLAY, 1);
-        mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::WOOD, 1);
-        mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::WHEAT, 1);
-        mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::SHEEP, 1);
+
+        if (aConsumeResource)
+        {
+            mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::CLAY, 1);
+            mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::WOOD, 1);
+            mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::WHEAT, 1);
+            mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::SHEEP, 1);
+        }
 
         mPlayers[mCurrentPlayer]->addColony(*pVertex);
     }
@@ -894,14 +898,17 @@ int GameMap::buildColony(const Point_t aPoint, const ColonyType aColony)
         {
             return 4;
         }
-        mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::WHEAT, 2);
-        mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::ORE, 3);
+        if (aConsumeResource)
+        {
+            mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::WHEAT, 2);
+            mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::ORE, 3);
+        }
     }
 
     return pVertex->setOwner(mCurrentPlayer, aColony);
 }
 
-int GameMap::buildRoad(const Point_t aPoint)
+int GameMap::buildRoad(const Point_t aPoint, bool aConsumeResource)
 {
     if (!boundaryCheck(aPoint.x, aPoint.y))
     {
@@ -931,8 +938,11 @@ int GameMap::buildRoad(const Point_t aPoint)
         return 4;
     }
 
-    mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::CLAY, 1);
-    mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::WOOD, 1);
+    if (aConsumeResource)
+    {
+        mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::CLAY, 1);
+        mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::WOOD, 1);
+    }
 
     mPlayers[mCurrentPlayer]->addRoad(*pEdge);
 

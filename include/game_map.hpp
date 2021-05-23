@@ -180,8 +180,8 @@ public:
      *            buildRoad   - adjacent vertex is not owner by current player
      * @return 4: insufficient resource
      */
-    int buildColony(const Point_t aPoint, const ColonyType aColony);
-    int buildRoad(const Point_t aPoint);
+    int buildColony(const Point_t aPoint, const ColonyType aColony, bool aConsumeResource = true);
+    int buildRoad(const Point_t aPoint, bool aConsumeResource = true);
 
     GameMap(const GameMap &) = delete;
     GameMap& operator=(const GameMap&) = delete;
