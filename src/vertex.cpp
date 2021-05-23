@@ -109,7 +109,7 @@ ColonyType Vertex::getColonyType() const
     return mColony;
 }
 
-bool Vertex::isAvailable() const
+bool Vertex::isAvailable(const int aPlayerId) const
 {
     for (const Vertex* const pAdjVertex : mAdjacentVertices)
     {
@@ -118,7 +118,24 @@ bool Vertex::isAvailable() const
             return false;
         }
     }
-    return true;
+
+    if (aPlayerId == -1)
+    {
+        // skip edge check
+        return true;
+    }
+    else
+    {
+        // at least 1 edge need to be owner by aPlayerId
+        for (const Edge* const pAdjEdge : mAdjacentEdges)
+        {
+            if (pAdjEdge->getOwner() == aPlayerId)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 bool Vertex::isCoastal() const

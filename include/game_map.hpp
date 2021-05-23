@@ -173,6 +173,9 @@ public:
     int robVertex(const Point_t aVertex, ResourceTypes& aRobResource);
 
     /**
+     * @param aEdgeCheck perform edge_check, i.e. at least one adjacent edge must be owned by currentPlayer
+     * @param aConsumeResource do not consume player's resource if set to false
+     *
      * @return 0: ok
      * @return 1: incorrect coordinate
      * @return 2: incorrect owner
@@ -180,8 +183,8 @@ public:
      *            buildRoad   - adjacent vertex is not owner by current player
      * @return 4: insufficient resource
      */
-    int buildColony(const Point_t aPoint, const ColonyType aColony, bool aConsumeResource = true);
-    int buildRoad(const Point_t aPoint, bool aConsumeResource = true);
+    int buildColony(const Point_t aPoint, const ColonyType aColony, const bool aEdgeCheck = true, const bool aConsumeResource = true);
+    int buildRoad(const Point_t aPoint, const bool aConsumeResource = true);
 
     GameMap(const GameMap &) = delete;
     GameMap& operator=(const GameMap&) = delete;

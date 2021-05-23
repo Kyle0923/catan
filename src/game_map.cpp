@@ -842,7 +842,7 @@ void GameMap::currentPlayerAddResource(const ResourceTypes aResource)
     mPlayers.at(mCurrentPlayer)->addResources(aResource, 1);
 }
 
-int GameMap::buildColony(const Point_t aPoint, const ColonyType aColony, bool aConsumeResource)
+int GameMap::buildColony(const Point_t aPoint, const ColonyType aColony, const bool aEdgeCheck, const bool aConsumeResource)
 {
     if (!boundaryCheck(aPoint.x, aPoint.y))
     {
@@ -871,7 +871,7 @@ int GameMap::buildColony(const Point_t aPoint, const ColonyType aColony, bool aC
 
     if (aColony == ColonyType::SETTLEMENT)
     {
-        if (!pVertex->isAvailable())
+        if (!pVertex->isAvailable(aEdgeCheck ? mCurrentPlayer : -1))
         {
             WARN_LOG("One or more adjacent vertex of " + pVertex->getStringId() + " is owned, cannot build settlement here");
             return 3;
@@ -908,7 +908,7 @@ int GameMap::buildColony(const Point_t aPoint, const ColonyType aColony, bool aC
     return pVertex->setOwner(mCurrentPlayer, aColony);
 }
 
-int GameMap::buildRoad(const Point_t aPoint, bool aConsumeResource)
+int GameMap::buildRoad(const Point_t aPoint, const bool aConsumeResource)
 {
     if (!boundaryCheck(aPoint.x, aPoint.y))
     {

@@ -129,7 +129,7 @@ int Edge::getOwner() const
     return mOwner;
 }
 
-bool Edge::isAvailable(int aPlayerId) const
+bool Edge::isAvailable(const int aPlayerId) const
 {
     for (const Vertex* const pAdjVertex : mAdjacentVertices)
     {
