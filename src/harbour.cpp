@@ -43,10 +43,10 @@ int Harbour::calculatePoints(GameMap& aMap)
     }
     else if (mVertex1.x > mVertex2.x)
     {
-        //     xxxx+   !      +
-        // CLAY   /    !     / x
-        //     x /     !    /   WOOD
-        //      +      !   +xxxx
+        //      xxxx+   !      +
+        // BRICK   /    !     / x
+        //      x /     !    /   WOOD
+        //       +      !   +xxxx
         Point_t pointA = mVertex1;  // point next to "xxxx"
         Point_t pointB = mVertex2;  // the other point
         int dx = -1;

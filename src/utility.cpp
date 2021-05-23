@@ -14,7 +14,7 @@
 #include "edge.hpp"
 
 const std::vector<std::string> consumableResourceStringValue = \
-    {"clay", "sheep", "wheat", "wood", "ore"};
+    {"brick", "sheep", "wheat", "wood", "ore"};
 
 std::vector<std::string> splitString(const std::string& aString, char aDelim)
 {
@@ -80,7 +80,7 @@ std::string resourceTypesToStr(const ResourceTypes aResource)
     switch (aResource)
     {
         CASE_PRINT(NONE);
-        CASE_PRINT(CLAY);
+        CASE_PRINT(BRICK);
         CASE_PRINT(SHEEP);
         CASE_PRINT(WHEAT);
         CASE_PRINT(WOOD);

@@ -104,7 +104,7 @@ int GameMap::populateHarbours(bool aUseDefaultPosition, bool aUseDefaultResource
         INFO_LOG("Successfully created all harbours");
 
     SequenceConfig_t config(static_cast<size_t>(ResourceTypes::ANY) + 1);
-    config[ResourceTypes::CLAY]  = constant::NUM_HARBOUR_CLAY;
+    config[ResourceTypes::BRICK] = constant::NUM_HARBOUR_BRICK;
     config[ResourceTypes::SHEEP] = constant::NUM_HARBOUR_SHEEP;
     config[ResourceTypes::WHEAT] = constant::NUM_HARBOUR_WHEAT;
     config[ResourceTypes::WOOD]  = constant::NUM_HARBOUR_WOOD;
@@ -334,7 +334,7 @@ int GameMap::assignResourceAndDice()
 {
     SequenceConfig_t resourceConfig(static_cast<size_t>(ResourceTypes::ANY));
     // default config
-    resourceConfig[ResourceTypes::CLAY]   = constant::NUM_LAND_CLAY;
+    resourceConfig[ResourceTypes::BRICK]  = constant::NUM_LAND_BRICK;
     resourceConfig[ResourceTypes::SHEEP]  = constant::NUM_LAND_SHEEP;
     resourceConfig[ResourceTypes::WHEAT]  = constant::NUM_LAND_WHEAT;
     resourceConfig[ResourceTypes::WOOD]   = constant::NUM_LAND_WOOD;
@@ -705,18 +705,18 @@ size_t GameMap::currentPlayer() const
 
 bool GameMap::currentPlayerHasResourceForRoad() const
 {
-    // 1 clay, 1 wood
+    // 1 brick, 1 wood
     return mPlayers[mCurrentPlayer]->hasResources({
-        {ResourceTypes::CLAY, 1},
+        {ResourceTypes::BRICK, 1},
         {ResourceTypes::WOOD, 1}
     });
 }
 
 bool GameMap::currentPlayerHasResourceForSettlement() const
 {
-    // 1 clay, 1 wood, 1 wheat, 1 sheep
+    // 1 brick, 1 wood, 1 wheat, 1 sheep
     return mPlayers[mCurrentPlayer]->hasResources({
-        {ResourceTypes::CLAY, 1},
+        {ResourceTypes::BRICK, 1},
         {ResourceTypes::WOOD, 1},
         {ResourceTypes::WHEAT, 1},
         {ResourceTypes::SHEEP, 1}
@@ -767,7 +767,7 @@ int GameMap::currentPlayerConsumeDevCard(const DevelopmentCardTypes aDevCard)
 
 int GameMap::currentPlayerPlayMonopoly(const ResourceTypes aResource)
 {
-    if (!(aResource >= ResourceTypes::CLAY && aResource <= ResourceTypes::ORE))
+    if (!(aResource >= ResourceTypes::BRICK && aResource <= ResourceTypes::ORE))
     {
         // incorrect resource
         return 1;
@@ -884,7 +884,7 @@ int GameMap::buildColony(const Point_t aPoint, const ColonyType aColony, const b
 
         if (aConsumeResource)
         {
-            mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::CLAY, 1);
+            mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::BRICK, 1);
             mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::WOOD, 1);
             mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::WHEAT, 1);
             mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::SHEEP, 1);
@@ -940,7 +940,7 @@ int GameMap::buildRoad(const Point_t aPoint, const bool aConsumeResource)
 
     if (aConsumeResource)
     {
-        mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::CLAY, 1);
+        mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::BRICK, 1);
         mPlayers[mCurrentPlayer]->consumeResources(ResourceTypes::WOOD, 1);
     }
 

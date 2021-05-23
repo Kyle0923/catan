@@ -24,7 +24,7 @@ struct Point_t
 enum class ResourceTypes
 {
     NONE = -1,
-    CLAY = 0,
+    BRICK = 0,
     SHEEP = 1,
     WHEAT = 2,
     WOOD = 3,

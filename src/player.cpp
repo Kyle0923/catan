@@ -132,7 +132,7 @@ Player::Player(int aId) :
 {
     // empty
     // TODO: the following is for testing only
-    mResourcesOnHand[(int)ResourceTypes::CLAY] = 10;
+    mResourcesOnHand[(int)ResourceTypes::BRICK] = 10;
     mResourcesOnHand[(int)ResourceTypes::SHEEP] = 10;
     mResourcesOnHand[(int)ResourceTypes::WHEAT] = 10;
     mResourcesOnHand[(int)ResourceTypes::WOOD] = 10;

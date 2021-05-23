@@ -18,7 +18,7 @@
 #include "common.hpp"
 
 /* SequenceConfig_t is an array whose value represents the num of occurrences of the index in the output
- * e.g., aConfig[CLAY] = 2 means, there should be 2 CLAY in the returned vector
+ * e.g., aConfig[BRICK] = 2 means, there should be 2 BRICK in the returned vector
  */
 
 struct SequenceConfig_t

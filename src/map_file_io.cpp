@@ -81,7 +81,7 @@ int MapIO::readMap(GameMap& aGameMap)
                 }
                 case '.':
                 // convert ResourceTypes to numbers in ASCII, e.g. (char) 1 + '0' = '1'
-                case (char)ResourceTypes::CLAY + '0':
+                case (char)ResourceTypes::BRICK + '0':
                 case (char)ResourceTypes::SHEEP + '0':
                 case (char)ResourceTypes::WHEAT + '0':
                 case (char)ResourceTypes::WOOD + '0':
