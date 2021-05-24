@@ -104,25 +104,21 @@ ActionStatus DevelopmentCardHandler::act(GameMap& aMap, UserInterface& aUi, std:
         case DevelopmentCardTypes::KNIGHT:
         {
             aUi.pushCommandHelper(std::make_unique<CommandParameterReader>(&mRobberMoveHandler));
-            mRobberMoveHandler.instruction(aReturnMsg);
             return ActionStatus::SUCCESS;
         }
         case DevelopmentCardTypes::ROAD_BUILDING:
         {
             aUi.pushCommandHelper(std::make_unique<CommandParameterReader>(&mRoadBuilder));
-            mRoadBuilder.instruction(aReturnMsg);
             return ActionStatus::SUCCESS;
         }
         case DevelopmentCardTypes::YEAR_OF_PLENTY:
         {
             aUi.pushCommandHelper(std::make_unique<CommandParameterReader>(&mYearOfPlentyHandler));
-            mYearOfPlentyHandler.instruction(aReturnMsg);
             return ActionStatus::SUCCESS;
         }
         case DevelopmentCardTypes::MONOPOLY:
         {
             aUi.pushCommandHelper(std::make_unique<CommandParameterReader>(&mMonopolyHandler));
-            mMonopolyHandler.instruction(aReturnMsg);
             return ActionStatus::SUCCESS;
         }
         default:

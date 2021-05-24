@@ -150,10 +150,9 @@ public:
     int currentPlayerConsumeDevCard(const DevelopmentCardTypes aDevCard);
 
     /**
-     * @return 0 on success
-     * @return 1 if aResource is not one of the comsumpable resources
-    */
-    int currentPlayerPlayMonopoly(const ResourceTypes aResource);
+     * @return amount of the resource got
+     */
+    size_t currentPlayerPlayMonopoly(const ResourceTypes aResource);
 
     /**
      * @brief for StatusHandler command, stringify player's status,

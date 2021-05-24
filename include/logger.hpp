@@ -21,7 +21,7 @@
 #ifndef RELEASE
 #define TEMP_LOG(...) \
     Logger::info(__FILE__ ":", __LINE__, ": ", __VA_ARGS__)
-#endif
+#endif /* RELEASE */
 
 #define INFO_LOG(...) \
     Logger::info(__FILE__ ":", __LINE__, ": ", __VA_ARGS__)

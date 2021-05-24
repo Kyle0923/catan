@@ -503,17 +503,22 @@ int UserInterface::loop(GameMap& aMap)
         std::vector<std::string> returnMsg;
         auto currentCmdHelperIter = mCommandHelperStack.begin();
         ActionStatus rc = (*currentCmdHelperIter)->act(aMap, *this, input, mouseEvent, returnMsg);
+
         if (rc == ActionStatus::EXIT)
         {
             mCommandHelperStack.erase(currentCmdHelperIter);
             --mInputStartY;
             --mInputStartX;
-        }
-
-        if (mCommandHelperStack.size() == 0)
-        {
-            // no more handler, exit
-            break;
+            if (mCommandHelperStack.size() == 0)
+            {
+                // no more handler, exit
+                break;
+            }
+            else
+            {
+                // call act() of the latest top cmdHelper
+                mCommandHelperStack.front()->act(aMap, *this, {}, Point_t{0, 0}, returnMsg);
+            }
         }
 
         if (rc != ActionStatus::PARTIAL_COMMAND)

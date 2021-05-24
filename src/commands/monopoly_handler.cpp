@@ -45,7 +45,9 @@ ActionStatus MonopolyHandler::act(GameMap& aMap, UserInterface& aUi, std::vector
     {
         return ActionStatus::PARAM_REQUIRED;
     }
-    aMap.currentPlayerPlayMonopoly(mResource);
+    const size_t amountGot = aMap.currentPlayerPlayMonopoly(mResource);
+    aReturnMsg.emplace_back(Logger::formatString( \
+        "You got ", amountGot, " ", consumableResourceStringValue.at(static_cast<size_t>(mResource))));
     return ActionStatus::SUCCESS;
 }
 
