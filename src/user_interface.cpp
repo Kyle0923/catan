@@ -439,7 +439,7 @@ int UserInterface::loop(GameMap& aMap)
             {
                 std::string str;
                 int lastX = readUserInput(true, false, str);
-                wmove(mInputWindow, 1, lastX);
+                wmove(mInputWindow, mInputStartY, lastX);
                 break;
             }
             case '\t':
