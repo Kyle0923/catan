@@ -66,7 +66,8 @@ ActionStatus BuildHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<st
 
     if (rc != 0)
     {
-        aReturnMsg.emplace_back(Logger::formatString("Construction failed, rc=", rc));
+        INFO_LOG("build command failed, build_type=" + mBuildType + ", playerID=", aMap.currentPlayer(), ", rc=", rc);
+        aReturnMsg.emplace_back("Construction failed");
     }
 
     switch (rc)
