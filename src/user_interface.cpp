@@ -11,6 +11,7 @@
 #include "game_map.hpp"
 #include "logger.hpp"
 #include "utility.hpp"
+#include "command_history.hpp"
 
 int UserInterface::initColors()
 {
@@ -334,6 +335,7 @@ int UserInterface::loop(GameMap& aMap)
     std::string input = "";
     Point_t mouseEvent{0, 0};
     int keystroke;
+    CommandHistory commandHistory;
 
     while (1)
     {
@@ -433,10 +435,11 @@ int UserInterface::loop(GameMap& aMap)
             {
                 //TODO:
                 // std::string earlierCmd = (keystroke == KEY_UP ? xxx : yyy);
+                std::string earlierCmd = (keystroke == KEY_UP ? commandHistory.lastCmd() : commandHistory.nextCmd());
+                const char* eCmd = earlierCmd.c_str();
                 wmove(mInputWindow, mInputStartY, mInputStartX + 1);
                 wclrtoeol(mInputWindow);
-                // winsstr(mInputWindow, <c-style string to be insert>);
-                // wmove(mInputWindow, mInputStartY, mInputStartX + 1 + <inserted string length>);
+                waddstr(mInputWindow, eCmd);
                 break;
             }
             case KEY_HOME:
@@ -505,6 +508,8 @@ int UserInterface::loop(GameMap& aMap)
             INFO_LOG("USER input cmd: ", input);
             //TODO:
             // push cmd histroy, cmd = input
+            commandHistory.recordCmd(input);
+
         }
         else
         {

@@ -21,9 +21,11 @@ private:
     std::string mCurrentCommand;
 public:
     CommandHistory();
-    void recordCmd(std::string cmd);
+    void recordCmd(std::string);
     std::string getCommand();
-    void nextCmd();
-    void lastCmd();
+    size_t getCommandIndex();
+    size_t getHistorySize();
+    std::string nextCmd();
+    std::string lastCmd();
 };
 #endif

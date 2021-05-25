@@ -11,10 +11,10 @@
 
 CommandHistory::CommandHistory() = default;
 
-void CommandHistory::recordCmd(std::string cmd)
+void CommandHistory::recordCmd(std::string aCmd)
 {
     if (mHistory.size() == 10) mHistory.pop_front();
-    mHistory.push_back(cmd);
+    mHistory.push_back(aCmd);
     mCurrentIndex = mHistory.size();
     mCurrentCommand = "";
 }
@@ -24,20 +24,26 @@ std::string CommandHistory::getCommand()
     return mCurrentCommand;
 }
 
-void CommandHistory::nextCmd()
+size_t CommandHistory::getCommandIndex()
 {
-    if (mCurrentIndex == mHistory.size() - 1) 
-    {
-        mCurrentCommand = "";
-    }
-    else mCurrentCommand = mHistory.at(++mCurrentIndex);
+    return mCurrentIndex;
 }
 
-void CommandHistory::lastCmd()
+size_t CommandHistory::getHistorySize()
 {
-    if (mCurrentIndex == 0) 
-    {
-        mCurrentCommand = "";
-    }
+    return mHistory.size();
+}
+
+std::string CommandHistory::nextCmd()
+{
+    if (mCurrentIndex == mHistory.size() - 1) mCurrentCommand = "";
+    else mCurrentCommand = mHistory.at(++mCurrentIndex);
+    return mCurrentCommand;
+}
+
+std::string CommandHistory::lastCmd()
+{
+    if (mCurrentIndex == 0) mCurrentCommand = "";
     else mCurrentCommand = mHistory.at(--mCurrentIndex);
+    return mCurrentCommand;
 }
