@@ -152,7 +152,6 @@ bool UserInterface::checkSize(const GameMap& aMap, const int aVerticalPadding, c
     return true;
 }
 
-
 void UserInterface::restoreBorder(WINDOW* const aWindow, const chtype aColor)
 {
     int curX, curY; // save cursor position, restore it later
@@ -461,9 +460,7 @@ int UserInterface::loop(GameMap& aMap)
                 currentCommandHelper()->getPossibleInputs(input, &autoFillString);
                 if (autoFillString.length() > 0)
                 {
-                    winsstr(mInputWindow, autoFillString.c_str());
-                    restoreBorder(mInputWindow, COLOR_PAIR(getInputWinBorderColor(aMap.currentPlayer())));
-                    wmove(mInputWindow, mInputStartY, getcurx(mInputWindow) + autoFillString.length());
+                    waddstr(mInputWindow, autoFillString.c_str());
                 }
                 break;
             }
@@ -471,12 +468,7 @@ int UserInterface::loop(GameMap& aMap)
 
         if (isprint(keystroke) && keystroke <= 126)
         {
-            // echo to mInputWindow, advance cursor
-            winsch(mInputWindow, keystroke);
-            restoreBorder(mInputWindow, COLOR_PAIR(getInputWinBorderColor(aMap.currentPlayer()))); // winsch will remove the border (char) at the end of current line
-            int curX, curY;
-            getyx(mInputWindow, curY, curX);
-            wmove(mInputWindow, curY, curX + 1);
+            waddch(mInputWindow, keystroke);
         }
 
         readUserInput(false, true, input);
