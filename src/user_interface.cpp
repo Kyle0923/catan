@@ -428,6 +428,17 @@ int UserInterface::loop(GameMap& aMap)
                 }
                 break;
             }
+            case KEY_UP:
+            case KEY_DOWN:
+            {
+                //TODO:
+                // std::string earlierCmd = (keystroke == KEY_UP ? xxx : yyy);
+                wmove(mInputWindow, mInputStartY, mInputStartX + 1);
+                wclrtoeol(mInputWindow);
+                // winsstr(mInputWindow, <c-style string to be insert>);
+                // wmove(mInputWindow, mInputStartY, mInputStartX + 1 + <inserted string length>);
+                break;
+            }
             case KEY_HOME:
             case KEY_PPAGE:
             {
@@ -439,7 +450,7 @@ int UserInterface::loop(GameMap& aMap)
             {
                 std::string str;
                 int lastX = readUserInput(true, false, str);
-                wmove(mInputWindow, 1, lastX);
+                wmove(mInputWindow, mInputStartY, lastX);
                 break;
             }
             case '\t':
@@ -492,28 +503,35 @@ int UserInterface::loop(GameMap& aMap)
         {
             readUserInput(true, true, input);
             INFO_LOG("USER input cmd: ", input);
+            //TODO:
+            // push cmd histroy, cmd = input
         }
         else
         {
             input = "";
-            INFO_LOG("USER input: mouse event");
+            INFO_LOG("USER input: mouse event at ", mouseEvent);
         }
         const std::string inputPrefix(mInputStartX, '>');  // for later printToConsole
 
         std::vector<std::string> returnMsg;
         auto currentCmdHelperIter = mCommandHelperStack.begin();
         ActionStatus rc = (*currentCmdHelperIter)->act(aMap, *this, input, mouseEvent, returnMsg);
+
         if (rc == ActionStatus::EXIT)
         {
             mCommandHelperStack.erase(currentCmdHelperIter);
             --mInputStartY;
             --mInputStartX;
-        }
-
-        if (mCommandHelperStack.size() == 0)
-        {
-            // no more handler, exit
-            break;
+            if (mCommandHelperStack.size() == 0)
+            {
+                // no more handler, exit
+                break;
+            }
+            else
+            {
+                // call act() of the latest top cmdHelper
+                mCommandHelperStack.front()->act(aMap, *this, {}, Point_t{0, 0}, returnMsg);
+            }
         }
 
         if (rc != ActionStatus::PARTIAL_COMMAND)

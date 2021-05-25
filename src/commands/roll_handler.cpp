@@ -29,7 +29,6 @@ ActionStatus RollHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std
     if (dice == 7)
     {
         aUi.pushCommandHelper(std::make_unique<CommandParameterReader>(&mRobberMoveHandler));
-        mRobberMoveHandler.instruction(aReturnMsg);
     }
     return ActionStatus::SUCCESS;
 }

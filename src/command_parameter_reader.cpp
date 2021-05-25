@@ -60,7 +60,6 @@ ActionStatus CommandParameterReader::act(GameMap& aMap, UserInterface& aUi, std:
     if (aInput == "" && aPoint == Point_t{0, 0})
     {
         // no param provided
-        aReturnMsg.emplace_back("Parameter needed");
         pParamCmd->instruction(aReturnMsg);
         return ActionStatus::FAILED;
     }

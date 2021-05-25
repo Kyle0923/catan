@@ -773,13 +773,13 @@ int GameMap::currentPlayerConsumeDevCard(const DevelopmentCardTypes aDevCard)
     return mPlayers[mCurrentPlayer]->consumeDevelopmentCard(aDevCard);
 }
 
-int GameMap::currentPlayerPlayMonopoly(const ResourceTypes aResource)
+size_t GameMap::currentPlayerPlayMonopoly(const ResourceTypes aResource)
 {
     if (!(aResource >= ResourceTypes::BRICK && aResource <= ResourceTypes::ORE))
     {
-        // incorrect resource
-        return 1;
+        ERROR_LOG("Incorrect ResourceType, int_val: ", static_cast<int>(aResource));
     }
+
     size_t sumOfResource = 0;
     for (Player* player : mPlayers)
     {
@@ -793,7 +793,7 @@ int GameMap::currentPlayerPlayMonopoly(const ResourceTypes aResource)
     }
     DEBUG_LOG_L3("Monopoly_card: sum of resource is ", sumOfResource);
     mPlayers.at(mCurrentPlayer)->addResources(aResource, sumOfResource);
-    return 0;
+    return sumOfResource;
 }
 
 void GameMap::summarizePlayerStatus(int aPlayerId, std::vector<std::string>& aReturnMsg) const

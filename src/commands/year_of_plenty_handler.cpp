@@ -62,6 +62,11 @@ ActionStatus YearOfPlentyHandler::act(GameMap& aMap, UserInterface& aUi, std::ve
 
     aMap.currentPlayerAddResource(mResource1);
     aMap.currentPlayerAddResource(mResource2);
+
+    aReturnMsg.emplace_back (
+            "You got 1 " + consumableResourceStringValue.at(static_cast<size_t>(mResource1)) + " and 1 "
+                + consumableResourceStringValue.at(static_cast<size_t>(mResource2))
+    );
     return ActionStatus::SUCCESS;
 }
 
