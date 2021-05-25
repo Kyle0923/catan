@@ -2,7 +2,7 @@
  * Project: catan
  * @file command_helper.cpp
  *
- * @author Zonghao Huang <kyle0923@qq.com>
+ * @author Bowei Li <cesterty024@gmail.com>
  *
  * All right reserved.
  */
@@ -13,7 +13,7 @@ CommandHistory::CommandHistory() = default;
 
 void CommandHistory::recordCmd(std::string cmd)
 {
-    if (mHistory.size() == 10) mHistory.erase(mHistory.begin());
+    if (mHistory.size() == 10) mHistory.pop_front();
     mHistory.push_back(cmd);
     mCurrentIndex = mHistory.size();
     mCurrentCommand = "";
