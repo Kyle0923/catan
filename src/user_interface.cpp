@@ -428,6 +428,17 @@ int UserInterface::loop(GameMap& aMap)
                 }
                 break;
             }
+            case KEY_UP:
+            case KEY_DOWN:
+            {
+                //TODO:
+                // std::string earlierCmd = (keystroke == KEY_UP ? xxx : yyy);
+                wmove(mInputWindow, mInputStartY, mInputStartX + 1);
+                wclrtoeol(mInputWindow);
+                // winsstr(mInputWindow, <c-style string to be insert>);
+                // wmove(mInputWindow, mInputStartY, mInputStartX + 1 + <inserted string length>);
+                break;
+            }
             case KEY_HOME:
             case KEY_PPAGE:
             {
