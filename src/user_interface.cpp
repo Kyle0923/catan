@@ -503,11 +503,13 @@ int UserInterface::loop(GameMap& aMap)
         {
             readUserInput(true, true, input);
             INFO_LOG("USER input cmd: ", input);
+            //TODO:
+            // push cmd histroy, cmd = input
         }
         else
         {
             input = "";
-            INFO_LOG("USER input: mouse event");
+            INFO_LOG("USER input: mouse event at ", mouseEvent);
         }
         const std::string inputPrefix(mInputStartX, '>');  // for later printToConsole
 
