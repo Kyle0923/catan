@@ -205,25 +205,29 @@ int UserInterface::readStringFromWindow(WINDOW* const aWindow, int aStartingY, i
     aString.clear();
     int curX, curY; // save cursor position, restore it later
     getyx(aWindow, curY, curX);
-    const int bufferSize = COLS - aStartingX;
-    char buffer[bufferSize] = {0};
+    constexpr int BUFFER_SIZE = 256;
+    if (COLS - aStartingX > BUFFER_SIZE)
+    {
+        WARN_LOG("BufferSize less than window width: ", BUFFER_SIZE, " vs ", COLS - aStartingX);
+    }
+    char buffer[BUFFER_SIZE] = {0};
     if (aUntilEol)
     {
-        mvwinnstr(aWindow, aStartingY, aStartingX, buffer, bufferSize);
+        mvwinnstr(aWindow, aStartingY, aStartingX, buffer, BUFFER_SIZE);
         aString = std::string(buffer);
         trimTrailingSpace(aString);
     }
     else
     {
         // read up to (curX - 1)
-        if (curX <= aStartingX)
+        if (curX < aStartingX)
         {
-            WARN_LOG("Incorrect curX position: curX <= aStartingX");
+            ERROR_LOG("Incorrect curX position: curX < aStartingX");
         }
         else
         {
-            // read length == (curX - aStartingX), from aStartingX to curX-1
-            // do not trim trailing space, trailing space serves as delimiter to inform
+            // read length == (curX - aStartingX), i.e. from aStartingX to curX-1
+            // do not trim trailing space: trailing space serves as delimiter to inform
             // getPossibleInputs() that the command is ended
             mvwinnstr(aWindow, aStartingY, aStartingX, buffer, curX - aStartingX);
             aString = std::string(buffer);
