@@ -9,7 +9,7 @@
 # and the library name must be in the form of lib<name>.a or lib<name>.so (gcc ld -l format)
 #
 
-CC := g++
+CXX := g++
 ARTIFACT := catan.exe
 SRC_DIR_BASE := src
 SRC_DIR := $(SRC_DIR_BASE) \
@@ -61,13 +61,13 @@ all: lint $(THIRD_PARTY_LIB_DIR) $(ARTIFACT)
 .PHONY: all lint clean clean_all $(THIRD_PARTY_LIB_DIR) $(CLEAN_THIRD_PARTY)
 
 $(ARTIFACT): $(OBJ) $(THIRD_PARTY_LIB)
-	$(CC) $(OBJ) $(LIB) $(CFLAGS) -o $@
+	$(CXX) $(OBJ) $(LIB) $(CFLAGS) -o $@
 ifneq ($(RELEASE),)
 	@echo -e "\nBuilding for RELEASE completed: $(ARTIFACT)"
 endif
 
 $(BIN_DIR)/%.o: $(SRC_DIR_BASE)/%.cpp | $(BIN_DIR) $(THIRD_PARTY_LIB_DIR)
-	$(CC) $(CPPFLAGS) $(CFLAGS) -MF $(patsubst %.o,%.d,$@) -c $< -o $@
+	$(CXX) $(CPPFLAGS) $(CFLAGS) -MF $(patsubst %.o,%.d,$@) -c $< -o $@
 
 $(THIRD_PARTY_LIB): $(THIRD_PARTY_LIB_DIR)
 $(THIRD_PARTY_LIB_DIR):
