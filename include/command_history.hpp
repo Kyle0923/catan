@@ -14,7 +14,8 @@
 #include<deque>
 #include<string>
 
-class CommandHistory{
+class CommandHistory
+{
 private:
     std::deque<std::string>mHistory;
     size_t mCurrentIndex = 0;
@@ -23,7 +24,6 @@ public:
     CommandHistory();
     void recordCmd(std::string);
     std::string getCommand();
-    size_t getCommandIndex();
     size_t getHistorySize();
     std::string nextCmd();
     std::string lastCmd();
