@@ -431,12 +431,18 @@ int UserInterface::loop(GameMap& aMap)
                 break;
             }
             case KEY_UP:
+            {
+                readUserInput(true, true, input);
+                commandHistory.recordInput(input);
+                [[fallthrough]];
+            }
             case KEY_DOWN:
             {
                 std::string earlierCmd = (keystroke == KEY_UP ? commandHistory.lastCmd() : commandHistory.nextCmd());
                 wmove(mInputWindow, mInputStartY, mInputStartX + 1);
                 wclrtoeol(mInputWindow);
                 waddstr(mInputWindow, earlierCmd.c_str());
+                restoreBorder(mInputWindow, COLOR_PAIR(getInputWinBorderColor(aMap.currentPlayer())));
                 break;
             }
             case KEY_HOME:
