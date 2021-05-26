@@ -24,38 +24,41 @@ void CommandHistory::recordCmd(std::string aCmd)
     } 
     mHistory.push_back(aCmd);
     mCurrentIndex = mHistory.size();
+    mInput = "";
 }
 
+void CommandHistory::recordInput(std::string aInput) 
+{
+    if (aInput.size() == 0)
+    {
+        return;
+    }
+
+    mInput = aInput;
+}
 
 std::string CommandHistory::nextCmd()
 {
     // fetch and return the next command
-    if (mCurrentIndex < mHistory.size()) 
+    if (mCurrentIndex == mHistory.size()) 
     {
-        ++mCurrentIndex;
+        return mInput;
     } 
-
-    if (mCurrentIndex >= 0 && mCurrentIndex < mHistory.size())
+    else
     {
-        return mHistory.at(mCurrentIndex);
-    }
-    else 
-    {
-        return "";
+        return mHistory.at(++mCurrentIndex);
     }
 }
-
 
 std::string CommandHistory::lastCmd()
 {
     // fetch and return the previous command
-    if (mCurrentIndex > 0) 
+    if (mCurrentIndex == 0)
     {
-        --mCurrentIndex;
-    } 
-
-    if (mCurrentIndex >= 0 && mCurrentIndex < mHistory.size())
+        return mHistory.at(0);
+    }
+    else
     {
-        return mHistory.at(mCurrentIndex);
+        return mHistory.at(--mCurrentIndex);
     }
 }
