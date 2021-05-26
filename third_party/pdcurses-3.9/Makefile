@@ -30,12 +30,6 @@ PDCOBJS_WITH_DIR = $(addprefix $(BIN_DIR)/,$(PDCOBJS))
 
 PDCURSES_WIN_H	= $(osdir)/pdcwin.h
 
-CC		= gcc
-AR		= ar
-STRIP		= strip
-LINK		= gcc
-WINDRES		= windres
-
 ifeq ($(DEBUG),Y)
 	CFLAGS  = -g -Wall -DPDCDEBUG
 	LDFLAGS = -g
@@ -75,7 +69,7 @@ $(BIN_DIR):
 $(LIB_DIR):
 	mkdir -p $@
 
-$(LIBCURSES) : $(LIBOBJS_WITH_DIR) $(PDCOBJS_WITH_DIR) $(RESOURCE) | $(LIB_DIR)
+$(LIBCURSES) : $(LIBOBJS_WITH_DIR) $(PDCOBJS_WITH_DIR) | $(LIB_DIR)
 	$(AR) $(LIBFLAGS) $@ $?
 
 $(LIBOBJS_WITH_DIR) $(PDCOBJS_WITH_DIR) : $(PDCURSES_HEADERS) | $(BIN_DIR)

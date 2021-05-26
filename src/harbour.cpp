@@ -115,7 +115,7 @@ int Harbour::calculatePoints(GameMap& aMap)
 std::vector<Point_t> Harbour::getAllPoints() const
 {
     std::vector<Point_t> allPoints(mLinks);
-    for (size_t ii = 0; ii < std::min(resourceTypesToStr(mResourceType).length(), 5U); ++ii)
+    for (size_t ii = 0; ii < std::min(resourceTypesToStr(mResourceType).length(), size_t{5U}); ++ii)
     {
         allPoints.push_back(Point_t{mTopLeft.x + ii, mTopLeft.y});
     }

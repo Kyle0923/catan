@@ -9,7 +9,16 @@
 # and the library name must be in the form of lib<name>.a or lib<name>.so (gcc ld -l format)
 #
 
-CXX := g++
+ifneq ($(USE_CLANG),)
+export CXX := clang++ -target i686-pc-windows-gnu
+export CC  := clang -target i686-pc-windows-gnu
+export AR  := llvm-ar --format=gnu
+else
+export CXX := g++
+export CC  := gcc
+export AR  := ar
+endif
+
 ARTIFACT := catan.exe
 SRC_DIR_BASE := src
 SRC_DIR := $(SRC_DIR_BASE) \
