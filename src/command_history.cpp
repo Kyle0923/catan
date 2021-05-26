@@ -40,7 +40,7 @@ void CommandHistory::recordInput(std::string aInput)
 std::string CommandHistory::nextCmd()
 {
     // fetch and return the next command
-    if (mCurrentIndex == mHistory.size()) 
+    if (mCurrentIndex == mHistory.size()-1) 
     {
         return mInput;
     } 
