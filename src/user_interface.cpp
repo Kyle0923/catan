@@ -433,13 +433,10 @@ int UserInterface::loop(GameMap& aMap)
             case KEY_UP:
             case KEY_DOWN:
             {
-                //TODO:
-                // std::string earlierCmd = (keystroke == KEY_UP ? xxx : yyy);
                 std::string earlierCmd = (keystroke == KEY_UP ? commandHistory.lastCmd() : commandHistory.nextCmd());
-                const char* eCmd = earlierCmd.c_str();
                 wmove(mInputWindow, mInputStartY, mInputStartX + 1);
                 wclrtoeol(mInputWindow);
-                waddstr(mInputWindow, eCmd);
+                waddstr(mInputWindow, earlierCmd.c_str());
                 break;
             }
             case KEY_HOME:
@@ -506,10 +503,7 @@ int UserInterface::loop(GameMap& aMap)
         {
             readUserInput(true, true, input);
             INFO_LOG("USER input cmd: ", input);
-            //TODO:
-            // push cmd histroy, cmd = input
             commandHistory.recordCmd(input);
-
         }
         else
         {

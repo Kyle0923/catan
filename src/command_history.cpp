@@ -1,6 +1,6 @@
 /**
  * Project: catan
- * @file command_helper.cpp
+ * @file command_history.cpp
  *
  * @author Bowei Li <cesterty024@gmail.com>
  *
@@ -9,58 +9,53 @@
 
 #include "command_history.hpp"
 
-CommandHistory::CommandHistory() = default;
 
 void CommandHistory::recordCmd(std::string aCmd)
 {
-    if (mHistory.size() == 10) mHistory.pop_front();
+    // record the command in command history
+    if (aCmd.size() == 0) 
+    {
+        return;
+    }
+
+    if (mHistory.size() == 10) 
+    {
+        mHistory.pop_front();
+    } 
     mHistory.push_back(aCmd);
-    mCurrentIndex = mHistory.size() + 1;
-    mCurrentCommand = "";
+    mCurrentIndex = mHistory.size();
 }
 
-std::string CommandHistory::getCommand()
-{
-    return mCurrentCommand;
-}
-
-size_t CommandHistory::getHistorySize()
-{
-    return mHistory.size();
-}
 
 std::string CommandHistory::nextCmd()
 {
-    if (mCurrentIndex <= mHistory.size()) 
+    // fetch and return the next command
+    if (mCurrentIndex < mHistory.size()) 
     {
         ++mCurrentIndex;
     } 
 
-    if (mCurrentIndex >= 1 && mCurrentIndex <= mHistory.size())
+    if (mCurrentIndex >= 0 && mCurrentIndex < mHistory.size())
     {
-        mCurrentCommand = mHistory.at(mCurrentIndex - 1);
+        return mHistory.at(mCurrentIndex);
     }
-    else {
-        mCurrentCommand = "";
+    else 
+    {
+        return "";
     }
-
-    return mCurrentCommand;
 }
+
 
 std::string CommandHistory::lastCmd()
 {
+    // fetch and return the previous command
     if (mCurrentIndex > 0) 
     {
         --mCurrentIndex;
     } 
 
-    if (mCurrentIndex >= 1 && mCurrentIndex <= mHistory.size())
+    if (mCurrentIndex >= 0 && mCurrentIndex < mHistory.size())
     {
-        mCurrentCommand = mHistory.at(mCurrentIndex - 1);
+        return mHistory.at(mCurrentIndex);
     }
-    else {
-        mCurrentCommand = "";
-    }
-
-    return mCurrentCommand;
 }

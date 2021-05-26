@@ -1,7 +1,7 @@
 /**
  * Project: catan
- * @file common.hpp
- * @brief common data types
+ * @file command_history.hpp
+ * @brief command history class
  *
  * @author Bowei Li <cesterty024@gmail.com>
  *
@@ -17,14 +17,10 @@
 class CommandHistory
 {
 private:
-    std::deque<std::string>mHistory;
+    std::deque<std::string> mHistory; // container to hold command history
     size_t mCurrentIndex = 0;
-    std::string mCurrentCommand;
 public:
-    CommandHistory();
     void recordCmd(std::string);
-    std::string getCommand();
-    size_t getHistorySize();
     std::string nextCmd();
     std::string lastCmd();
 };
