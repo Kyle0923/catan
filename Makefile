@@ -43,7 +43,7 @@ LIB += $(THIRD_PARTY_LIB_DIR:%=-L%/lib) \
 	$(patsubst lib%,-l%,$(basename $(notdir $(THIRD_PARTY_LIB)))) \
 
 CPPFLAGS := $(INC) -MMD -MP
-CFLAGS   := -Wall -std=c++14
+CFLAGS   := -std=c++14 -Wall -Werror
 DEPS := $(OBJ:.o=.d)
 
 # make up clean targets for third party libraries
