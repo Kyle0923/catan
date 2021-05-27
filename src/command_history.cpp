@@ -29,7 +29,7 @@ void CommandHistory::recordCmd(std::string aCmd)
 
 void CommandHistory::recordInput(std::string aInput) 
 {
-    if (aInput.size() == 0)
+    if (mCurrentIndex != mHistory.size())
     {
         return;
     }
@@ -40,10 +40,16 @@ void CommandHistory::recordInput(std::string aInput)
 std::string CommandHistory::nextCmd()
 {
     // fetch and return the next command
-    if (mCurrentIndex == mHistory.size()-1) 
+
+    if (mCurrentIndex == mHistory.size()) 
     {
         return mInput;
-    } 
+    }
+    else if (mCurrentIndex == mHistory.size() - 1)
+    {
+        ++mCurrentIndex;
+        return mInput;
+    }
     else
     {
         return mHistory.at(++mCurrentIndex);
@@ -53,6 +59,11 @@ std::string CommandHistory::nextCmd()
 std::string CommandHistory::lastCmd()
 {
     // fetch and return the previous command
+    if (mHistory.size() == 0) 
+    {
+        return mInput;
+    }
+
     if (mCurrentIndex == 0)
     {
         return mHistory.at(0);
