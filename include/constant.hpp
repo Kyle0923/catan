@@ -15,7 +15,7 @@
 
 constexpr uint32_t VER_MAJOR = 0;
 constexpr uint32_t VER_MINOR = 8;
-constexpr uint32_t VER_PATCH = 3;
+constexpr uint32_t VER_PATCH = 4;
 
 namespace constant
 {
