@@ -8,7 +8,7 @@
  */
 
 #include "command_history.hpp"
-
+#include "logger.hpp"
 
 void CommandHistory::recordCmd(std::string aCmd)
 {
@@ -25,6 +25,7 @@ void CommandHistory::recordCmd(std::string aCmd)
     mHistory.push_back(aCmd);
     mCurrentIndex = mHistory.size();
     mInput = "";
+    DEBUG_LOG_L3("cmdHistory: ", mHistory);
 }
 
 void CommandHistory::recordInput(std::string aInput) 

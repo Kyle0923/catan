@@ -16,6 +16,7 @@
 #include <sstream>
 #include <vector>
 #include <set>
+#include <deque>
 #include <stdexcept>
 
 #ifndef RELEASE
@@ -68,6 +69,12 @@ template<typename T>
 extern std::ostream& operator<< (std::ostream& aStream, const std::set<T>& aSet)
 {
     return printIterable(aStream, "Set", aSet.begin(), aSet.end());
+};
+
+template<typename T>
+extern std::ostream& operator<< (std::ostream& aStream, const std::deque<T>& aDeque)
+{
+    return printIterable(aStream, "Deque", aDeque.begin(), aDeque.end());
 };
 
 class Logger
