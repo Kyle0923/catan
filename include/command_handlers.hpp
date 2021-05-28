@@ -1,6 +1,6 @@
 /**
  * Project: catan
- * @file command_common.hpp
+ * @file command_handlers.hpp
  * @brief declaration of the common commands (quit, exit, help)
  *        and other individual commands
  *
