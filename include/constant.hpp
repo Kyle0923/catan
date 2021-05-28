@@ -42,6 +42,8 @@ constexpr size_t NUM_DICE_3_TO_11 = 2U;
 constexpr size_t NUM_DICE_2_OR_12 = 1U;
 constexpr size_t NUM_DICE_7       = 0U;
 
+constexpr size_t MAX_HISTORY_SIZE = 10U; // number of history command recorded
+
 #ifdef RELEASE
 constexpr int DEFAULT_DEBUG_LEVEL = 5;
 #else

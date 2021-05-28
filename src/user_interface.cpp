@@ -433,12 +433,12 @@ int UserInterface::loop(GameMap& aMap)
             case KEY_UP:
             {
                 readUserInput(true, true, input);
-                commandHistory.recordInput(input);
+                commandHistory.cacheInput(input);
                 [[fallthrough]];
             }
             case KEY_DOWN:
             {
-                std::string earlierCmd = (keystroke == KEY_UP ? commandHistory.lastCmd() : commandHistory.nextCmd());
+                std::string earlierCmd = (keystroke == KEY_UP ? commandHistory.prevHistory() : commandHistory.nextHistory());
                 wmove(mInputWindow, mInputStartY, mInputStartX + 1);
                 wclrtoeol(mInputWindow);
                 waddstr(mInputWindow, earlierCmd.c_str());
@@ -509,7 +509,7 @@ int UserInterface::loop(GameMap& aMap)
         {
             readUserInput(true, true, input);
             INFO_LOG("USER input cmd: ", input);
-            commandHistory.recordCmd(input);
+            commandHistory.pushToHistory(input);
         }
         else
         {

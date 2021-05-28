@@ -20,13 +20,12 @@ class CommandHistory
 {
 private:
     std::deque<std::string> mHistory; // container to hold command history
-    static constexpr int MAX_HISTORY_SIZE = 10; // only holds the most recent ten history records
-    size_t mCurrentIndex = 0;
-    std::string mInput;
+    size_t mHistoryIndex = 0; // index to indicate which history to display
+    std::string mCache; // denotes the cached input
 public:
-    void recordCmd(std::string); // record the executed command in command history
-    void recordInput(std::string); // record the current (not yet executed) command
-    const std::string& nextCmd();
-    const std::string& lastCmd();
+    void pushToHistory(const std::string&); // push the executed command to command history
+    void cacheInput(const std::string&); // record the current (not yet executed) User Input
+    const std::string& nextHistory();
+    const std::string& prevHistory();
 };
 #endif

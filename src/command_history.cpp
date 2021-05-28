@@ -9,63 +9,64 @@
 
 #include "command_history.hpp"
 #include "logger.hpp"
+#include "constant.hpp"
 
-void CommandHistory::recordCmd(std::string aCmd)
+void CommandHistory::pushToHistory(const std::string& aExecutedCmd)
 {
-    // record the executed command in command history
-    if (aCmd.size() == 0)
+    // push the executed command to command history
+    if (aExecutedCmd.size() == 0)
     {
         return;
     }
 
-    if (mHistory.size() == MAX_HISTORY_SIZE)
+    if (mHistory.size() == constant::MAX_HISTORY_SIZE)
     {
         mHistory.pop_front();
     }
-    mHistory.push_back(aCmd);
-    mCurrentIndex = mHistory.size();
-    mInput = "";
+    mHistory.push_back(aExecutedCmd);
+    mHistoryIndex = mHistory.size();
+    mCache = "";
     DEBUG_LOG_L3("cmdHistory: ", mHistory);
 }
 
-void CommandHistory::recordInput(std::string aInput)
+void CommandHistory::cacheInput(const std::string& aCurrentInput)
 {
-    // record the current (not yet executed) command in a string
-    if (mCurrentIndex == mHistory.size())
+    // record the current (not yet executed) command in a string named mCache
+    if (mHistoryIndex == mHistory.size())
     {
-        mInput = aInput;
+        mCache = aCurrentInput;
     }
 }
 
-const std::string& CommandHistory::nextCmd()
+const std::string& CommandHistory::nextHistory()
 {
     // fetch and return the next command
 
-    if (mCurrentIndex + 1 >= mHistory.size())
+    if (mHistoryIndex + 1 >= mHistory.size())
     {
-        mCurrentIndex = mHistory.size();
-        return mInput;
+        mHistoryIndex = mHistory.size();
+        return mCache;
     }
     else
     {
-        return mHistory.at(++mCurrentIndex);
+        return mHistory.at(++mHistoryIndex);
     }
 }
 
-const std::string& CommandHistory::lastCmd()
+const std::string& CommandHistory::prevHistory()
 {
     // fetch and return the previous command
     if (mHistory.size() == 0)
     {
-        return mInput;
+        return mCache;
     }
 
-    if (mCurrentIndex == 0)
+    if (mHistoryIndex == 0)
     {
         return mHistory.at(0);
     }
     else
     {
-        return mHistory.at(--mCurrentIndex);
+        return mHistory.at(--mHistoryIndex);
     }
 }
