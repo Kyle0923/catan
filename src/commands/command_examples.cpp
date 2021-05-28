@@ -12,7 +12,7 @@
 
 #ifndef RELEASE
 
-#include "command_common.hpp"
+#include "command_handlers.hpp"
 
 std::string SubCmdHandler::command() const
 {

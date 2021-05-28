@@ -9,7 +9,7 @@
  * All right reserved.
  */
 
-#include "command_common.hpp"
+#include "command_handlers.hpp"
 
 RoadBuildingHandler::RoadBuildingHandler() :
     mRoadCounter(0U)

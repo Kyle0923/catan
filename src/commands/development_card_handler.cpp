@@ -9,7 +9,7 @@
  * All right reserved.
  */
 
-#include "command_common.hpp"
+#include "command_handlers.hpp"
 #include "command_parameter_reader.hpp"
 
 const std::vector<std::string> DevelopmentCardHandler::mActionPool = {"play", "buy"};

@@ -15,7 +15,7 @@
 #include "map_file_io.hpp"
 #include "cli_opt.hpp"
 #include "command_dispatcher.hpp"
-#include "command_common.hpp"
+#include "command_handlers.hpp"
 #include "utility.hpp"
 #include "logger.hpp"
 

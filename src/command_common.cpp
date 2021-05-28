@@ -8,7 +8,7 @@
  */
 
 #include <map>
-#include "command_common.hpp"
+#include "command_handlers.hpp"
 
 const std::vector<std::string> CommandHandler::mEmptyVector = {};
 

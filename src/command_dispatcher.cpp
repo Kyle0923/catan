@@ -9,7 +9,7 @@
 
 #include <sstream>
 #include "command_dispatcher.hpp"
-#include "command_common.hpp"
+#include "command_handlers.hpp"
 #include "logger.hpp"
 #include "command_parameter_reader.hpp"
 
