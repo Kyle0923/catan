@@ -43,7 +43,7 @@ ActionStatus BuildHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<st
 {
     if (aArgs.size() != 0)
     {
-        processParameter(aMap, aArgs.front(), Point_t{0, 0}, aReturnMsg);
+        onParameterReceive(aMap, aArgs.front(), Point_t{0, 0}, aReturnMsg);
     }
     if (!parameterComplete())
     {
@@ -104,7 +104,7 @@ ActionStatus BuildHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<st
     return ActionStatus::SUCCESS;
 }
 
-ActionStatus BuildHandler::processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
+ActionStatus BuildHandler::onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
 {
     // first prompt user for build type: road or settlement or city
     INFO_LOG(command() + " reading parameter " + aParam);

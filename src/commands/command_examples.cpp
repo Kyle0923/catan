@@ -49,7 +49,7 @@ ActionStatus ParameterExampleCommandHandler::act(GameMap& aMap, UserInterface& a
     return ActionStatus::SUCCESS;
 }
 
-ActionStatus ParameterExampleCommandHandler::processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
+ActionStatus ParameterExampleCommandHandler::onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
 {
     // first prompt user for a mouse event
     if (aParam == "" && aPoint == Point_t{0, 0})

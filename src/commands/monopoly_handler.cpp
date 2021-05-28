@@ -38,7 +38,7 @@ ActionStatus MonopolyHandler::act(GameMap& aMap, UserInterface& aUi, std::vector
 {
     for (std::string arg : aArgs)
     {
-        processParameter(aMap, arg, Point_t{0, 0}, aReturnMsg);
+        onParameterReceive(aMap, arg, Point_t{0, 0}, aReturnMsg);
     }
 
     if (!parameterComplete())
@@ -51,7 +51,7 @@ ActionStatus MonopolyHandler::act(GameMap& aMap, UserInterface& aUi, std::vector
     return ActionStatus::SUCCESS;
 }
 
-ActionStatus MonopolyHandler::processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
+ActionStatus MonopolyHandler::onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
 {
     if (parameterComplete())
     {

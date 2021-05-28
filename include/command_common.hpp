@@ -55,7 +55,7 @@ class PassHandler: public NextHandler // alias of NextHandler
     virtual std::string command() const override final;
 };
 
-class BuildHandler: public CommandHandler, public ParameterizedCommand
+class BuildHandler: public StatefulCommandHandler
 {
 protected:
     Point_t mPoint;
@@ -67,7 +67,7 @@ public:
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
     virtual const std::vector<std::string>& paramAutoFillPool(size_t aParamIndex) const override final;
 
-    virtual ActionStatus processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+    virtual ActionStatus onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
     virtual bool parameterComplete() const override final;
     virtual void resetParameters() override final;
     virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;
@@ -76,7 +76,7 @@ public:
 };
 
 // for road_building development_card
-class RoadBuildingHandler: public CommandHandler, public ParameterizedCommand
+class RoadBuildingHandler: public StatefulCommandHandler
 {
 private:
     size_t mRoadCounter;
@@ -84,7 +84,7 @@ public:
     virtual std::string command() const override final;
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
 
-    virtual ActionStatus processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+    virtual ActionStatus onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
     virtual bool parameterComplete() const override final;
     virtual void resetParameters() override;
     virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;
@@ -93,7 +93,7 @@ public:
 };
 
 // for year_of_plenty development_card
-class YearOfPlentyHandler: public CommandHandler, public ParameterizedCommand
+class YearOfPlentyHandler: public StatefulCommandHandler
 {
 private:
     ResourceTypes mResource1;
@@ -106,7 +106,7 @@ public:
     virtual const std::vector<std::string>& paramAutoFillPool(size_t aParamIndex) const override final;
     virtual size_t currentParamIndex() const override final;
 
-    virtual ActionStatus processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+    virtual ActionStatus onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
     virtual bool parameterComplete() const override final;
     virtual void resetParameters() override;
     virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;
@@ -115,7 +115,7 @@ public:
 };
 
 // for monopoly development_card
-class MonopolyHandler: public CommandHandler, public ParameterizedCommand
+class MonopolyHandler: public StatefulCommandHandler
 {
 private:
     ResourceTypes mResource;
@@ -126,7 +126,7 @@ public:
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
     virtual const std::vector<std::string>& paramAutoFillPool(size_t aParamIndex) const override final;
 
-    virtual ActionStatus processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+    virtual ActionStatus onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
     virtual bool parameterComplete() const override final;
     virtual void resetParameters() override;
     virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;
@@ -136,7 +136,7 @@ public:
 
 // Singleton object
 // should only be used by RollHandler, DevelopmentCardHandler
-class RobberMoveHandler: public CommandHandler, public ParameterizedCommand
+class RobberMoveHandler: public StatefulCommandHandler
 {
 private:
     Point_t mRobberDestination;
@@ -146,7 +146,7 @@ public:
     virtual std::string command() const override final;
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
 
-    virtual ActionStatus processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+    virtual ActionStatus onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
     virtual bool parameterComplete() const override final;
     virtual void resetParameters() override final;
     virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;
@@ -165,7 +165,7 @@ public:
     RollHandler();
 };
 
-class DevelopmentCardHandler: public CommandHandler, public ParameterizedCommand
+class DevelopmentCardHandler: public StatefulCommandHandler
 {
 private:
     std::string mAction;
@@ -183,7 +183,7 @@ public:
     virtual size_t currentParamIndex() const override final;
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
 
-    virtual ActionStatus processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+    virtual ActionStatus onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
     virtual bool parameterComplete() const override final;
     virtual void resetParameters() override final;
     virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;
@@ -198,7 +198,7 @@ class StatusHandler: public CommandHandler
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
 };
 
-class FirstTwoRoundHandler: public CommandHandler, public ParameterizedCommand
+class FirstTwoRoundHandler: public StatefulCommandHandler
 {
 private:
     size_t mRound;  // round 1 or 2
@@ -211,7 +211,7 @@ public:
     virtual std::string command() const override final;
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
 
-    virtual ActionStatus processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+    virtual ActionStatus onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
     virtual bool parameterComplete() const override final;
     virtual void resetParameters() override final;
     virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;
@@ -231,7 +231,7 @@ class SubCmdHandler: public CommandHandler
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
 };
 
-class ParameterExampleCommandHandler: public CommandHandler, public ParameterizedCommand
+class ParameterExampleCommandHandler: public StatefulCommandHandler
 {
 private:
     Point_t mPoint;
@@ -240,7 +240,7 @@ public:
     virtual std::string command() const override final;
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
 
-    virtual ActionStatus processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+    virtual ActionStatus onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
     virtual bool parameterComplete() const override final;
     virtual void resetParameters() override final;
     virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;

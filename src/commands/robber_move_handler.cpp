@@ -41,7 +41,7 @@ ActionStatus RobberMoveHandler::act(GameMap& aMap, UserInterface& aUi, std::vect
     return ActionStatus::SUCCESS;
 }
 
-ActionStatus RobberMoveHandler::processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
+ActionStatus RobberMoveHandler::onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
 {
     if (mRobberDestination == Point_t{0, 0})
     {

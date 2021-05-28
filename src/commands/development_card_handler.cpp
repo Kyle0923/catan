@@ -68,7 +68,7 @@ ActionStatus DevelopmentCardHandler::act(GameMap& aMap, UserInterface& aUi, std:
 {
     for (std::string arg : aArgs)
     {
-        processParameter(aMap, arg, Point_t{0, 0}, aReturnMsg);
+        onParameterReceive(aMap, arg, Point_t{0, 0}, aReturnMsg);
     }
 
     if (!parameterComplete())
@@ -128,7 +128,7 @@ ActionStatus DevelopmentCardHandler::act(GameMap& aMap, UserInterface& aUi, std:
     }
 }
 
-ActionStatus DevelopmentCardHandler::processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
+ActionStatus DevelopmentCardHandler::onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
 {
     if (mAction == "")
     {

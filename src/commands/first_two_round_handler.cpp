@@ -33,7 +33,7 @@ ActionStatus FirstTwoRoundHandler::act(GameMap& aMap, UserInterface& aUi, std::v
 {
     for (std::string arg : aArgs)
     {
-        processParameter(aMap, arg, Point_t{0, 0}, aReturnMsg);
+        onParameterReceive(aMap, arg, Point_t{0, 0}, aReturnMsg);
     }
 
     if (!parameterComplete())
@@ -44,7 +44,7 @@ ActionStatus FirstTwoRoundHandler::act(GameMap& aMap, UserInterface& aUi, std::v
     return ActionStatus::SUCCESS;
 }
 
-ActionStatus FirstTwoRoundHandler::processParameter(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
+ActionStatus FirstTwoRoundHandler::onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
 {
     return ActionStatus::SUCCESS;
 }

@@ -18,22 +18,22 @@ CommandParameterReader::CommandParameterReader(CommandHandler* const aCmd):
 
 ActionStatus CommandParameterReader::act(GameMap& aMap, UserInterface& aUi, std::string aInput, Point_t aPoint, std::vector<std::string>& aReturnMsg)
 {
-    ParameterizedCommand* const pParamCmd = dynamic_cast<ParameterizedCommand*>(mCmd);
+    StatefulCommandHandler* const pStatefulCmd = dynamic_cast<StatefulCommandHandler*>(mCmd);
 
     if (aInput.find("exit") == 0)
     {
-        if (pParamCmd)
+        if (pStatefulCmd)
         {
-            pParamCmd->resetParameters();
+            pStatefulCmd->resetParameters();
         }
         return ActionStatus::EXIT;
     }
 
     if (aInput.find("help") == 0)
     {
-        if (pParamCmd)
+        if (pStatefulCmd)
         {
-            pParamCmd->instruction(aReturnMsg);
+            pStatefulCmd->instruction(aReturnMsg);
         }
         else
         {
@@ -45,9 +45,9 @@ ActionStatus CommandParameterReader::act(GameMap& aMap, UserInterface& aUi, std:
     }
 
     std::vector<std::string> params = splitString(aInput);
-    if (!pParamCmd)
+    if (!pStatefulCmd)
     {
-        // not inherit from ParameterizedCommand
+        // not inherit from StatefulCommandHandler
         ActionStatus rc = mCmd->act(aMap, aUi, params, aReturnMsg);
         INFO_LOG(mCmd->command() + "::act() returned " + actionStatusToStr(rc));
         if (rc != ActionStatus::PARAM_REQUIRED)
@@ -60,21 +60,21 @@ ActionStatus CommandParameterReader::act(GameMap& aMap, UserInterface& aUi, std:
     if (aInput == "" && aPoint == Point_t{0, 0})
     {
         // no param provided
-        pParamCmd->instruction(aReturnMsg);
+        pStatefulCmd->instruction(aReturnMsg);
         return ActionStatus::FAILED;
     }
 
     bool readSuccessful = true;
     for (std::string param : params)
     {
-        ActionStatus rc = pParamCmd->processParameter(aMap, param, aPoint, aReturnMsg);
+        ActionStatus rc = pStatefulCmd->onParameterReceive(aMap, param, aPoint, aReturnMsg);
         readSuccessful &= (rc == ActionStatus::SUCCESS);
 
-        INFO_LOG(mCmd->command() + "::processParameter(), param: " + param + ", ", \
+        INFO_LOG(mCmd->command() + "::onParameterReceive(), param: " + param + ", ", \
                     aPoint, "; returned " + actionStatusToStr(rc));
     }
 
-    if (!pParamCmd->parameterComplete())
+    if (!pStatefulCmd->parameterComplete())
     {
         if (!readSuccessful)
         {
@@ -84,7 +84,7 @@ ActionStatus CommandParameterReader::act(GameMap& aMap, UserInterface& aUi, std:
         {
             DEBUG_LOG_L3("parameter required for ", mCmd->command());
         }
-        pParamCmd->instruction(aReturnMsg);
+        pStatefulCmd->instruction(aReturnMsg);
         return ActionStatus::PARAM_REQUIRED;
     }
 
@@ -97,7 +97,7 @@ ActionStatus CommandParameterReader::act(GameMap& aMap, UserInterface& aUi, std:
     }
     else
     {
-        pParamCmd->resetParameters();
+        pStatefulCmd->resetParameters();
         return ActionStatus::EXIT;
     }
 }
