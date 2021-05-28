@@ -9,11 +9,11 @@
  * All right reserved.
  */
 
-#ifndef INCLUDE_COMMAND_COMMON_HPP
-#define INCLUDE_COMMAND_COMMON_HPP
+#ifndef INCLUDE_COMMAND_HANDLERS_HPP
+#define INCLUDE_COMMAND_HANDLERS_HPP
 
 #include "command_dispatcher.hpp"
-#include "command_handler.hpp"
+#include "command_common.hpp"
 #include "game_map.hpp"
 #include "user_interface.hpp"
 #include "utility.hpp"
@@ -259,4 +259,4 @@ class BuildingHandler: public CommandHandler
 
 #endif /* RELEASE */
 
-#endif /* INCLUDE_COMMAND_COMMON_HPP */
+#endif /* INCLUDE_COMMAND_HANDLERS_HPP */

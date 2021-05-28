@@ -14,7 +14,7 @@
 #include <vector>
 #include <map>
 #include "command_helper.hpp"
-#include "command_handler.hpp"
+#include "command_common.hpp"
 
 class BackdoorHandler; // forward declaration of BackdoorHandler
 

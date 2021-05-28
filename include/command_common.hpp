@@ -1,6 +1,6 @@
 /**
  * Project: catan
- * @file command_handler.hpp
+ * @file command_common.hpp
  * @brief CommandHandler and StatefulCommandHandler base class (interface)
  *        Defines the APIs of the commands
  *        Stateless commands should derive from CommandHandler
@@ -11,8 +11,8 @@
  * All right reserved.
  */
 
-#ifndef INCLUDE_COMMAND_HANDLER_HPP
-#define INCLUDE_COMMAND_HANDLER_HPP
+#ifndef INCLUDE_COMMAND_COMMON_HPP
+#define INCLUDE_COMMAND_COMMON_HPP
 
 #include <vector>
 #include "common.hpp"
@@ -131,4 +131,4 @@ public:
     virtual ~StatefulCommandHandler() = default;
 };
 
-#endif /* INCLUDE_COMMAND_HANDLER_HPP */
+#endif /* INCLUDE_COMMAND_COMMON_HPP */

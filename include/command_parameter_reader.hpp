@@ -13,7 +13,7 @@
 #define INCLUDE_COMMAND_PARAMETER_READER_HPP
 
 #include "command_helper.hpp"
-#include "command_handler.hpp"
+#include "command_common.hpp"
 
 class CommandParameterReader : public CommandHelper
 {
