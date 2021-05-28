@@ -20,7 +20,7 @@ class CommandHistory
 {
 private:
     std::deque<std::string> mHistory; // container to hold command history
-    static constexpr int mMaxHistorySize = 10; // only holds the most recent ten history records
+    static constexpr int MAX_HISTORY_SIZE = 10; // only holds the most recent ten history records
     size_t mCurrentIndex = 0;
     std::string mInput;
 public:

@@ -18,7 +18,7 @@ void CommandHistory::recordCmd(std::string aCmd)
         return;
     }
 
-    if (mHistory.size() == 10)
+    if (mHistory.size() == MAX_HISTORY_SIZE)
     {
         mHistory.pop_front();
     }
