@@ -15,7 +15,7 @@
 
 constexpr uint32_t VER_MAJOR = 0;
 constexpr uint32_t VER_MINOR = 8;
-constexpr uint32_t VER_PATCH = 3;
+constexpr uint32_t VER_PATCH = 4;
 
 namespace constant
 {
@@ -41,6 +41,8 @@ constexpr size_t NUM_HARBOUR_ANY = NUM_OF_HARBOUR - NUM_HARBOUR_RESOURCE; // num
 constexpr size_t NUM_DICE_3_TO_11 = 2U;
 constexpr size_t NUM_DICE_2_OR_12 = 1U;
 constexpr size_t NUM_DICE_7       = 0U;
+
+constexpr size_t MAX_HISTORY_SIZE = 10U; // number of history command recorded
 
 #ifdef RELEASE
 constexpr int DEFAULT_DEBUG_LEVEL = 5;
