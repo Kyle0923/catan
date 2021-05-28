@@ -12,43 +12,38 @@
 
 void CommandHistory::recordCmd(std::string aCmd)
 {
-    // record the command in command history
-    if (aCmd.size() == 0) 
+    // record the executed command in command history
+    if (aCmd.size() == 0)
     {
         return;
     }
 
-    if (mHistory.size() == 10) 
+    if (mHistory.size() == 10)
     {
         mHistory.pop_front();
-    } 
+    }
     mHistory.push_back(aCmd);
     mCurrentIndex = mHistory.size();
     mInput = "";
     DEBUG_LOG_L3("cmdHistory: ", mHistory);
 }
 
-void CommandHistory::recordInput(std::string aInput) 
+void CommandHistory::recordInput(std::string aInput)
 {
-    if (mCurrentIndex != mHistory.size())
+    // record the current (not yet executed) command in a string
+    if (mCurrentIndex == mHistory.size())
     {
-        return;
+        mInput = aInput;
     }
-
-    mInput = aInput;
 }
 
-std::string CommandHistory::nextCmd()
+const std::string& CommandHistory::nextCmd()
 {
     // fetch and return the next command
 
-    if (mCurrentIndex == mHistory.size()) 
+    if (mCurrentIndex + 1 >= mHistory.size())
     {
-        return mInput;
-    }
-    else if (mCurrentIndex == mHistory.size() - 1)
-    {
-        ++mCurrentIndex;
+        mCurrentIndex = mHistory.size();
         return mInput;
     }
     else
@@ -57,10 +52,10 @@ std::string CommandHistory::nextCmd()
     }
 }
 
-std::string CommandHistory::lastCmd()
+const std::string& CommandHistory::lastCmd()
 {
     // fetch and return the previous command
-    if (mHistory.size() == 0) 
+    if (mHistory.size() == 0)
     {
         return mInput;
     }
