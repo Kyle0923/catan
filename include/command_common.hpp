@@ -23,20 +23,32 @@ class UserInterface;
 
 /**
  * @usage:
- * Command handlers except "help", "exit" need to add to CommandDispatcher constructor
+ * DO NOT inherit CommandHandler directly
+ * Instead, inherit StatelessCommandHandler or StatefulCommandHandler and
+ * implement the corresponding APIs
+ * CommandHandlers other than "help", "exit" should add to CommandDispatcher constructor
  *
  * @brief:
- * CommandHandlers by default are *stateless*.
- * That is, it has no internal variables that record the states of the command.
+ * CommandHandler class provides top-level abstraction to interface with CommandHelper
+ * classes (CommandDispatcher and CommandParameterReader)
+ * It has two derive classes, StatelessCommandHandler and StatefulCommandHandler.
+ * Commands should inherit one of these two instead of directly from top-level CommandHandler
+ *
+ **
+ * StatelessCmd
+ * Stateless means it has no internal variable that record the states of the command.
+ * Therefore, all parameters must pass in at once.
  * The expected behaviour of the stateless commands are,
  * based on the string parameters, figure out what to do, perform the action,
- * and return control back to the upper level
+ * and return control back to the upper level.
+ * Because of the differences between string paramters and mouse event, and the requirement
+ * that all parameters must pass in at once, we chose to only support string parameters for
+ * StatelessCmd. All commandHandlers that require mouse event must use StatefulCommand instead
  *
- * However, while it is possible (and supported) to pass multiple string parameters at once,
- * due to the nature of mouse events, it is impossible to pass string parameters and
- * mouse event(s) together at one stage. Therefore, in general, commands that require
- * mouse event(s) should inherit StatefulCommandHandler and accept paramters in a
- * multi-stage fashion.
+ **
+ * StatefulCmd
+ * In general, commands that require mouse event(s) should inherit StatefulCommandHandler
+ * and accept paramters in a multi-stage fashion.
  *
  * In addition, because StatefulCommandHandler provides an instruction() api,
  * it has a better use experience than the stateless CommandHandler.
@@ -57,19 +69,17 @@ public:
     virtual std::string description() const;
 
     /**
-     * handling of the command.
      * @param aReturnMsg stores the messages that need to return
      *
-     * If parameter(s) expected but not provided in aArgs, return ActionStatus::PARAM_REQUIRED
-     *
-     * If only *string* parameters are required, no additional effort is required
-     * CommandParameterReader will split the next cli input and pass to act() through aArgs.
-     *
-     * If special handling for parameter(s) is required, the cmdHandler should instead
-     * inherit StatefulCommandHandler and implement onParameterReceive()
-     * CommandParameterReader will then call onParameterReceive instead.
+     * @brief
+     * Top-level API for CommandHelper classes
+     * the internal implemetaion is done by StatefulCmdHandler and StatelessCmdHandler
+     * and sub-level API provided by StatefulCmdHandler and StatelessCmdHandler
+     * Commands should implement the sub-level APIs provided by these two classes
      */
-    virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) = 0;
+    virtual ActionStatus \
+        run(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, \
+            Point_t aPoint, std::vector<std::string>& aReturnMsg) = 0;
 
     /**
      * for auto complete, returns a vector of possible input parameters
@@ -95,13 +105,49 @@ protected:
 };
 
 /**
+ * StatelessCommandHandler base class (interface)
+ * commands that are stateless (execute and done) should inherit this class
+ */
+class StatelessCommandHandler : public CommandHandler
+{
+protected:
+    /**
+     * @brief The actual action to be performed
+     *        derived class should implement this method
+     * @param aArgs the arguments passed in
+     * @param aReturnMsg - return message, instructions for user or error message
+     *
+     * @return PARAM_REQUIRED if parameter is expected but not found in aArgs
+     *         CommandParameterReader will split the next cli input and
+     *         pass in through aArgs.
+     */
+    virtual ActionStatus \
+        statelessRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, \
+            std::vector<std::string>& aReturnMsg) = 0;
+public:
+    virtual ActionStatus \
+        run(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, \
+            Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+    StatelessCommandHandler() = default;
+    virtual ~StatelessCommandHandler() = default;
+};
+
+/**
  * StatefulCommandHandler base class (interface)
  * commands that requires *special* handling for parameters should inherit this class
  * and implement readParameter() method
+ *
+ **
+ * StatefulCommandHandler model
+ * when run() get called, it will first call onParameterReceive() recursively until all
+ * parameter is processed.
+ * Then run() will check parameterComplete(), if false, it will return PARAM_REQUIRED
+ * else, it will call statefulRun() to perform the action
+ * See command_common.cpp for implementation detail
  */
 class StatefulCommandHandler : public CommandHandler
 {
-public:
+protected:
     /**
      * @param aParam - string parameter
      * @param aPoint - for mouse event, the coord on GameMap
@@ -112,10 +158,22 @@ public:
     virtual ActionStatus onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) = 0;
 
     /**
+     * @brief The actual action to be performed
+     *        derived class should implement this method
+     */
+    virtual ActionStatus \
+        statefulRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg) = 0;
+
+    /**
      * return true when all necessary parameters are read in.
-     * then readParameter() will call CommandHandler::act() to trigger the commandHandler
+     * Then CommandHandler::statefulRun() gets called
      */
     virtual bool parameterComplete() const = 0;
+
+public:
+    virtual ActionStatus \
+        run(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, \
+            Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
 
     /**
      * reset all internal parameters

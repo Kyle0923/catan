@@ -64,18 +64,8 @@ size_t DevelopmentCardHandler::currentParamIndex() const
     }
 }
 
-ActionStatus DevelopmentCardHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
+ActionStatus DevelopmentCardHandler::statefulRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg)
 {
-    for (std::string arg : aArgs)
-    {
-        onParameterReceive(aMap, arg, Point_t{0, 0}, aReturnMsg);
-    }
-
-    if (!parameterComplete())
-    {
-        return ActionStatus::PARAM_REQUIRED;
-    }
-
     DevelopmentCardTypes devCard = static_cast<DevelopmentCardTypes>(mDevCard);
     if (mAction == "buy")
     {

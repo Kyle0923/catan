@@ -22,7 +22,7 @@ std::string StatusHandler::description() const
     return "display player's status, optionally you may provide a 'player ID' to check on other's status";
 }
 
-ActionStatus StatusHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
+ActionStatus StatusHandler::statelessRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
 {
     int playerId = -1;
     if (aArgs.size() > 0)

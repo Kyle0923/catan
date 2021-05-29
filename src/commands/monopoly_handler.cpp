@@ -34,17 +34,8 @@ const std::vector<std::string>& MonopolyHandler::paramAutoFillPool(size_t aParam
     return mEmptyVector;
 }
 
-ActionStatus MonopolyHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
+ActionStatus MonopolyHandler::statefulRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg)
 {
-    for (std::string arg : aArgs)
-    {
-        onParameterReceive(aMap, arg, Point_t{0, 0}, aReturnMsg);
-    }
-
-    if (!parameterComplete())
-    {
-        return ActionStatus::PARAM_REQUIRED;
-    }
     const size_t amountGot = aMap.currentPlayerPlayMonopoly(mResource);
     aReturnMsg.emplace_back(Logger::formatString( \
         "You got ", amountGot, " ", consumableResourceStringValue.at(static_cast<size_t>(mResource))));

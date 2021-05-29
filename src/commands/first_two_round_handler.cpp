@@ -29,18 +29,8 @@ std::string FirstTwoRoundHandler::command() const
     return "first_two_round_handler";
 }
 
-ActionStatus FirstTwoRoundHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
+ActionStatus FirstTwoRoundHandler::statefulRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg)
 {
-    for (std::string arg : aArgs)
-    {
-        onParameterReceive(aMap, arg, Point_t{0, 0}, aReturnMsg);
-    }
-
-    if (!parameterComplete())
-    {
-        return ActionStatus::PARAM_REQUIRED;
-    }
-
     return ActionStatus::SUCCESS;
 }
 
