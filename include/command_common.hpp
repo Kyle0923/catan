@@ -142,7 +142,7 @@ public:
  * when run() get called, it will first call onParameterReceive() recursively until all
  * parameter is processed.
  * Then run() will check parameterComplete(), if false, it will return PARAM_REQUIRED
- * else, it will call actImpl() to perform the action
+ * else, it will call statefulRun() to perform the action
  * See command_common.cpp for implementation detail
  */
 class StatefulCommandHandler : public CommandHandler
@@ -166,7 +166,7 @@ protected:
 
     /**
      * return true when all necessary parameters are read in.
-     * Then CommandHandler::actImpl() gets called
+     * Then CommandHandler::statefulRun() gets called
      */
     virtual bool parameterComplete() const = 0;
 
