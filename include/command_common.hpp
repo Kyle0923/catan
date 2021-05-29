@@ -62,14 +62,16 @@ public:
      *
      * If parameter(s) expected but not provided in aArgs, return ActionStatus::PARAM_REQUIRED
      *
-     * If only *string* parameters are required, no additional effort is required
+     * If only *string* parameters are required, no mouse event event is required,
      * CommandParameterReader will split the next cli input and pass to act() through aArgs.
      *
      * If special handling for parameter(s) is required, the cmdHandler should instead
      * inherit StatefulCommandHandler and implement onParameterReceive()
      * CommandParameterReader will then call onParameterReceive instead.
      */
-    virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) = 0;
+    virtual ActionStatus \
+        act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, \
+            Point_t aPoint, std::vector<std::string>& aReturnMsg) = 0;
 
     /**
      * for auto complete, returns a vector of possible input parameters
@@ -95,13 +97,36 @@ protected:
 };
 
 /**
+ * StatelessCommandHandler base class (interface)
+ * commands that are stateless (execute and done) should inherit this class
+ */
+class StatelessCommandHandler : public CommandHandler
+{
+protected:
+    /**
+     * @brief The actual action to be performed
+     *        derived class should implement this method
+     * @param aArgs the arguments passed in
+     */
+    virtual ActionStatus \
+        actImpl(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, \
+            std::vector<std::string>& aReturnMsg) = 0;
+public:
+    virtual ActionStatus \
+        act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, \
+            Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+    StatelessCommandHandler() = default;
+    virtual ~StatelessCommandHandler() = default;
+};
+
+/**
  * StatefulCommandHandler base class (interface)
  * commands that requires *special* handling for parameters should inherit this class
  * and implement readParameter() method
  */
 class StatefulCommandHandler : public CommandHandler
 {
-public:
+protected:
     /**
      * @param aParam - string parameter
      * @param aPoint - for mouse event, the coord on GameMap
@@ -112,10 +137,23 @@ public:
     virtual ActionStatus onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) = 0;
 
     /**
+     * @brief The actual action to be performed
+     *        derived class should implement this method
+     */
+    virtual ActionStatus \
+        actImpl(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg) = 0;
+
+    /**
      * return true when all necessary parameters are read in.
      * then readParameter() will call CommandHandler::act() to trigger the commandHandler
      */
     virtual bool parameterComplete() const = 0;
+
+
+public:
+    virtual ActionStatus \
+        act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, \
+            Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
 
     /**
      * reset all internal parameters

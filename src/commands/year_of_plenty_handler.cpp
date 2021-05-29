@@ -48,18 +48,8 @@ size_t YearOfPlentyHandler::currentParamIndex() const
     return 2;
 }
 
-ActionStatus YearOfPlentyHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
+ActionStatus YearOfPlentyHandler::actImpl(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg)
 {
-    for (std::string arg : aArgs)
-    {
-        onParameterReceive(aMap, arg, Point_t{0, 0}, aReturnMsg);
-    }
-
-    if (!parameterComplete())
-    {
-        return ActionStatus::PARAM_REQUIRED;
-    }
-
     aMap.currentPlayerAddResource(mResource1);
     aMap.currentPlayerAddResource(mResource2);
 

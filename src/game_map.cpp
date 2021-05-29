@@ -881,7 +881,7 @@ int GameMap::buildColony(const Point_t aPoint, const ColonyType aColony, const b
     {
         if (!pVertex->isAvailable(aEdgeCheck ? mCurrentPlayer : -1))
         {
-            WARN_LOG("One or more adjacent vertex of " + pVertex->getStringId() + " is owned, cannot build settlement here");
+            WARN_LOG("cannot build settlement at " + pVertex->getStringId() + "adjacent vertex occupied or no edge connected to this vertex");
             return 3;
         }
 

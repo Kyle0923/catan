@@ -39,17 +39,8 @@ const std::vector<std::string>& BuildHandler::paramAutoFillPool(size_t aParamInd
     return mEmptyVector;
 }
 
-ActionStatus BuildHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
+ActionStatus BuildHandler::actImpl(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg)
 {
-    if (aArgs.size() != 0)
-    {
-        onParameterReceive(aMap, aArgs.front(), Point_t{0, 0}, aReturnMsg);
-    }
-    if (!parameterComplete())
-    {
-        return ActionStatus::PARAM_REQUIRED;
-    }
-
     int rc = -1;
     if (mBuildType == "road")
     {
@@ -77,19 +68,20 @@ ActionStatus BuildHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<st
             aReturnMsg.emplace_back("Construction complete");
             break;
         case 1:
-            aReturnMsg.emplace_back("Incorrect coordinate");
+            aReturnMsg.emplace_back(std::string{"Please click on a "} + (mBuildType == "road" ? "edge" : "vertex"));
             break;
         case 2:
-            aReturnMsg.emplace_back(Logger::formatString("Incorrect owner of ", mPoint));
+            aReturnMsg.emplace_back("It is already occupied by others");
             break;
         case 3:
             if (mBuildType == "road")
             {
-                aReturnMsg.emplace_back("None of the adjacent vertices is owner by current player");
+                aReturnMsg.emplace_back("None of the adjacent vertices or roads is owner by you");
             }
             else
             {
-                aReturnMsg.emplace_back("One or more adjacent vertex is occupied");
+                // TODO: incorrect msg
+                aReturnMsg.emplace_back("TODO: incorrect msg, One or more adjacent vertex is occupied");
             }
             break;
         case 4:

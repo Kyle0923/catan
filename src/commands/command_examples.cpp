@@ -19,7 +19,7 @@ std::string SubCmdHandler::command() const
     return "subcmd";
 }
 
-ActionStatus SubCmdHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
+ActionStatus SubCmdHandler::actImpl(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
 {
     aUi.pushCommandHelper(std::make_unique<CommandDispatcher>(std::vector<CommandHandler*>({new SubCmdHandler()})));
     return ActionStatus::SUCCESS;
@@ -37,12 +37,8 @@ std::string ParameterExampleCommandHandler::command() const
     return "parameter";
 }
 
-ActionStatus ParameterExampleCommandHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
+ActionStatus ParameterExampleCommandHandler::actImpl(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg)
 {
-    if (!parameterComplete())
-    {
-        return ActionStatus::PARAM_REQUIRED;
-    }
     aReturnMsg.push_back("User clicked on '" + aMap.getTerrain(mPoint)->getStringId() + "'");
     aReturnMsg.push_back("And passed in param '" + mParam + "'");
     aReturnMsg.push_back(command() + "::act() successful");
@@ -97,7 +93,7 @@ std::string BuildingHandler::command() const
     return "building";
 }
 
-ActionStatus BuildingHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
+ActionStatus BuildingHandler::actImpl(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
 {
     for (size_t ii = 0; ii < aArgs.size(); ++ii)
     {

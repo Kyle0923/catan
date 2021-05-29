@@ -16,7 +16,7 @@ std::string RobberMoveHandler::command() const
     return "robber_move";   // this should only be used for logging purpose
 }
 
-ActionStatus RobberMoveHandler::act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
+ActionStatus RobberMoveHandler::actImpl(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg)
 {
     aMap.moveRobber(mRobberDestination);
     ResourceTypes resourceToRob = ResourceTypes::NONE;
