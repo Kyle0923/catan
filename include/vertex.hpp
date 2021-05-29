@@ -38,12 +38,15 @@ public:
     int getOwner() const;
 
     /**
-     * @param aPlayerId the player who is about to buildColony on this vertex
-     *                  set to -1 to skip checking the edge constraint
      * @return true if none of the adjacent vertex is occupied
-     *              and at least one of the edge is owned by this player
      */
-    bool isAvailable(const int aPlayerId) const;
+    bool isAvailable() const;
+
+    /**
+     * @param aPlayerId the player who is about to buildColony on this vertex
+     * @return true if at least one of the edge is owned by this player
+     */
+    bool isConnected(const int aPlayerId) const;
 
     ColonyType getColonyType() const;
     bool isCoastal() const;

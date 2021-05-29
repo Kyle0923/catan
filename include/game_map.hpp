@@ -185,8 +185,9 @@ public:
      * @return 1: incorrect coordinate
      * @return 2: incorrect owner
      * @return 3: buildColony - adjacent vertex occupied
-     *            buildRoad   - adjacent vertex is not owner by current player
+     *            buildRoad   - adjacent vertex/road is not owner by current player
      * @return 4: insufficient resource
+     * @return 5: buildColony - (only when aEdgeCheck == true) adjacent road not owned by current player
      */
     int buildColony(const Point_t aPoint, const ColonyType aColony, const bool aEdgeCheck = true, const bool aConsumeResource = true);
     int buildRoad(const Point_t aPoint, const bool aConsumeResource = true);

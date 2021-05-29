@@ -80,12 +80,14 @@ ActionStatus BuildHandler::statefulRun(GameMap& aMap, UserInterface& aUi, std::v
             }
             else
             {
-                // TODO: incorrect msg
-                aReturnMsg.emplace_back("TODO: incorrect msg, One or more adjacent vertex is occupied");
+                aReturnMsg.emplace_back("One or more adjacent vertex is occupied");
             }
             break;
         case 4:
             aReturnMsg.emplace_back("Insufficient resources");
+            break;
+        case 5:
+            aReturnMsg.emplace_back("None of the adjacent roads is owner by you");
             break;
         case -1:
         default:

@@ -873,16 +873,25 @@ int GameMap::buildColony(const Point_t aPoint, const ColonyType aColony, const b
     if ((aColony == ColonyType::SETTLEMENT && vertexOwner != -1) || \
         (aColony == ColonyType::CITY && vertexOwner != static_cast<int>(mCurrentPlayer)))
     {
-        WARN_LOG(pVertex->getStringId() + " is owned by Player#", vertexOwner, " already, cannot reset for Player#", mCurrentPlayer);
+        WARN_LOG(pVertex->getStringId() + " is owned by Player#", vertexOwner, " already, cannot set for Player#", mCurrentPlayer);
         return 2;
     }
 
     if (aColony == ColonyType::SETTLEMENT)
     {
-        if (!pVertex->isAvailable(aEdgeCheck ? mCurrentPlayer : -1))
+        if (!pVertex->isAvailable())
         {
-            WARN_LOG("cannot build settlement at " + pVertex->getStringId() + "adjacent vertex occupied or no edge connected to this vertex");
+            WARN_LOG("cannot build settlement at " + pVertex->getStringId() + "adjacent vertex occupied");
             return 3;
+        }
+
+        if (aEdgeCheck)
+        {
+            if (!pVertex->isConnected(mCurrentPlayer))
+            {
+                WARN_LOG("cannot build settlement at " + pVertex->getStringId() + ", no edge connected to this vertex");
+                return 5;
+            }
         }
 
         if (!currentPlayerHasResourceForSettlement())
