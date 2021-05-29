@@ -39,7 +39,7 @@ const std::vector<std::string>& BuildHandler::paramAutoFillPool(size_t aParamInd
     return mEmptyVector;
 }
 
-ActionStatus BuildHandler::actImpl(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg)
+ActionStatus BuildHandler::statefulRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg)
 {
     int rc = -1;
     if (mBuildType == "road")

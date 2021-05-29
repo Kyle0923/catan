@@ -78,7 +78,7 @@ public:
      * Commands should implement the sub-level APIs provided by these two classes
      */
     virtual ActionStatus \
-        act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, \
+        run(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, \
             Point_t aPoint, std::vector<std::string>& aReturnMsg) = 0;
 
     /**
@@ -122,11 +122,11 @@ protected:
      *         pass in through aArgs.
      */
     virtual ActionStatus \
-        actImpl(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, \
+        statelessRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, \
             std::vector<std::string>& aReturnMsg) = 0;
 public:
     virtual ActionStatus \
-        act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, \
+        run(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, \
             Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
     StatelessCommandHandler() = default;
     virtual ~StatelessCommandHandler() = default;
@@ -139,9 +139,9 @@ public:
  *
  **
  * StatefulCommandHandler model
- * when act() get called, it will first call onParameterReceive() recursively until all
+ * when run() get called, it will first call onParameterReceive() recursively until all
  * parameter is processed.
- * Then act() will check parameterComplete(), if false, it will return PARAM_REQUIRED
+ * Then run() will check parameterComplete(), if false, it will return PARAM_REQUIRED
  * else, it will call actImpl() to perform the action
  * See command_common.cpp for implementation detail
  */
@@ -162,7 +162,7 @@ protected:
      *        derived class should implement this method
      */
     virtual ActionStatus \
-        actImpl(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg) = 0;
+        statefulRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg) = 0;
 
     /**
      * return true when all necessary parameters are read in.
@@ -172,7 +172,7 @@ protected:
 
 public:
     virtual ActionStatus \
-        act(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, \
+        run(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, \
             Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
 
     /**

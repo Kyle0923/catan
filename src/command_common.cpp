@@ -28,14 +28,14 @@ size_t CommandHandler::currentParamIndex() const
     return 0;
 }
 
-ActionStatus StatelessCommandHandler::act(
+ActionStatus StatelessCommandHandler::run(
     GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, \
     Point_t /* aPoint */, std::vector<std::string>& aReturnMsg)
 {
-    return actImpl(aMap, aUi, aArgs, aReturnMsg);
+    return statelessRun(aMap, aUi, aArgs, aReturnMsg);
 }
 
-ActionStatus StatefulCommandHandler::act(
+ActionStatus StatefulCommandHandler::run(
     GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, \
     Point_t aPoint, std::vector<std::string>& aReturnMsg)
 {
@@ -65,9 +65,9 @@ ActionStatus StatefulCommandHandler::act(
         instruction(aReturnMsg);
         return ActionStatus::PARAM_REQUIRED;
     }
-    INFO_LOG("read param completed for " + command() + ", calling actImpl()");
+    INFO_LOG("read param completed for " + command() + ", calling statefulRun()");
 
-    ActionStatus rc = actImpl(aMap, aUi, aReturnMsg);
+    ActionStatus rc = statefulRun(aMap, aUi, aReturnMsg);
     if (rc != ActionStatus::PARAM_REQUIRED)
     {
         resetParameters();
@@ -88,7 +88,7 @@ std::string ExitHandler::description() const
     return "Exit current command";
 }
 
-ActionStatus ExitHandler::actImpl(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
+ActionStatus ExitHandler::statelessRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
 {
     return ActionStatus::EXIT;
 }
@@ -103,7 +103,7 @@ std::string HelpHandler::description() const
     return "print help message";
 }
 
-ActionStatus HelpHandler::actImpl(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
+ActionStatus HelpHandler::statelessRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
 {
     const std::map<std::string, CommandHandler*>& handlers = mDispatcher->getHandlers();
     for (auto iter : handlers)
@@ -137,7 +137,7 @@ std::string NextHandler::description() const
     return "Pass to next player";
 }
 
-ActionStatus NextHandler::actImpl(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
+ActionStatus NextHandler::statelessRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
 {
     size_t nextPlayer = aMap.nextPlayer();
     aReturnMsg.push_back(Logger::formatString("Current Player is player#", nextPlayer));

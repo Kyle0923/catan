@@ -84,7 +84,7 @@ ActionStatus CommandDispatcher::act(GameMap& aMap, UserInterface& aUi, std::stri
     {
         pCmdHandler = mCommandHandlers.at(command);
     }
-    ActionStatus rc = pCmdHandler->act(aMap, aUi, commandParam, aPoint, aReturnMsg);
+    ActionStatus rc = pCmdHandler->run(aMap, aUi, commandParam, aPoint, aReturnMsg);
     StatefulCommandHandler* pStatefulCmd = dynamic_cast<StatefulCommandHandler*>(pCmdHandler);
     if (rc == ActionStatus::PARAM_REQUIRED)
     {

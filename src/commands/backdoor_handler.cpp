@@ -14,7 +14,7 @@ std::string BackdoorHandler::command() const
     return "__";
 }
 
-ActionStatus BackdoorHandler::actImpl(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
+ActionStatus BackdoorHandler::statelessRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
 {
     // credit http://www.ascii-art.de/ascii/s/sharks.txt
     const std::string shark = \

@@ -64,7 +64,7 @@ size_t DevelopmentCardHandler::currentParamIndex() const
     }
 }
 
-ActionStatus DevelopmentCardHandler::actImpl(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg)
+ActionStatus DevelopmentCardHandler::statefulRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg)
 {
     DevelopmentCardTypes devCard = static_cast<DevelopmentCardTypes>(mDevCard);
     if (mAction == "buy")

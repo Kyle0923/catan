@@ -22,7 +22,7 @@ std::string RoadBuildingHandler::command() const
     return "road_building";
 }
 
-ActionStatus RoadBuildingHandler::actImpl(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg)
+ActionStatus RoadBuildingHandler::statefulRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg)
 {
     // actual road_building is handled in onParameterReceive()
     return ActionStatus::SUCCESS;

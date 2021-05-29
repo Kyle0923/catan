@@ -29,7 +29,7 @@ std::string FirstTwoRoundHandler::command() const
     return "first_two_round_handler";
 }
 
-ActionStatus FirstTwoRoundHandler::actImpl(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg)
+ActionStatus FirstTwoRoundHandler::statefulRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg)
 {
     return ActionStatus::SUCCESS;
 }

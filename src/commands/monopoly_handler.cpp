@@ -34,7 +34,7 @@ const std::vector<std::string>& MonopolyHandler::paramAutoFillPool(size_t aParam
     return mEmptyVector;
 }
 
-ActionStatus MonopolyHandler::actImpl(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg)
+ActionStatus MonopolyHandler::statefulRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg)
 {
     const size_t amountGot = aMap.currentPlayerPlayMonopoly(mResource);
     aReturnMsg.emplace_back(Logger::formatString( \

@@ -46,7 +46,7 @@ ActionStatus CommandParameterReader::act(GameMap& aMap, UserInterface& aUi, std:
 
     std::vector<std::string> params = splitString(aInput);
     // not inherit from StatefulCommandHandler
-    ActionStatus rc = mCmd->act(aMap, aUi, params, aPoint, aReturnMsg);
+    ActionStatus rc = mCmd->run(aMap, aUi, params, aPoint, aReturnMsg);
     INFO_LOG(mCmd->command() + "::act() returned " + actionStatusToStr(rc));
     if (rc != ActionStatus::PARAM_REQUIRED)
     {
