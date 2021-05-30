@@ -21,7 +21,7 @@ std::string ExitHandler::description() const
     return "Exit current command";
 }
 
-ActionStatus ExitHandler::statelessRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
+ActionStatus ExitHandler::statelessRun(GameMap& aMap, UserInterface& aUi, const std::vector<std::string>& aArgs, std::vector<std::string>& aReturnMsg)
 {
     return ActionStatus::EXIT;
 }
@@ -36,7 +36,7 @@ std::string HelpHandler::description() const
     return "print help message";
 }
 
-ActionStatus HelpHandler::statelessRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
+ActionStatus HelpHandler::statelessRun(GameMap& aMap, UserInterface& aUi, const std::vector<std::string>& aArgs, std::vector<std::string>& aReturnMsg)
 {
     const std::map<std::string, CommandHandler*>& handlers = mDispatcher->getHandlers();
     for (auto iter : handlers)
@@ -70,7 +70,7 @@ std::string NextHandler::description() const
     return "Pass to next player";
 }
 
-ActionStatus NextHandler::statelessRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
+ActionStatus NextHandler::statelessRun(GameMap& aMap, UserInterface& aUi, const std::vector<std::string>& aArgs, std::vector<std::string>& aReturnMsg)
 {
     size_t nextPlayer = aMap.nextPlayer();
     aReturnMsg.push_back(Logger::formatString("Current Player is player#", nextPlayer));

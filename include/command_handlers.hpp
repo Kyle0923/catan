@@ -22,7 +22,7 @@
 class BackdoorHandler: public StatelessCommandHandler
 {
 protected:
-    ActionStatus statelessRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
+    ActionStatus statelessRun(GameMap& aMap, UserInterface& aUi, const std::vector<std::string>& aArgs, std::vector<std::string>& aReturnMsg) override final;
 public:
     std::string command() const override final;
 };
@@ -30,7 +30,7 @@ public:
 class ExitHandler: public StatelessCommandHandler
 {
 protected:
-    virtual ActionStatus statelessRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
+    virtual ActionStatus statelessRun(GameMap& aMap, UserInterface& aUi, const std::vector<std::string>& aArgs, std::vector<std::string>& aReturnMsg) override final;
 public:
     virtual std::string command() const override final;
     virtual std::string description() const override final;
@@ -41,7 +41,7 @@ class HelpHandler: public StatelessCommandHandler
 private:
     CommandDispatcher* const mDispatcher;
 protected:
-    virtual ActionStatus statelessRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
+    virtual ActionStatus statelessRun(GameMap& aMap, UserInterface& aUi, const std::vector<std::string>& aArgs, std::vector<std::string>& aReturnMsg) override final;
 public:
     virtual std::string command() const override final;
     virtual std::string description() const override final;
@@ -51,7 +51,7 @@ public:
 class NextHandler: public StatelessCommandHandler
 {
 protected:
-    virtual ActionStatus statelessRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
+    virtual ActionStatus statelessRun(GameMap& aMap, UserInterface& aUi, const std::vector<std::string>& aArgs, std::vector<std::string>& aReturnMsg) override final;
 public:
     virtual std::string command() const override;
     virtual std::string description() const override final;
@@ -69,7 +69,7 @@ protected:
     const static std::vector<std::string> mBuildTypeMatchingPool; // possible values of mBuildType
 protected:
     virtual ActionStatus statefulRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg) override final;
-    virtual ActionStatus onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+    virtual ActionStatus onParameterReceive(GameMap& aMap, const std::string& aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
     virtual bool parameterComplete() const override final;
 public:
     virtual std::string command() const override final;
@@ -89,7 +89,7 @@ private:
     size_t mRoadCounter;
 protected:
     virtual ActionStatus statefulRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg) override final;
-    virtual ActionStatus onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+    virtual ActionStatus onParameterReceive(GameMap& aMap, const std::string& aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
     virtual bool parameterComplete() const override final;
 public:
     virtual std::string command() const override final;
@@ -109,7 +109,7 @@ private:
     const static std::vector<std::string>& mResourceTypeMatchingPool; // possible values of mBuildType
 protected:
     virtual ActionStatus statefulRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg) override final;
-    virtual ActionStatus onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+    virtual ActionStatus onParameterReceive(GameMap& aMap, const std::string& aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
     virtual bool parameterComplete() const override final;
 public:
     virtual std::string command() const override final;
@@ -130,7 +130,7 @@ private:
     const static std::vector<std::string>& mResourceTypeMatchingPool; // possible values of mBuildType
 protected:
     virtual ActionStatus statefulRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg) override final;
-    virtual ActionStatus onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+    virtual ActionStatus onParameterReceive(GameMap& aMap, const std::string& aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
     virtual bool parameterComplete() const override final;
 public:
     virtual std::string command() const override final;
@@ -152,7 +152,7 @@ private:
     RobberMoveHandler();
 protected:
     virtual ActionStatus statefulRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg) override final;
-    virtual ActionStatus onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+    virtual ActionStatus onParameterReceive(GameMap& aMap, const std::string& aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
     virtual bool parameterComplete() const override final;
 public:
     virtual std::string command() const override final;
@@ -168,7 +168,7 @@ class RollHandler: public StatelessCommandHandler
 private:
     RobberMoveHandler& mRobberMoveHandler;
 protected:
-    virtual ActionStatus statelessRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
+    virtual ActionStatus statelessRun(GameMap& aMap, UserInterface& aUi, const std::vector<std::string>& aArgs, std::vector<std::string>& aReturnMsg) override final;
 public:
     virtual std::string command() const override final;
     virtual std::string description() const override final;
@@ -188,7 +188,7 @@ private:
     const static std::vector<std::string> mPlayableDevCard;
 protected:
     virtual ActionStatus statefulRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg) override final;
-    virtual ActionStatus onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+    virtual ActionStatus onParameterReceive(GameMap& aMap, const std::string& aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
     virtual bool parameterComplete() const override final;
 public:
     virtual std::string command() const override final;
@@ -205,7 +205,7 @@ public:
 class StatusHandler: public StatelessCommandHandler
 {
 protected:
-    virtual ActionStatus statelessRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
+    virtual ActionStatus statelessRun(GameMap& aMap, UserInterface& aUi, const std::vector<std::string>& aArgs, std::vector<std::string>& aReturnMsg) override final;
 public:
     virtual std::string command() const override final;
     virtual std::string description() const override final;
@@ -222,7 +222,7 @@ private:
     std::unique_ptr<CommandHelper> mTopLevelCmdDispatcher;  // when first two rounds is finished, push this to UI cmdHelper stack
 protected:
     virtual ActionStatus statefulRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg) override final;
-    virtual ActionStatus onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+    virtual ActionStatus onParameterReceive(GameMap& aMap, const std::string& aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
     virtual bool parameterComplete() const override final;
 
 public:
@@ -234,6 +234,40 @@ public:
     FirstTwoRoundHandler(const std::vector<int>& aOrder, std::unique_ptr<CommandHelper> aCmdDispatcher);
 };
 
+class TradeHandler: public StatefulCommandHandler
+{
+using Offer_t = struct {
+        size_t offeror;
+        std::map<ResourceTypes, size_t> lookingFor;
+        std::map<ResourceTypes, size_t> offering;
+    };
+private:
+    static const std::vector<std::string> mOffereeMatchingPool;
+    std::string mOfferee;
+    bool mOfferComposed;
+    Offer_t mOutgoingOffer;
+    std::vector<Offer_t> mIncomingOffer;
+
+protected:
+    virtual ActionStatus statefulRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg) override final;
+    virtual ActionStatus onStringParametersReceive(GameMap& aMap, const std::vector<std::string>& aArgs, std::vector<std::string>& aReturnMsg) override final;
+    virtual bool parameterComplete() const override final;
+
+    // not used
+    virtual ActionStatus onParameterReceive(GameMap& aMap, const std::string& aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+
+public:
+    virtual std::string command() const override final;
+    virtual std::string description() const override final;
+    virtual const std::vector<std::string>& paramAutoFillPool(size_t aParamIndex) const override final;
+    virtual size_t currentParamIndex() const override final;
+
+    virtual void resetParameters() override final;
+    virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;
+
+    TradeHandler();
+};
+
 ////////////////////////////////////////////////////////////////////////////////////
 // the commands below are meant to be used for testing in development.
 // they should not be built when RELEASE=1
@@ -243,7 +277,7 @@ public:
 class SubCmdHandler: public StatelessCommandHandler
 {
 protected:
-    virtual ActionStatus statelessRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
+    virtual ActionStatus statelessRun(GameMap& aMap, UserInterface& aUi, const std::vector<std::string>& aArgs, std::vector<std::string>& aReturnMsg) override final;
 public:
     virtual std::string command() const override final;
 };
@@ -255,7 +289,7 @@ private:
     std::string mParam;
 protected:
     virtual ActionStatus statefulRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg) override final;
-    virtual ActionStatus onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+    virtual ActionStatus onParameterReceive(GameMap& aMap, const std::string& aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
     virtual bool parameterComplete() const override final;
 public:
     virtual std::string command() const override final;
@@ -274,7 +308,7 @@ public:
     virtual std::string command() const override final;
     virtual const std::vector<std::string>& paramAutoFillPool(size_t aParamIndex) const override final;
 protected:
-    virtual ActionStatus statelessRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg) override final;
+    virtual ActionStatus statelessRun(GameMap& aMap, UserInterface& aUi, const std::vector<std::string>& aArgs, std::vector<std::string>& aReturnMsg) override final;
 };
 
 #endif /* RELEASE */

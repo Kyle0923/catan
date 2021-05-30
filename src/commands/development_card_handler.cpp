@@ -118,7 +118,7 @@ ActionStatus DevelopmentCardHandler::statefulRun(GameMap& aMap, UserInterface& a
     }
 }
 
-ActionStatus DevelopmentCardHandler::onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
+ActionStatus DevelopmentCardHandler::onParameterReceive(GameMap& aMap, const std::string& aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
 {
     if (mAction == "")
     {

@@ -28,7 +28,7 @@ ActionStatus RoadBuildingHandler::statefulRun(GameMap& aMap, UserInterface& aUi,
     return ActionStatus::SUCCESS;
 }
 
-ActionStatus RoadBuildingHandler::onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
+ActionStatus RoadBuildingHandler::onParameterReceive(GameMap& aMap, const std::string& aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
 {
     INFO_LOG(command() + "reading mouse event ", aPoint);
 

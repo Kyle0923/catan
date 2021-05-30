@@ -44,6 +44,7 @@ int main(int argc, char** argv)
             new RollHandler(),
             new StatusHandler(),
             new DevelopmentCardHandler(),
+            new TradeHandler(),
 #ifndef RELEASE
             // these commands are only for testing in development
             new BuildingHandler(),

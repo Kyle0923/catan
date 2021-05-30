@@ -19,7 +19,7 @@ std::string SubCmdHandler::command() const
     return "subcmd";
 }
 
-ActionStatus SubCmdHandler::statelessRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
+ActionStatus SubCmdHandler::statelessRun(GameMap& aMap, UserInterface& aUi, const std::vector<std::string>& aArgs, std::vector<std::string>& aReturnMsg)
 {
     aUi.pushCommandHelper(std::make_unique<CommandDispatcher>(std::vector<CommandHandler*>({new SubCmdHandler()})));
     return ActionStatus::SUCCESS;
@@ -45,7 +45,7 @@ ActionStatus ParameterExampleCommandHandler::statefulRun(GameMap& aMap, UserInte
     return ActionStatus::SUCCESS;
 }
 
-ActionStatus ParameterExampleCommandHandler::onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
+ActionStatus ParameterExampleCommandHandler::onParameterReceive(GameMap& aMap, const std::string& aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
 {
     // first prompt user for a mouse event
     if (aParam == "" && aPoint == Point_t{0, 0})
@@ -93,7 +93,7 @@ std::string BuildingHandler::command() const
     return "building";
 }
 
-ActionStatus BuildingHandler::statelessRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, std::vector<std::string>& aReturnMsg)
+ActionStatus BuildingHandler::statelessRun(GameMap& aMap, UserInterface& aUi, const std::vector<std::string>& aArgs, std::vector<std::string>& aReturnMsg)
 {
     for (size_t ii = 0; ii < aArgs.size(); ++ii)
     {

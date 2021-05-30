@@ -122,7 +122,7 @@ protected:
      *         pass in through aArgs.
      */
     virtual ActionStatus \
-        statelessRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string> aArgs, \
+        statelessRun(GameMap& aMap, UserInterface& aUi, const std::vector<std::string>& aArgs, \
             std::vector<std::string>& aReturnMsg) = 0;
 public:
     virtual ActionStatus \
@@ -155,7 +155,19 @@ protected:
      *
      * @return onParameterReceive should return either ActionStatus::SUCCESS or ActionStatus::FAILED
      */
-    virtual ActionStatus onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) = 0;
+    virtual ActionStatus onParameterReceive(GameMap& aMap, const std::string& aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) = 0;
+
+    /**
+     * @brief This is a wrapper that use a loop to call the onParameterReceive() above.
+     *        Some commands expect arguments in a key-value pair format, then they will
+     *        need to override this method instead
+     *
+     * @param aArgs - string parameters
+     * @param aReturnMsg - return message, instructions for user or error message
+     *
+     * @return onStringParametersReceive should return either ActionStatus::SUCCESS or ActionStatus::FAILED
+     */
+    virtual ActionStatus onStringParametersReceive(GameMap& aMap, const std::vector<std::string>& aArgs, std::vector<std::string>& aReturnMsg);
 
     /**
      * @brief The actual action to be performed

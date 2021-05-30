@@ -98,7 +98,7 @@ ActionStatus BuildHandler::statefulRun(GameMap& aMap, UserInterface& aUi, std::v
     return ActionStatus::SUCCESS;
 }
 
-ActionStatus BuildHandler::onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
+ActionStatus BuildHandler::onParameterReceive(GameMap& aMap, const std::string& aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
 {
     // first prompt user for build type: road or settlement or city
     INFO_LOG(command() + " reading parameter " + aParam);

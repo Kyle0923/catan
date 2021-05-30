@@ -22,7 +22,7 @@ std::string RollHandler::description() const
     return "roll the dice";
 }
 
-ActionStatus RollHandler::statelessRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string> /* aArgs */, std::vector<std::string>& aReturnMsg)
+ActionStatus RollHandler::statelessRun(GameMap& aMap, UserInterface& aUi, const std::vector<std::string>& /* aArgs */, std::vector<std::string>& aReturnMsg)
 {
     int dice = aMap.rollDice();
     aReturnMsg.emplace_back("You rolled: " + std::to_string(dice));

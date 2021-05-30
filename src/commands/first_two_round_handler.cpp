@@ -34,7 +34,7 @@ ActionStatus FirstTwoRoundHandler::statefulRun(GameMap& aMap, UserInterface& aUi
     return ActionStatus::SUCCESS;
 }
 
-ActionStatus FirstTwoRoundHandler::onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
+ActionStatus FirstTwoRoundHandler::onParameterReceive(GameMap& aMap, const std::string& aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
 {
     return ActionStatus::SUCCESS;
 }

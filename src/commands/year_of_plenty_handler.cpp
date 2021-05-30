@@ -60,7 +60,7 @@ ActionStatus YearOfPlentyHandler::statefulRun(GameMap& aMap, UserInterface& aUi,
     return ActionStatus::SUCCESS;
 }
 
-ActionStatus YearOfPlentyHandler::onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
+ActionStatus YearOfPlentyHandler::onParameterReceive(GameMap& aMap, const std::string& aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
 {
     if (parameterComplete())
     {

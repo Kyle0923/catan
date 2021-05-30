@@ -49,18 +49,7 @@ ActionStatus StatefulCommandHandler::run(
     }
     else
     {
-        ActionStatus rc;
-        for (std::string param : aArgs)
-        {
-            rc = onParameterReceive(aMap, param, Point_t{0, 0}, aReturnMsg);
-            INFO_LOG(command() + "::onParameterReceive(), mouse_event: ", \
-                        aPoint, "; returned " + actionStatusToStr(rc));
-
-            if (rc != ActionStatus::SUCCESS)
-            {
-                break;
-            }
-        }
+        onStringParametersReceive(aMap, aArgs, aReturnMsg);
     }
 
     if (!parameterComplete())
@@ -74,6 +63,25 @@ ActionStatus StatefulCommandHandler::run(
     if (rc != ActionStatus::PARAM_REQUIRED)
     {
         resetParameters();
+    }
+    return rc;
+}
+
+ActionStatus StatefulCommandHandler::onStringParametersReceive(
+    GameMap& aMap, const std::vector<std::string>& aArgs, \
+    std::vector<std::string>& aReturnMsg)
+{
+    ActionStatus rc = ActionStatus::SUCCESS;
+    for (const std::string& param : aArgs)
+    {
+        rc = onParameterReceive(aMap, param, Point_t{0, 0}, aReturnMsg);
+        INFO_LOG(command() + "::onParameterReceive() param: " , param, "; returned " + actionStatusToStr(rc));
+
+        if (rc != ActionStatus::SUCCESS)
+        {
+            aReturnMsg.emplace_back("Unkown parameter: " + param + ", abort");
+            break;
+        }
     }
     return rc;
 }

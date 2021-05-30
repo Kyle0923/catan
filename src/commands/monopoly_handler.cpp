@@ -42,7 +42,7 @@ ActionStatus MonopolyHandler::statefulRun(GameMap& aMap, UserInterface& aUi, std
     return ActionStatus::SUCCESS;
 }
 
-ActionStatus MonopolyHandler::onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
+ActionStatus MonopolyHandler::onParameterReceive(GameMap& aMap, const std::string& aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
 {
     if (parameterComplete())
     {

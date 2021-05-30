@@ -41,7 +41,7 @@ ActionStatus RobberMoveHandler::statefulRun(GameMap& aMap, UserInterface& aUi, s
     return ActionStatus::SUCCESS;
 }
 
-ActionStatus RobberMoveHandler::onParameterReceive(GameMap& aMap, std::string aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
+ActionStatus RobberMoveHandler::onParameterReceive(GameMap& aMap, const std::string& aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg)
 {
     if (mRobberDestination == Point_t{0, 0})
     {
