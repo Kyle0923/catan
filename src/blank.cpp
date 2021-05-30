@@ -23,14 +23,7 @@ Blank* Blank::getBlank()
 
 char Blank::getCharRepresentation(const size_t aPointX, const size_t aPointY, const bool aUseId) const
 {
-    if (aUseId)
-    {
-        return ' ';
-    }
-    else
-    {
-        return ' ';
-    }
+    return ' ';
 }
 
 std::string Blank::getStringId() const

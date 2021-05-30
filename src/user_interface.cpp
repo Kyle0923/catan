@@ -206,7 +206,7 @@ int UserInterface::readStringFromWindow(WINDOW* const aWindow, int aStartingY, i
     aString.clear();
     int curX, curY; // save cursor position, restore it later
     getyx(aWindow, curY, curX);
-    constexpr int BUFFER_SIZE = 256;
+    constexpr int BUFFER_SIZE = 512;
     if (COLS - aStartingX > BUFFER_SIZE)
     {
         WARN_LOG("BufferSize less than window width: ", BUFFER_SIZE, " vs ", COLS - aStartingX);
