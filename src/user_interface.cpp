@@ -474,6 +474,11 @@ int UserInterface::loop(GameMap& aMap)
                 }
                 break;
             }
+            case 464:   // minus sign on number pad
+            {
+                keystroke = '-';
+                break;
+            }
         } /* switch (keystroke) */
 
         if (isprint(keystroke) && keystroke <= 126)

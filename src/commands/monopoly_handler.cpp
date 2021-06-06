@@ -11,9 +11,6 @@
 
 #include "command_handlers.hpp"
 
-const std::vector<std::string>& MonopolyHandler::mResourceTypeMatchingPool = \
-    consumableResourceStringValue;
-
 MonopolyHandler::MonopolyHandler() :
     mResource(ResourceTypes::NONE)
 {
@@ -29,7 +26,7 @@ const std::vector<std::string>& MonopolyHandler::paramAutoFillPool(size_t aParam
 {
     if (!parameterComplete())
     {
-        return mResourceTypeMatchingPool;
+        return consumableResourceStringValue;
     }
     return mEmptyVector;
 }
@@ -50,7 +47,7 @@ ActionStatus MonopolyHandler::onParameterReceive(GameMap& aMap, const std::strin
         return ActionStatus::SUCCESS;
     }
 
-    int index = indexInVector(aParam, mResourceTypeMatchingPool);
+    int index = indexInVector(aParam, consumableResourceStringValue);
     if (index == -1)
     {
         aReturnMsg.emplace_back("unkown parameter: " + aParam);
@@ -75,7 +72,7 @@ void MonopolyHandler::instruction(std::vector<std::string>& aReturnMsg) const
     if (!parameterComplete())
     {
         aReturnMsg.emplace_back("Which resource you want to steal from all other players?");
-        aReturnMsg.emplace_back(stringVectorJoin(mResourceTypeMatchingPool));
+        aReturnMsg.emplace_back(stringVectorJoin(consumableResourceStringValue));
         return;
     }
 }

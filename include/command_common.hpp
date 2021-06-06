@@ -161,6 +161,8 @@ protected:
      * @brief This is a wrapper that use a loop to call the onParameterReceive() above.
      *        Some commands expect arguments in a key-value pair format, then they will
      *        need to override this method instead
+     *        NOTE: this function does not handle mouse event, if mouse event is required
+     *              commands need to implement the handling in onParameterReceive() above
      *
      * @param aArgs - string parameters
      * @param aReturnMsg - return message, instructions for user or error message

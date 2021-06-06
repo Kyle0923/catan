@@ -127,7 +127,6 @@ class MonopolyHandler: public StatefulCommandHandler
 {
 private:
     ResourceTypes mResource;
-    const static std::vector<std::string>& mResourceTypeMatchingPool; // possible values of mBuildType
 protected:
     virtual ActionStatus statefulRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg) override final;
     virtual ActionStatus onParameterReceive(GameMap& aMap, const std::string& aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
@@ -236,11 +235,6 @@ public:
 
 class TradeHandler: public StatefulCommandHandler
 {
-using Offer_t = struct {
-        size_t offeror;
-        std::map<ResourceTypes, size_t> lookingFor;
-        std::map<ResourceTypes, size_t> offering;
-    };
 private:
     static const std::vector<std::string> mOffereeMatchingPool;
     std::string mOfferee;
@@ -266,6 +260,32 @@ public:
     virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;
 
     TradeHandler();
+};
+
+class TradeAnswerHandler: public StatefulCommandHandler
+{
+private:
+    bool mOfferComposed;
+    Offer_t mIncomingOffer;
+
+protected:
+    virtual ActionStatus statefulRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg) override final;
+    virtual ActionStatus onStringParametersReceive(GameMap& aMap, const std::vector<std::string>& aArgs, std::vector<std::string>& aReturnMsg) override final;
+    virtual bool parameterComplete() const override final;
+
+    // not used
+    virtual ActionStatus onParameterReceive(GameMap& aMap, const std::string& aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+
+public:
+    virtual std::string command() const override final;
+    virtual std::string description() const override final;
+    virtual const std::vector<std::string>& paramAutoFillPool(size_t aParamIndex) const override final;
+    virtual size_t currentParamIndex() const override final;
+
+    virtual void resetParameters() override final;
+    virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;
+
+    TradeAnswerHandler();
 };
 
 ////////////////////////////////////////////////////////////////////////////////////

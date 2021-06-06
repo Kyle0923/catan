@@ -17,7 +17,7 @@ const std::vector<std::string> TradeHandler::mOffereeMatchingPool = {"bank", "pl
 TradeHandler::TradeHandler() :
     mOfferee(""),
     mOfferComposed(false),
-    mOutgoingOffer{ static_cast<size_t>(-1), {}, {} }
+    mOutgoingOffer{ static_cast<size_t>(-1), {} }
 {
     // empty
 }
@@ -38,6 +38,10 @@ const std::vector<std::string>& TradeHandler::paramAutoFillPool(size_t aParamInd
     {
         return mOffereeMatchingPool;
     }
+    else if (aParamIndex % 2 == 1)
+    {
+        return consumableResourceStringValue;
+    }
     else
     {
         return mEmptyVector;
@@ -55,6 +59,10 @@ size_t TradeHandler::currentParamIndex() const
 
 ActionStatus TradeHandler::statefulRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg)
 {
+    aReturnMsg.emplace_back("Stub, TradeHandler::statefulRun()");
+    //TODO:
+    // with bank: validate offer
+    // with player: pushCmdHelperStack(TradeBroker?)
     return ActionStatus::SUCCESS;
 }
 
@@ -66,32 +74,65 @@ ActionStatus TradeHandler::onParameterReceive(GameMap& aMap, const std::string& 
 
 ActionStatus TradeHandler::onStringParametersReceive(GameMap& aMap, const std::vector<std::string>& aArgs, std::vector<std::string>& aReturnMsg)
 {
-    // for ()
-    // if (aParam == "")
-    // {
-    //     return ActionStatus::FAILED;
-    // }
+    for (size_t index = 0; index < aArgs.size(); ++index)
+    {
+        const std::string& param = aArgs[index];
+        if (param == "")
+        {
+            return ActionStatus::FAILED;
+        }
 
-    // if (mOfferee == "")
-    // {
-    //     if (indexInVector(aParam, mOffereeMatchingPool) >= 0)
-    //     {
-    //         mOfferee = aParam;
-    //         mOutgoingOffer.offeror = aMap.currentPlayer();
-    //         return ActionStatus::SUCCESS;
-    //     }
-    //     else
-    //     {
-    //         return ActionStatus::FAILED;
-    //     }
-    // }
+        if (mOfferee == "")
+        {
+            if (indexInVector(param, mOffereeMatchingPool) >= 0)
+            {
+                mOfferee = param;
+                mOutgoingOffer.offeror = aMap.currentPlayer();
+                continue;
+            }
+            else
+            {
+                aReturnMsg.emplace_back("Unkown parameter: " + param + ", abort");
+                return ActionStatus::FAILED;
+            }
+        }
+
+        if (param == "done")
+        {
+            mOfferComposed = true;
+            return ActionStatus::SUCCESS;
+        }
+
+        int resource = indexInVector(param, consumableResourceStringValue);
+        if (resource >= 0)
+        {
+            if (index + 1 < aArgs.size())
+            {
+                int amount = 0;
+                if (!stringToInteger(aArgs[index + 1], amount))
+                {
+                    aReturnMsg.emplace_back("No numerical value for " + param + ", discarded");
+                    continue;
+                }
+                // amount store the amount of the resource
+                ++index;
+                mOutgoingOffer.resources[static_cast<ResourceTypes>(resource)] = amount;
+                continue;
+            }
+        }
+        else
+        {
+            aReturnMsg.emplace_back("Unkown parameter: " + param + ", discarded");
+            continue;
+        }
+    }
 
     return ActionStatus::SUCCESS;
 }
 
 bool TradeHandler::parameterComplete() const
 {
-    return true;
+    return mOfferComposed;
 }
 
 void TradeHandler::resetParameters()
@@ -99,8 +140,7 @@ void TradeHandler::resetParameters()
     mOfferee = "";
     mOfferComposed = false;
     mOutgoingOffer.offeror = static_cast<size_t>(-1);
-    mOutgoingOffer.lookingFor.clear();
-    mOutgoingOffer.offering.clear();
+    mOutgoingOffer.resources.clear();
     mIncomingOffer.clear();
 }
 
@@ -120,4 +160,31 @@ void TradeHandler::instruction(std::vector<std::string>& aReturnMsg) const
     {
         aReturnMsg.emplace_back("Trading with player");
     }
+    aReturnMsg.emplace_back("Please compose the offer by entering the resource name followed by the amount of that resource");
+    aReturnMsg.emplace_back("Enter positive value for the resources you are looking for");
+    aReturnMsg.emplace_back("and negative value for the resources you are offering");
+    aReturnMsg.emplace_back("Enter 'done' when you finish");
+    aReturnMsg.emplace_back("");
+
+    if (mOutgoingOffer.resources.size() > 0)
+    {
+        std::string lookingFor = "You are looking for ";
+        std::string offering = "You are offering ";
+        for (const auto& item : mOutgoingOffer.resources)
+        {
+            if (item.second < 0)
+            {
+                offering += std::to_string(-item.second) + " " + \
+                            consumableResourceStringValue.at(static_cast<size_t>(item.first)) + " ";
+            }
+            else
+            {
+                lookingFor += std::to_string(item.second) + " " + \
+                            consumableResourceStringValue.at(static_cast<size_t>(item.first)) + " ";
+            }
+        }
+        aReturnMsg.emplace_back(lookingFor);
+        aReturnMsg.emplace_back(offering);
+    }
+
 }
