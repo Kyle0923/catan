@@ -79,7 +79,7 @@ ActionStatus StatefulCommandHandler::onStringParametersReceive(
 
         if (rc != ActionStatus::SUCCESS)
         {
-            aReturnMsg.emplace_back("Unkown parameter: " + param + ", abort");
+            aReturnMsg.emplace_back("Unknown parameter: " + param + ", abort");
             break;
         }
     }

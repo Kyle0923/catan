@@ -16,6 +16,7 @@
 #include "cli_opt.hpp"
 #include "command_dispatcher.hpp"
 #include "command_handlers.hpp"
+#include "trading_system.hpp"
 #include "utility.hpp"
 #include "logger.hpp"
 

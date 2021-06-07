@@ -12,7 +12,6 @@
 #define INCLUDE_COMMON_HPP
 
 #include <vector>
-#include <map>
 #include <string>
 
 struct Point_t
@@ -62,12 +61,5 @@ enum class ActionStatus
     EXIT,             // only "exit" & "quit" should return this, child command finished, back to parent command, effectively pop cmdHelper stack
     FAILED,           // internal error, write to log
 };
-
-// used in trading
-using Offer_t = \
-struct {
-        size_t offeror;
-        std::map<ResourceTypes, int> resources;
-    };
 
 #endif /* INCLUDE_COMMON_HPP */

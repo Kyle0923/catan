@@ -233,61 +233,6 @@ public:
     FirstTwoRoundHandler(const std::vector<int>& aOrder, std::unique_ptr<CommandHelper> aCmdDispatcher);
 };
 
-class TradeHandler: public StatefulCommandHandler
-{
-private:
-    static const std::vector<std::string> mOffereeMatchingPool;
-    std::string mOfferee;
-    bool mOfferComposed;
-    Offer_t mOutgoingOffer;
-    std::vector<Offer_t> mIncomingOffer;
-
-protected:
-    virtual ActionStatus statefulRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg) override final;
-    virtual ActionStatus onStringParametersReceive(GameMap& aMap, const std::vector<std::string>& aArgs, std::vector<std::string>& aReturnMsg) override final;
-    virtual bool parameterComplete() const override final;
-
-    // not used
-    virtual ActionStatus onParameterReceive(GameMap& aMap, const std::string& aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
-
-public:
-    virtual std::string command() const override final;
-    virtual std::string description() const override final;
-    virtual const std::vector<std::string>& paramAutoFillPool(size_t aParamIndex) const override final;
-    virtual size_t currentParamIndex() const override final;
-
-    virtual void resetParameters() override final;
-    virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;
-
-    TradeHandler();
-};
-
-class TradeAnswerHandler: public StatefulCommandHandler
-{
-private:
-    bool mOfferComposed;
-    Offer_t mIncomingOffer;
-
-protected:
-    virtual ActionStatus statefulRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg) override final;
-    virtual ActionStatus onStringParametersReceive(GameMap& aMap, const std::vector<std::string>& aArgs, std::vector<std::string>& aReturnMsg) override final;
-    virtual bool parameterComplete() const override final;
-
-    // not used
-    virtual ActionStatus onParameterReceive(GameMap& aMap, const std::string& aParam, Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
-
-public:
-    virtual std::string command() const override final;
-    virtual std::string description() const override final;
-    virtual const std::vector<std::string>& paramAutoFillPool(size_t aParamIndex) const override final;
-    virtual size_t currentParamIndex() const override final;
-
-    virtual void resetParameters() override final;
-    virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;
-
-    TradeAnswerHandler();
-};
-
 ////////////////////////////////////////////////////////////////////////////////////
 // the commands below are meant to be used for testing in development.
 // they should not be built when RELEASE=1

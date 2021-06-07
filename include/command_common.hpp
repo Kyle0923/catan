@@ -160,7 +160,8 @@ protected:
     /**
      * @brief This is a wrapper that use a loop to call the onParameterReceive() above.
      *        Some commands expect arguments in a key-value pair format, then they will
-     *        need to override this method instead
+     *        need to override this method instead; in this case, these commands should
+     *        implement a trivial "return SUCCESS" for onParameterReceive
      *        NOTE: this function does not handle mouse event, if mouse event is required
      *              commands need to implement the handling in onParameterReceive() above
      *
