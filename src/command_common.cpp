@@ -11,7 +11,7 @@
 #include "command_handlers.hpp"
 #include "logger.hpp"
 
-const std::vector<std::string> CommandHandler::mEmptyVector = {};
+const std::vector<std::string> CommandHandler::EMPTY_STRING_VECTOR = {};
 
 std::string CommandHandler::description() const
 {
@@ -20,7 +20,7 @@ std::string CommandHandler::description() const
 
 const std::vector<std::string>& CommandHandler::paramAutoFillPool(size_t aParamIndex) const
 {
-    return mEmptyVector;
+    return EMPTY_STRING_VECTOR;
 }
 
 size_t CommandHandler::currentParamIndex() const

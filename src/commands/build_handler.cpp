@@ -36,7 +36,7 @@ const std::vector<std::string>& BuildHandler::paramAutoFillPool(size_t aParamInd
     {
         return mBuildTypeMatchingPool;
     }
-    return mEmptyVector;
+    return EMPTY_STRING_VECTOR;
 }
 
 ActionStatus BuildHandler::statefulRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg)

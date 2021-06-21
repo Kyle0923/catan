@@ -33,11 +33,50 @@ struct Offer_t {
     std::map<ResourceTypes, int> resources;
 };
 
+/**
+ * @brief
+ * an helper class to compose the offer,
+ * does not inherit from CommandHandler,
+ * therefore, it is not expected to be used by itself
+ */
+class OfferComposer
+{
+private:
+    bool mOfferComplete;
+    Offer_t mOffer;
+
+public:
+    ActionStatus composeOffer(const std::vector<std::string>& aArgs, std::vector<std::string>& aReturnMsg);
+    const std::vector<std::string>& paramAutoFillPool(size_t aParamIndex) const;
+    void instruction(std::vector<std::string>& aReturnMsg) const;
+
+    void reset();
+
+    bool isOfferComplete() const;
+    const Offer_t& getOffer() const;
+
+    OfferComposer(const size_t aPlayerId);
+};
+
+class TradeHandler: public StatelessCommandHandler
+{
+private:
+    static const std::vector<std::string> mTradingTargets;
+    void instruction(std::vector<std::string>& aReturnMsg) const;
+
+protected:
+    virtual ActionStatus statelessRun(GameMap& aMap, UserInterface& aUi, const std::vector<std::string>& aArgs, std::vector<std::string>& aReturnMsg) override final;
+
+public:
+    virtual std::string command() const override final;
+    virtual std::string description() const override final;
+    virtual const std::vector<std::string>& paramAutoFillPool(size_t aParamIndex) const override final;
+};
+
 class OfferInitiator: public StatefulCommandHandler
 {
 private:
-    bool mOfferComposed;
-    Offer_t mOutgoingOffer;
+    OfferComposer mOfferComposer;
 
 protected:
     virtual ActionStatus statefulRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg) override final;
@@ -54,29 +93,13 @@ public:
     virtual void resetParameters() override final;
     virtual void instruction(std::vector<std::string>& aReturnMsg) const override final;
 
-    OfferInitiator();
-};
-
-class TradeHandler: public StatelessCommandHandler
-{
-private:
-    static const std::vector<std::string> mTradingTargets;
-    void instruction(std::vector<std::string>& aReturnMsg) const;
-    OfferInitiator mOfferInitiator;
-
-protected:
-    virtual ActionStatus statelessRun(GameMap& aMap, UserInterface& aUi, const std::vector<std::string>& aArgs, std::vector<std::string>& aReturnMsg) override final;
-
-public:
-    virtual std::string command() const override final;
-    virtual std::string description() const override final;
-    virtual const std::vector<std::string>& paramAutoFillPool(size_t aParamIndex) const override final;
+    OfferInitiator(const size_t aPlayerId);
 };
 
 class OfferBroker: public StatefulCommandHandler
 {
 private:
-    bool mOfferComposed;
+    bool mOfferComplete;
     Offer_t mIncomingOffer;
 
 protected:

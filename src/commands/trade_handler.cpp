@@ -32,7 +32,7 @@ const std::vector<std::string>& TradeHandler::paramAutoFillPool(size_t aParamInd
     }
     else
     {
-        return mEmptyVector;
+        return EMPTY_STRING_VECTOR;
     }
 }
 
@@ -62,9 +62,10 @@ ActionStatus TradeHandler::statelessRun(GameMap& aMap, UserInterface& aUi, const
     }
     else
     {
-        // trading with player
-        aUi.pushCommandHelper(std::make_unique<CommandParameterReader>(&mOfferInitiator));
-        mOfferInitiator.instruction(aReturnMsg);
+        // to compose an offer
+        aUi.pushCommandHelper(std::make_unique<FosterCommandParameterReader>(
+            std::make_unique<OfferInitiator>(aMap.currentPlayer())
+        ));
     }
 
     return ActionStatus::SUCCESS;

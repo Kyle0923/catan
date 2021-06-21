@@ -543,7 +543,7 @@ int UserInterface::loop(GameMap& aMap)
             }
             else
             {
-                // call act() of the latest top cmdHelper
+                // prints the help msg of the previous CmdHelper
                 mCommandHelperStack.front()->act(aMap, *this, {}, Point_t{0, 0}, returnMsg);
             }
         }

@@ -12,12 +12,20 @@
 #ifndef INCLUDE_COMMAND_PARAMETER_READER_HPP
 #define INCLUDE_COMMAND_PARAMETER_READER_HPP
 
+#include <memory>
 #include "command_helper.hpp"
 #include "command_common.hpp"
 
+/**
+ * CommandParameterReader does not take ownership of mCmd,
+ * i.e., it does not provide memory handling for mCmd.
+ *
+ * If memory handling is required for the command,
+ * use FosterCommandParameterReader instead
+*/
 class CommandParameterReader : public CommandHelper
 {
-private:
+protected:
     CommandHandler* const mCmd;
 public:
     CommandParameterReader(CommandHandler* const aCmd);
@@ -27,6 +35,15 @@ public:
 
     virtual ActionStatus act(GameMap& aMap, UserInterface& aUi, std::string aInput, \
                                Point_t aPoint, std::vector<std::string>& aReturnMsg) override final;
+};
+
+class FosterCommandParameterReader : public CommandParameterReader
+{
+private:
+    std::unique_ptr<CommandHandler> mUniquePtr;
+public:
+    explicit FosterCommandParameterReader(std::unique_ptr<CommandHandler> aUniquePtr);
+    virtual ~FosterCommandParameterReader() = default;
 };
 
 #endif /* INCLUDE_COMMAND_PARAMETER_READER_HPP */

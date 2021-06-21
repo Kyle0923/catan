@@ -67,3 +67,11 @@ std::vector<std::string> CommandParameterReader::getPossibleInputs(const std::st
     }
     return stringMatcher(params.back(), matchPool, aAutoFillString);
 }
+
+////////////////////////////////////////////////////////////////////////////////////
+FosterCommandParameterReader::FosterCommandParameterReader(std::unique_ptr<CommandHandler> aUniquePtr) :
+    CommandParameterReader(aUniquePtr.get()),
+    mUniquePtr(std::move(aUniquePtr))
+{
+    //empty
+}

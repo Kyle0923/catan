@@ -96,7 +96,7 @@ public:
     };
 
     template<typename T>
-    inline bool isTerrain(const Point_t& aPoint)
+    inline bool isTerrain(const Point_t& aPoint) const
     {
         return isTerrain<T>(getTerrain(aPoint));
     };

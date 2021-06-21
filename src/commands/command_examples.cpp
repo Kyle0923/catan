@@ -113,7 +113,7 @@ const std::vector<std::string>& BuildingHandler::paramAutoFillPool(size_t aParam
     case 1:
         return param1;
     default:
-        return mEmptyVector;
+        return EMPTY_STRING_VECTOR;
     }
 }
 

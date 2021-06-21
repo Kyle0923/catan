@@ -32,7 +32,7 @@ const std::vector<std::string>& YearOfPlentyHandler::paramAutoFillPool(size_t aP
     {
         return mResourceTypeMatchingPool;
     }
-    return mEmptyVector;
+    return EMPTY_STRING_VECTOR;
 }
 
 size_t YearOfPlentyHandler::currentParamIndex() const
@@ -72,7 +72,7 @@ ActionStatus YearOfPlentyHandler::onParameterReceive(GameMap& aMap, const std::s
     int index = indexInVector(aParam, mResourceTypeMatchingPool);
     if (index == -1)
     {
-        aReturnMsg.emplace_back("unkown parameter: " + aParam);
+        aReturnMsg.emplace_back("unknown parameter: " + aParam);
         return ActionStatus::FAILED;
     }
     resource = static_cast<ResourceTypes>(index);

@@ -28,7 +28,7 @@ const std::vector<std::string>& MonopolyHandler::paramAutoFillPool(size_t aParam
     {
         return consumableResourceStringValue;
     }
-    return mEmptyVector;
+    return EMPTY_STRING_VECTOR;
 }
 
 ActionStatus MonopolyHandler::statefulRun(GameMap& aMap, UserInterface& aUi, std::vector<std::string>& aReturnMsg)
@@ -50,7 +50,7 @@ ActionStatus MonopolyHandler::onParameterReceive(GameMap& aMap, const std::strin
     int index = indexInVector(aParam, consumableResourceStringValue);
     if (index == -1)
     {
-        aReturnMsg.emplace_back("unkown parameter: " + aParam);
+        aReturnMsg.emplace_back("unknown parameter: " + aParam);
         return ActionStatus::FAILED;
     }
     mResource = static_cast<ResourceTypes>(index);

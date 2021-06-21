@@ -96,12 +96,12 @@ public:
     CommandHandler() = default;
     virtual ~CommandHandler() = default;
 
-protected:
     /**
-     * an empty std::string vector, paramAutoFillPool() returns const reference to reduce copying
-     * this empty vector is in static memory, so it is return-able as a reference
+     * an empty std::string vector, this empty vector is in static memory,
+     * so it can be returned through reference
+     * used in paramAutoFillPool() when needed to return an empty vector
      */
-    static const std::vector<std::string> mEmptyVector;
+    static const std::vector<std::string> EMPTY_STRING_VECTOR;
 };
 
 /**

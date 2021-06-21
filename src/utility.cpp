@@ -13,7 +13,7 @@
 #include "vertex.hpp"
 #include "edge.hpp"
 
-const std::vector<std::string> consumableResourceStringValue = \
+extern const std::vector<std::string> consumableResourceStringValue = \
     {"brick", "sheep", "wheat", "wood", "ore"};
 
 std::vector<std::string> splitString(const std::string& aString, char aDelim)

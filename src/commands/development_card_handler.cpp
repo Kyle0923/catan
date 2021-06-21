@@ -45,7 +45,7 @@ const std::vector<std::string>& DevelopmentCardHandler::paramAutoFillPool(size_t
     {
         return mPlayableDevCard;
     }
-    return mEmptyVector;
+    return EMPTY_STRING_VECTOR;
 }
 
 size_t DevelopmentCardHandler::currentParamIndex() const
@@ -129,7 +129,7 @@ ActionStatus DevelopmentCardHandler::onParameterReceive(GameMap& aMap, const std
         }
         else
         {
-            aReturnMsg.emplace_back("unkown parameter: " + aParam);
+            aReturnMsg.emplace_back("unknown parameter: " + aParam);
             return ActionStatus::FAILED;
         }
     }
@@ -138,7 +138,7 @@ ActionStatus DevelopmentCardHandler::onParameterReceive(GameMap& aMap, const std
         mDevCard = indexInVector(aParam, mPlayableDevCard);
         if (mDevCard == -1)
         {
-            aReturnMsg.emplace_back("unkown parameter: " + aParam);
+            aReturnMsg.emplace_back("unknown parameter: " + aParam);
             return ActionStatus::FAILED;
         }
         return ActionStatus::SUCCESS;
