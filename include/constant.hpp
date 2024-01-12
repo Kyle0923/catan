@@ -11,7 +11,7 @@
 #ifndef INCLUDE_CONSTANT_HPP
 #define INCLUDE_CONSTANT_HPP
 
-#include <cstddef>
+#include <cstdint>
 
 constexpr uint32_t VER_MAJOR = 0;
 constexpr uint32_t VER_MINOR = 8;
